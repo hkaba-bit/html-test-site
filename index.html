@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>LINOA 請求・入金台帳</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="sidetop">
+      <div class="brand"><b>LINOA 請求・入金台帳</b><span>国保連請求・立替・入金の管理</span></div>
+    </div>
+    <div><div class="lbl">表示する拠点</div>
+      <div class="seg" role="group" aria-label="表示する拠点" id="baseSeg">
+        <button type="button" data-base="合算" aria-pressed="true">合算</button>
+        <button type="button" data-base="御所" aria-pressed="false">御所</button>
+        <button type="button" data-base="大和高田" aria-pressed="false">大和高田</button>
+      </div></div>
+    <div><div class="lbl">メニュー</div><nav class="menu" id="menu" aria-label="メニュー"></nav></div>
+    <div class="me"><span class="h">入力する人</span><select id="meSel" aria-label="入力する人"></select></div>
+  </aside>
+  <main><div class="demo" role="note"><b>デモ版</b><span>表示している数値はデモ用のサンプルです。入力した内容はこのブラウザの中だけに保存され、ほかの人には見えません。</span><span class="spacer"></span><button type="button" class="btn small" id="demoReset">サンプルの状態に戻す</button></div><div id="notice" class="notice" hidden></div><div id="main"></div></main>
+</div>
+<div id="drawerRoot"></div>
+<div id="toastRoot"></div>
+<input type="file" id="fileIn" accept=".json,application/json" hidden>
+<script src="data.js"></script>
+<script src="adapter.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
