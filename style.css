@@ -223,3 +223,82 @@ details p,details .in{margin-top:8px;color:var(--muted);font-size:14px}
 
 .demo{max-width:1180px;margin:0 auto 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:10px 14px;border-radius:12px;background:var(--warn-soft);color:var(--ink);font-size:13px;border:1px solid var(--line)}
 .demo b{color:var(--warn)}
+
+/* ===== 次にやること ===== */
+.nextcard{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:22px;border:2px solid var(--accent);position:relative}
+.nextcard .nc-main{display:flex;flex-direction:column;gap:10px;min-width:0}
+.nextcard h2{font-size:21px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.nextcard h2 .no{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:17px;flex:none}
+.nextcard p{color:var(--ink);max-width:60ch}
+.nc-meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.nc-meta span{display:inline-flex;gap:6px;align-items:center}
+.nc-side{background:var(--sunk);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.nc-prog{display:flex;justify-content:space-between;align-items:baseline;font-size:13px}
+.nc-prog .num{font-weight:700;font-size:16px}
+.nc-bar{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px}
+.nc-bar i{height:8px;border-radius:4px;background:var(--line)}
+.nc-bar i.on{background:var(--ok)} .nc-bar i.cur{background:var(--accent)}
+.nc-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.nc-list li{display:flex;gap:10px;align-items:flex-start;color:var(--muted)}
+.nc-list .mk{flex:none;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);font-size:12px;background:var(--surface)}
+.nc-list .tx{display:flex;flex-direction:column;line-height:1.45}
+.nc-list small{font-size:11px;color:var(--faint)}
+.nc-list li.is-done .mk{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.nc-list li.is-cur{color:var(--ink);font-weight:700}
+.nc-list li.is-cur .mk{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+@media (max-width:860px){.nextcard{grid-template-columns:1fr}}
+.step{position:relative}
+.step.is-next{border:2px solid var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.step .ribbon{position:absolute;top:-11px;right:14px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px}
+.welcome{display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:var(--accent-soft);border-color:transparent}
+.welcome h2{font-size:18px}
+
+/* ===== 保存後の「次は」 ===== */
+.nextbar{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(560px,calc(100vw - 32px));display:flex;gap:12px;align-items:center;background:var(--ink);color:var(--surface);padding:12px 12px 12px 18px;border-radius:12px;z-index:60;box-shadow:0 8px 28px rgba(0,0,0,.25);font-size:13px}
+.nextbar .col{flex:1}
+.nextbar b{font-size:14px}
+.nextbar .btn.iconbtn{background:transparent;color:var(--surface);border-color:transparent}
+.nextbar .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+/* ===== 使い方ボタン ===== */
+.helpfab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:30;display:inline-flex;gap:8px;align-items:center;font:inherit;font-size:13px;font-weight:700;padding:9px 16px 9px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);box-shadow:var(--shadow);cursor:pointer}
+.helpfab span{width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:inline-flex;align-items:center;justify-content:center}
+.helpfab:hover{border-color:var(--accent)}
+body.touring .helpfab{display:none}
+@media (max-width:620px){.helpfab{right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px))}}
+
+/* ===== ツアー ===== */
+#tourRoot .tour-block{position:fixed;inset:0;z-index:70;background:transparent}
+#tourRoot .tour-block.dim{background:rgba(10,16,24,.55)}
+#tourRoot .tour-hole{position:fixed;z-index:71;border-radius:12px;box-shadow:0 0 0 3px var(--accent),0 0 0 9999px rgba(10,16,24,.55);pointer-events:none}
+#tourRoot .tour-card{position:fixed;z-index:72;background:var(--surface);color:var(--ink);border-radius:14px;padding:16px 18px 12px;box-shadow:0 12px 40px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:8px;border:1px solid var(--line)}
+#tourRoot .tour-card.center{transform:translate(-50%,-50%)}
+#tourRoot .tour-card h3{font-size:17px}
+#tourRoot .tour-card p{font-size:14px;line-height:1.75}
+#tourRoot .tour-card p b{color:var(--accent)}
+.tc-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.tc-count{font-size:12px;color:var(--muted)}
+.tc-prog{height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.tc-prog i{display:block;height:100%;background:var(--accent)}
+.tc-act{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.tc-act .spacer{flex:1}
+.tc-key{font-size:11px}
+@media (max-width:640px){.tc-key{display:none}}
+@media (prefers-reduced-motion:no-preference){#tourRoot .tour-hole{transition:top .25s,left .25s,width .25s,height .25s}}
+
+/* ===== レクチャー一覧 ===== */
+.learn-prog{display:flex;flex-direction:column;gap:6px;min-width:180px}
+.learn-prog b{font-size:22px}
+.courses{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.course{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow);min-width:0}
+.course.is-next{border:2px solid var(--accent)}
+.course .c-head{display:flex;gap:12px;align-items:flex-start}
+.course .c-head .pill{margin-left:auto;flex:none}
+.course .c-no{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-weight:700}
+.course.is-done .c-no{background:var(--ok);color:var(--surface)}
+.course h3{font-size:15px}
+.course ul{margin:0;padding-left:1.2em;font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:2px;flex:1}
+.handover{margin:0;padding:0;list-style:none;counter-reset:h;display:flex;flex-direction:column;gap:10px}
+.handover li{counter-increment:h;display:grid;grid-template-columns:30px minmax(0,1fr);column-gap:10px;font-size:14px}
+.handover li::before{content:counter(h);grid-row:span 2;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.handover li span{color:var(--muted);font-size:13px}

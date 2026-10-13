@@ -48,6 +48,7 @@ const MENU = [
   ['recon','突合','<path d="M7 7h13M7 7l3-3M7 7l3 3M17 17H4m13 0-3-3m3 3-3 3"/>'],
   ['returns','返戻台帳','<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-2"/>'],
   ['ledger','台帳・履歴','<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>'],
+  ['learn','使い方レクチャー','<path d="M2 8l10-4 10 4-10 4z"/><path d="M6 10v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/><path d="M22 8v6"/>'],
   ['settings','設定・使い方','<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>']
 ];
 const DEFAULT_SETTINGS = {feeRate:0.012, feeFixed:3850, alertRatio:0.2, anomaly:0.15, members:[], cash:{opening:null, asOf:null, costs:[]}, lastBackupAt:null};
@@ -265,7 +266,7 @@ function openStepA(b, sm) {
             {base:b, kind:'K10', sm, pm, amount:k, parts:nums, note, memo: [nums.length>1 ? nums.map((n,i)=>`${'①②③④⑤⑥'[i]}${yen(n)}`).join(' ') : '', note].filter(Boolean).join('／')},
             {base:b, kind:'T10', sm, pm, amount:t, reason:rsn, memo: rsn}
           ], `${b} ${ym(sm)}提供分の請求`);
-          closeDrawer(); toast(`${b}の${mm(sm)}分の請求を保存しました`);
+          closeDrawer(); savedNext(`${b}の${mm(sm)}分の請求を保存しました`);
         } catch (err) { $('dSave').disabled = false; msg.textContent = '保存できませんでした。もう一度お試しください。'; }
       });
     }
@@ -344,7 +345,7 @@ function openStepB(b, pm) {
         if (late) docs.push({base:b, kind:'T32', pm, amount:-late});
         if (paidStr) docs.push({base:b, kind:'B10', pm, amount: toNum(paidStr)});
         $('dSave').disabled = true; msg.textContent = '保存しています…';
-        try { await replaceDocs(editable, docs, `${b} ${ym(pm)}の精算`); closeDrawer(); toast(`${b}の${mm(pm)}の精算を保存しました`); }
+        try { await replaceDocs(editable, docs, `${b} ${ym(pm)}の精算`); closeDrawer(); savedNext(`${b}の${mm(pm)}の精算を保存しました`); }
         catch (err) { $('dSave').disabled = false; msg.textContent = '保存できませんでした。もう一度お試しください。'; }
       });
     }
@@ -382,7 +383,7 @@ function openStepC(b, sm) {
         const v = toNum($('cK').value), msg = $('dMsg');
         if (!v) return msg.textContent = '国保連の確定額を入れてください。';
         $('dSave').disabled = true; msg.textContent = '保存しています…';
-        try { await replaceDocs(k30, [{base:b, kind:'K30', sm, pm:addM(sm,2), amount:v, memo:$('cMemo').value.trim()}], `${b} ${ym(sm)}提供分の払出し通知`); closeDrawer(); toast(`${b}の${mm(sm)}分の確定額を保存しました`); }
+        try { await replaceDocs(k30, [{base:b, kind:'K30', sm, pm:addM(sm,2), amount:v, memo:$('cMemo').value.trim()}], `${b} ${ym(sm)}提供分の払出し通知`); closeDrawer(); savedNext(`${b}の${mm(sm)}分の確定額を保存しました`); }
         catch (err) { $('dSave').disabled = false; msg.textContent = '保存できませんでした。もう一度お試しください。'; }
       });
     }
@@ -433,7 +434,7 @@ function renderHome() {
     {k:'D', t:'齋藤様へ報告・売上概算', doc:'このツールの月次レポート／資金繰り', when:'5〜10日', desc:'今月の請求額・先月の国保連からの入金・来月の清算見込みを送ります。売上概算は会計の先生にも伝えます'},
     {k:'B', t:'トワライズ明細・精算の確認', doc:'トワライズの明細（17日ごろ）／尼信の通帳', when:'15日入金・17日明細', desc:`${mm(w)}に入金された立替金の内訳を入れ、入金額と合っているか確かめます`}
   ];
-  const close = S.closes[w] || {};
+  const close = S.closes[w] || {}, nx = nextStep(w), nxK = nx.cur ? nx.cur.k : null;
   const stepHtml = cards.map((c, i) => {
     let body = '', allDone = true;
     if (c.k !== 'D') {
@@ -449,7 +450,7 @@ function renderHome() {
       allDone = !!close.reportedAt;
       body = `<div class="basebox"><div class="bt"><b>${ym(w)}分</b>${close.reportedAt ? pill('done','✓ 報告済み') : pill('todo')}</div>${close.reportedAt?`<div class="bv"><span>${new Date(close.reportedAt).toLocaleDateString('ja-JP')} 報告済み${close.reportedBy?`（${esc(close.reportedBy)}）`:''}</span></div>`:''}<div><button type="button" class="btn small ${close.reportedAt?'':'primary'}" data-goreport="1">レポートを開く</button></div></div>`;
     }
-    return `<article class="step ${allDone?'done':''}"><div class="head"><div class="no">${allDone?'✓':i+1}</div><div class="col" style="gap:2px"><span class="eyebrow">${c.when}</span><h3>${c.t}</h3></div></div><p class="hint">${c.desc}</p><div class="doc">${ICON_DOC}<span>見る書類：${c.doc}</span></div>${body}</article>`;
+    return `<article class="step ${allDone?'done':''} ${c.k===nxK?'is-next':''}">${c.k===nxK?'<span class="ribbon">次はこれ</span>':''}<div class="head"><div class="no">${allDone?'✓':i+1}</div><div class="col" style="gap:2px"><span class="eyebrow">${c.when}</span><h3>${c.t}</h3></div></div><p class="hint">${c.desc}</p><div class="doc">${ICON_DOC}<span>見る書類：${c.doc}</span></div>${body}</article>`;
   }).join('');
   const docsState = close.docs || {};
   const docHtml = BASES.map(b => `<div class="col"><b style="font-size:14px">${b}</b>${DOCS.map(([k,n,s]) => { const v = docsState[`${BCODE[b]}_${k}`] || {}; return `<div class="docitem"><input type="checkbox" data-doc="${BCODE[b]}_${k}" ${v.done?'checked':''} aria-label="${b}の${n}を保存済み"><div class="nm">${n}<small>${s}${v.done&&v.by?`・${esc(v.by)}`:''}</small></div>${linkOk(v.url)?`<a href="${esc(v.url)}" target="_blank" rel="noopener">開く</a>`:`<button type="button" class="btn ghost small" data-doclink="${BCODE[b]}_${k}">リンク</button>`}</div>`; }).join('')}</div>`).join('');
@@ -457,7 +458,7 @@ function renderHome() {
   const attn = items.length ? items.map(x => `<div class="it"><div class="t">${pill(x.sev, x.sev==='bad'?'! 要確認':x.sev==='warn'?'注意':'確認')}<span>${esc(x.text)}</span></div>${x.act}</div>`).join('') : '<p class="hint">確認が必要なことはありません。</p>';
   const tl = [['1〜10日','国保連・トワライズへ請求',1,10],['5日ごろ','国保連の払出し通知',4,7],['5〜10日','齋藤様へ報告・売上概算',5,10],['15日・17日','立替入金・トワライズの明細',13,20],['月末','返戻の連絡（点数のみ）',25,31]].map(([a,b,f,t])=>`<div class="tl ${isNow && d>=f && d<=t?'now':''}"><b>${a}</b>${b}</div>`).join('');
   const dlCls = isNow && left >= 0 ? (left === 0 ? 'today' : left <= 3 ? 'soon' : '') : '';
-  $('main').innerHTML = `<div class="page">
+  $('main').innerHTML = `<div class="page">${guideBanner()}${nextCardHtml(w)}
     <section class="panel col" style="gap:14px">
       <div class="monthbar"><button type="button" class="btn navbtn" data-wm="-1" aria-label="前の月">‹</button><h1>${ym(w)}の作業</h1><button type="button" class="btn navbtn" data-wm="1" aria-label="次の月">›</button>${w!==nowM?`<button type="button" class="btn ghost" data-wm="0">今月に戻る</button>`:''}<div class="spacer"></div><span class="hint">左のカードから順に、届いた書類の数字を入れていきます</span></div>
       <div class="deadline ${dlCls}"><span class="hint">国保連 請求の締切</span><span class="big">${dl0.getMonth()+1}月${dl0.getDate()}日（${WD[dl0.getDay()]}）</span>${isNow?(left>0?`<span>あと <b>${left}日</b></span>`:left===0?'<b>今日が締切です</b>':'<span class="hint">締切は過ぎました</span>'):''}<span class="hint">10日が土日祝のときは翌営業日</span></div>
@@ -538,7 +539,7 @@ function renderReport() {
     <section class="panel"><div class="row">
       <div class="ptitle" style="flex:1"><span class="eyebrow">齋藤様への月次報告（毎月5〜10日）</span><h1>${ym(pm)}の月次レポート</h1><p class="hint">毎月お伝えしている3つの数字と、清算の見込みが誰の分かを示します。下段は、この月の立替入金がどう決まったかの内訳です。</p></div>
       <label class="f" style="width:190px">報告する月<select id="pmSel">${pms.slice().reverse().map(p => `<option value="${p}" ${p===pm?'selected':''}>${ym(p)}</option>`).join('')}</select></label></div></section>
-    <section class="panel col" style="gap:14px">
+    <section class="panel col regular" style="gap:14px">
       <h2>毎月の3つの数字</h2>
       <div class="kpis k3">
         <div class="kpi"><span class="l">今月の請求額（${mm(rg.reqSm)}提供分）</span><span class="v">${yen(rg.req)}</span><span class="s">うちトワライズへ ${yen(rg.reqT)}円</span></div>
@@ -570,7 +571,7 @@ function renderReport() {
   $('copyBtn').addEventListener('click', async () => { const t = $('reportText'); try { await navigator.clipboard.writeText(t.value); toast('報告文をコピーしました'); } catch (e) { t.select(); toast('文章を選択しました。Ctrl+C でコピーしてください'); } });
   const saveClose = async patch => { await db.doc('closes/' + pm).set({...(S.closes[pm]||{}), ...patch}); };
   $('saveCmt').addEventListener('click', async () => { try { await saveClose({comment: $('cmt').value.trim()}); toast('コメントを保存しました'); } catch (e) { toast('保存できませんでした'); } });
-  $('markDone').addEventListener('click', async () => { const done = !!close.reportedAt; try { await saveClose({comment: $('cmt').value.trim(), reportedAt: done ? null : new Date().toISOString(), reportedBy: done ? null : (S.me||'')}); logIt('報告', `${ym(pm)}の報告を${done?'取り消し':'報告済みに'}`); toast(done ? '報告済みを取り消しました' : '報告済みにしました'); } catch (e) { toast('保存できませんでした'); } });
+  $('markDone').addEventListener('click', async () => { const done = !!close.reportedAt; try { await saveClose({comment: $('cmt').value.trim(), reportedAt: done ? null : new Date().toISOString(), reportedBy: done ? null : (S.me||'')}); logIt('報告', `${ym(pm)}の報告を${done?'取り消し':'報告済みに'}`); done ? toast('報告済みを取り消しました') : savedNext('報告済みにしました'); } catch (e) { toast('保存できませんでした'); } });
 }
 function lineChart(el, ms, series, selM, label) {
   const W = 640, H = 230, L = 56, R = 14, T = 12, B = 30;
@@ -614,7 +615,7 @@ function renderCash() {
       <div class="tablewrap"><table><thead><tr><th>月</th><th>御所</th><th>大和高田</th><th class="r">入金見込み</th><th class="r">支出</th><th class="r">月末残高</th></tr></thead><tbody>${fc.map(r => `<tr class="${minRow && r.m===minRow.m ? (r.bal<0?'badrow':'minrow') : ''}"><td>${ym(r.m)}</td>${BASES.map(b => { const p = r.parts.find(x => x.b === b); return `<td>${p ? `<span class="num">${yen(p.v)}</span><br><span class="hint">${p.kind}</span>` : '<span class="hint">—</span>'}</td>`; }).join('')}<td class="num r"><b>${yen(r.inflow)}</b></td><td class="num r">${r.costs?sgn(-r.costs):'—'}</td><td class="num r"><b>${r.bal==null?'—':yen(r.bal)}</b></td></tr>`).join('')}</tbody></table></div>
       <p class="hint">推計は「売上概算（お伝えした額）」または直近3か月の立替請求の平均から、手数料の目安と、3か月前提供分の未解消差額を加減しています。給与日と入金日のずれなど月の途中の動きは含みません。</p>
     </section>
-    <section class="panel col" style="gap:14px">
+    <section class="panel col" id="estSec" style="gap:14px">
       <div class="row"><div class="ptitle" style="flex:1"><h2>売上概算（会計の先生・齋藤様へ 5日ごろ）</h2><p class="hint">今月の売上の見込みを、5日ごろに会計の先生（三光会計社）と齋藤様にお伝えします。確定するのは17日ごろのトワライズの明細です。お伝えした額を残し、実績との差が10％を超えたら理由を記録します。</p></div>
         <label class="f" style="width:180px">提供月<select id="estSm">${monthOpts(estSm, addM(nowM,-6), addM(nowM,2))}</select></label></div>
       <div class="fgrid">${BASES.map(b => { const e = estOf(b, estSm), sug = sum(ofBase(b),['K10'],r=>r.sm===estSm) || avgT10(b, estSm), prev = sum(ofBase(b),['K10'],r=>r.sm===addM(estSm,-1)); return `<div class="calc"><div class="row"><b>${b}</b>${e?pill('done','✓ お伝え済み'):pill('todo')}</div>
@@ -937,7 +938,7 @@ function drawMe() {
 function render() {
   drawMenu();
   if (!S.loaded && db) { $('main').innerHTML = '<div class="page"><div class="panel"><p class="hint">データを読み込んでいます…</p></div></div>'; return; }
-  ({home:renderHome, report:renderReport, cash:renderCash, recon:renderRecon, returns:renderReturns, ledger:renderLedger, settings:renderSettings})[S.tab]();
+  ({home:renderHome, report:renderReport, cash:renderCash, recon:renderRecon, returns:renderReturns, ledger:renderLedger, settings:renderSettings, learn:renderLearn})[S.tab]();
 }
 function setTab(t) { S.tab = t; try { localStorage.setItem('linoa-tab', t); } catch (e) {} render(); window.scrollTo({top:0}); }
 $('baseSeg').addEventListener('click', e => { const b = e.target.closest('[data-base]'); if (!b) return; S.base = b.dataset.base; document.querySelectorAll('[data-base]').forEach(x => x.setAttribute('aria-pressed', x === b)); render(); });
