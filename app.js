@@ -13,7 +13,7 @@ const KINDS = {
 const ORDER = Object.keys(KINDS);
 const BASES = ['御所','大和高田'];
 const BCODE = {'御所':'GS','大和高田':'TK'};
-const NF_REASONS = ['月遅れ請求分（立替の対象外）','返戻の再請求分','請求漏れ（後日精算）','その他'];
+const NF_REASONS = ['返戻の再請求分（トワライズには請求しない）','月遅れ請求分（立替の対象外）','請求漏れ（後日精算）','その他'];
 const OFF_TYPES = {
   henrei:{label:'返戻の相殺', sign:-1, kind:'T20'},
   more:{label:'請求漏れ分の精算', sign:1, kind:'T20'},
@@ -21,7 +21,7 @@ const OFF_TYPES = {
   kokuho:{label:'国保連の手数料など', sign:-1, kind:'T20'},
   other:{label:'その他', sign:-1, kind:'T20'}
 };
-const RET_STATUS = ['調査中','再請求待ち','再請求済','入金済','対象外'];
+const RET_STATUS = ['点数のみ','再請求待ち','再請求済','入金済','対象外'];
 const ERR_CODES = [
   ['EC01','受付','同じ請求の二重送信・重複','事業所'],
   ['EC08','受付','上限額管理結果票がすでに受付済み','事業所'],
@@ -35,9 +35,9 @@ const ERR_CODES = [
   ['S・T','二次審査','市町村の審査による返戻（S・Tで始まるコード）','市町村']
 ];
 const DOCS = [
-  ['henrei','返戻等一覧表','前月請求分・月末〜1日ごろ'],
-  ['kettei','支払決定額通知書','15日ごろ'],
-  ['seisan','トワライズ精算書','10日〜中旬'],
+  ['henrei','返戻の連絡（点数のみ）','前月末'],
+  ['kettei','国保連の払出し通知書','5日ごろ'],
+  ['seisan','トワライズの明細','17日ごろ（立替入金は15日ごろ）'],
   ['tsucho','尼信の通帳（入金の記帳）','入金のあと']
 ];
 const HOLIDAYS = new Set(['2026-01-01','2026-01-12','2026-02-11','2026-02-23','2026-03-20','2026-04-29','2026-05-03','2026-05-04','2026-05-05','2026-05-06','2026-07-20','2026-08-11','2026-09-21','2026-09-22','2026-09-23','2026-10-12','2026-11-03','2026-11-23','2027-01-01','2027-01-11','2027-02-11','2027-02-23','2027-03-21','2027-03-22','2027-04-29','2027-05-03','2027-05-04','2027-05-05','2027-07-19','2027-08-11','2027-09-20','2027-09-23','2027-10-11','2027-11-03','2027-11-23']);
@@ -50,7 +50,7 @@ const MENU = [
   ['ledger','台帳・履歴','<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>'],
   ['settings','設定・使い方','<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>']
 ];
-const DEFAULT_SETTINGS = {feeRate:0.012, feeFixed:3300, alertRatio:0.2, anomaly:0.15, members:[], cash:{opening:null, asOf:null, costs:[]}, lastBackupAt:null};
+const DEFAULT_SETTINGS = {feeRate:0.012, feeFixed:3850, alertRatio:0.2, anomaly:0.15, members:[], cash:{opening:null, asOf:null, costs:[]}, lastBackupAt:null};
 const S = { rows:[], closes:{}, returns:[], estimates:[], logs:[], settings:structuredClone(DEFAULT_SETTINGS), base:'合算', tab:'home', work:null, repPm:null,
   led:{pm:'', kind:'', q:'', unchecked:false, view:'rows'}, ret:{status:'open'}, loaded:false, me:'' };
 let db = null, dl = null, pendingRender = false;
@@ -80,7 +80,7 @@ const monthOpts = (sel, from = '2025-04', to = addM(nowM, 6)) => { let o = '', m
 const ICON_DOC = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>';
 function toast(msg){ const t = document.createElement('div'); t.className='toast'; t.setAttribute('role','status'); t.textContent = msg; $('toastRoot').replaceChildren(t); setTimeout(()=>{ t.remove(); }, 2600); }
 function firstSm(b){ const ks = ofBase(b).filter(r => r.kind==='K10').map(r => r.sm).sort(); return ks[0] || null; }
-function pill(state, text){ const def = {ok:'✓ 一致', done:'✓ 入力済', bad:'! 差あり', warn:'相殺待ち', wait:'入金待ち', todo:'未入力', na:'対象なし', open:'! 要確認', pay:'支払待ち', solved:'✓ 解消'}; const cls = {done:'ok', solved:'ok', open:'bad', pay:'wait'}[state] || state; return `<span class="pill ${cls}">${text || def[state]}</span>`; }
+function pill(state, text){ const def = {ok:'✓ 一致', done:'✓ 入力済', bad:'! 差あり', warn:'清算待ち', wait:'入金待ち', todo:'未入力', na:'対象なし', open:'! 要確認', pay:'通知待ち', solved:'✓ 解消'}; const cls = {done:'ok', solved:'ok', open:'bad', pay:'wait'}[state] || state; return `<span class="pill ${cls}">${text || def[state]}</span>`; }
 const fmtDate = s => { const d = new Date(s); return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; };
 const linkOk = u => /^https:\/\//.test(u||'');
 
@@ -100,7 +100,7 @@ function reconRows(list) {
     const k10 = sum(list, ['K10'], f), t10 = sum(list, ['T10'], f), k30 = sum(list, ['K30'], f), off = sum(list, ['T20'], f), redo = sum(list, ['T11'], f);
     const hasK30 = has(list, 'K30', f);
     const gap = hasK30 ? k30 - t10 : null, open = hasK30 ? gap - off : null;
-    const state = !hasK30 ? 'pay' : Math.abs(open) < 1 ? 'solved' : diffM(sm, nowM) <= 2 ? 'warn' : 'open';
+    const state = !hasK30 ? 'pay' : Math.abs(open) < 1 ? 'solved' : diffM(sm, nowM) <= 3 ? 'warn' : 'open';
     return {sm, k10, t10, nf: k10 - t10, k30, hasK30, gap, off, redo, open, state};
   });
 }
@@ -108,11 +108,26 @@ const openItems = b => reconRows(ofBase(b)).filter(r => r.state === 'warn' || r.
 const feeGuess = fac => fac > 0 ? Math.round(fac * S.settings.feeRate + S.settings.feeFixed) : 0;
 function avgT10(b, beforeSm, n = 3) { const rs = reconRows(ofBase(b)).filter(r => r.sm < beforeSm && r.t10 > 0).slice(-n); return rs.length ? Math.round(rs.reduce((a,r)=>a+r.t10,0)/rs.length) : 0; }
 function latestT10(b){ const rs = reconRows(ofBase(b)).filter(r => r.t10 > 0); return rs.at(-1) || null; }
+// 清算のルール：国保連の確定額と立替請求の差は、通常2か月後（提供月＋3か月目の立替入金）に差し引かれる。
+// 差（不足）が立替請求の20％を超えると、1か月早まる（提供月＋2か月目の立替入金）。
+function settleTiming(t10, gap) { const ratio = t10 && gap < 0 ? -gap / t10 : 0; return {ratio, early: ratio >= S.settings.alertRatio}; }
+const settleMonth = (sm, early) => addM(sm, early ? 2 : 3);
 function earlyRisk(b) {
-  const short = openItems(b).filter(o => o.open < 0).reduce((a,o)=>a+o.open,0);
-  const lt = latestT10(b); if (!lt || !short) return {ratio:0, short:0, base:lt?.t10||0};
-  const ratio = -short / lt.t10;
-  return {ratio, short, base:lt.t10, state: ratio >= S.settings.alertRatio ? 'bad' : ratio >= S.settings.alertRatio*0.75 ? 'warn' : 'ok'};
+  const r = reconRows(ofBase(b)).filter(x => x.hasK30 && x.gap < 0 && x.state !== 'solved').at(-1);
+  if (!r) return {ratio:0, short:0, base:0};
+  const ratio = -r.gap / (r.t10 || 1);
+  return {ratio, short:r.gap, base:r.t10, sm:r.sm, state: ratio >= S.settings.alertRatio ? 'bad' : ratio >= S.settings.alertRatio*0.75 ? 'warn' : 'ok'};
+}
+function regular(m) {
+  const list = view(), bs = basesInView();
+  const reqSm = addM(m,-1), paidSm = addM(m,-3), setSm = addM(m,-2);
+  const req = sum(list,['K10'],r=>r.sm===reqSm), reqT = sum(list,['T10'],r=>r.sm===reqSm);
+  const paidHas = has(list,'K30',r=>r.sm===paidSm), paid = sum(list,['K30'],r=>r.sm===paidSm);
+  const per = bs.map(b => { const L = ofBase(b), h = has(L,'K30',r=>r.sm===setSm), t = sum(L,['T10'],r=>r.sm===setSm), g = h ? sum(L,['K30'],r=>r.sm===setSm) - t : null;
+    const tm = g == null ? {ratio:0, early:false} : settleTiming(t, g); return {b, has:h, gap:g, t, ...tm, when: g == null ? null : settleMonth(setSm, tm.early)}; });
+  const setHas = per.some(x => x.has), gap = per.reduce((a,x)=>a+(x.gap||0),0);
+  const rets = S.returns.filter(x => bs.includes(x.base) && x.sm === setSm), retSum = -rets.reduce((a,x)=>a+toNum(x.amount),0);
+  return {m, reqSm, req, reqT, paidSm, paid, paidHas, setSm, setHas, gap, per, rets, retSum, other: gap - retSum};
 }
 function anomalies(b) {
   const rs = reconRows(ofBase(b)).filter(r => r.k10 > 0); if (rs.length < 2) return [];
@@ -193,22 +208,25 @@ function openStepA(b, sm) {
   const k10 = rs.filter(r => r.kind === 'K10'), t10 = rs.filter(r => r.kind === 'T10');
   let parts = k10.length ? (k10.length === 1 && Array.isArray(k10[0].parts) ? k10[0].parts.slice() : k10.map(r => r.amount)) : [''];
   const kTot = sum(k10, ['K10']), tTot = sum(t10, ['T10']);
-  const same = !t10.length || tTot === kTot, reason = t10[0]?.reason || '';
+  const reason = t10[0]?.reason || '', mode0 = !t10.length || tTot === kTot ? '1' : reason === NF_REASONS[0] ? '2' : '0', same = mode0 === '1';
   const memo = k10[0]?.note ?? '';
   const dl0 = kokuhoDeadline(addM(sm,1));
   openDrawer({
     eyebrow:`① 国保連への請求｜${b}`, title:`${ym(sm)}提供分の請求`,
-    note:`<b>見る書類：</b>国保連に送った請求書（サマリ）の合計欄と、トワライズへ提出した請求額。<br>締切は <b>${dl0.getMonth()+1}月${dl0.getDate()}日（${WD[dl0.getDay()]}）</b>。月遅れ請求などで請求書が何枚かに分かれるときは、行を追加してください。`,
+    note:`<b>見る書類：</b>国保連に送った請求データ（サマリ）の合計欄と、トワライズへ請求した額。<br>締切は <b>${dl0.getMonth()+1}月${dl0.getDate()}日（${WD[dl0.getDay()]}）</b>（いつもは5〜6日に請求）。返戻の再請求分などで請求が何枚かに分かれるときは、行を追加してください。<br><b>ルール：</b>返戻の再請求分は、トワライズには請求しません。同じ方の分を2回立て替えることになり、清算額が膨らんで「20％ルール」に当たりやすくなるためです。`,
     body: noMe() + `
       <div class="sec"><h4><span class="n">1</span>国保連への請求額</h4>
         <div class="lines" id="aParts"></div>
-        <div><button type="button" class="btn small" id="aAdd">＋ 請求書を追加（月遅れ分など）</button></div>
+        <div><button type="button" class="btn small" id="aAdd">＋ 請求を追加（返戻の再請求分など）</button></div>
         <div class="ro"><span>国保連への請求 合計</span><b class="num" id="aKTot">0</b></div></div>
       <div class="sec"><h4><span class="n">2</span>トワライズへの立替請求額</h4>
         <div class="choice" role="radiogroup" aria-label="立替請求額">
-          <label><input type="radio" name="aSame" value="1" ${same?'checked':''}>国保連の請求と同じ金額</label>
-          <label><input type="radio" name="aSame" value="0" ${same?'':'checked'}>金額が違う</label></div>
-        <div id="aDiff" class="col" ${same?'hidden':''}>
+          <label><input type="radio" name="aSame" value="1" ${mode0==='1'?'checked':''}>国保連の請求と同じ金額</label>
+          <label><input type="radio" name="aSame" value="2" ${mode0==='2'?'checked':''}>返戻の再請求分を除く（新規分だけ）</label>
+          <label><input type="radio" name="aSame" value="0" ${mode0==='0'?'checked':''}>その他の理由で金額が違う</label></div>
+        <div id="aRe" class="col" ${mode0==='2'?'':'hidden'}>
+          <label class="f">返戻の再請求分の額（円）<span class="sub">国保連にだけ請求し、トワライズには請求しない額</span><input class="amt" id="aReAmt" inputmode="numeric" value="${mode0==='2'?yen(kTot-tTot):''}"></label></div>
+        <div id="aDiff" class="col" ${mode0==='0'?'':'hidden'}>
           <label class="f">トワライズへの請求額（円）<input class="amt" id="aT" inputmode="numeric" value="${same?'':yen(tTot)}"></label>
           <label class="f">立替しない理由<span class="sub">国保連には請求するが、トワライズには請求しない分の理由</span>
             <select id="aReason"><option value="">選んでください</option>${NF_REASONS.map(x=>`<option ${x===reason?'selected':''}>${x}</option>`).join('')}</select></label></div></div>
@@ -221,23 +239,26 @@ function openStepA(b, sm) {
       };
       const calc = () => {
         const k = parts.reduce((a,v)=>a+toNum(v),0); $('aKTot').textContent = yen(k);
-        const s = root.querySelector('input[name=aSame]:checked').value === '1', t = s ? k : toNum($('aT').value), nf = k - t;
+        const md = root.querySelector('input[name=aSame]:checked').value, t = md === '1' ? k : md === '2' ? k - toNum($('aReAmt').value) : toNum($('aT').value), nf = k - t;
         $('aCalc').innerHTML = `<div class="cl"><span>国保連への請求</span><span class="num">${yen(k)}</span></div><div class="cl"><span>トワライズへの立替請求</span><span class="num">${yen(t)}</span></div><div class="cl tot"><span>立替しない額</span><span class="num">${nf?sgn(nf):'0'}</span></div>` +
-          (nf ? `<div class="res warn">${nf>0?`${yen(nf)}円は立替されず、国保連から入金されたあとトワライズの精算で戻ってきます。`:`立替請求の方が ${yen(-nf)}円 多くなっています。入力をご確認ください。`}</div>` : `<div class="res ok">国保連への請求と立替請求が一致しています。</div>`);
-        const est = estOf(b, sm); if (est && k) { const d = (t - toNum(est.amount)) / toNum(est.amount); if (Math.abs(d) >= .1) $('aCalc').insertAdjacentHTML('beforeend', `<div class="res warn">提出済みの売上概算（${yen(est.amount)}円）と ${(d*100).toFixed(1)}％ 違います。資金繰りの画面で理由を残してください。</div>`); }
+          (nf ? `<div class="res warn">${nf>0?`${yen(nf)}円は立替されず、国保連から入金されたあとトワライズの清算で戻ってきます。`:`立替請求の方が ${yen(-nf)}円 多くなっています。入力をご確認ください。`}</div>` : `<div class="res ok">国保連への請求と立替請求が一致しています。</div>`) +
+          (md === '1' && parts.filter(v => toNum(v) > 0).length > 1 ? `<div class="res warn">請求が複数に分かれています。返戻の再請求分が入っていれば、トワライズには請求しません（「返戻の再請求分を除く」を選んでください）。</div>` : '');
+        const est = estOf(b, sm); if (est && k) { const d = (t - toNum(est.amount)) / toNum(est.amount); if (Math.abs(d) >= .1) $('aCalc').insertAdjacentHTML('beforeend', `<div class="res warn">お伝えした売上概算（${yen(est.amount)}円）と ${(d*100).toFixed(1)}％ 違います。資金繰りの画面で理由を残してください。</div>`); }
       };
       root.addEventListener('input', e => { if (e.target.dataset.pi != null) parts[+e.target.dataset.pi] = e.target.value; calc(); });
-      root.addEventListener('change', e => { if (e.target.name === 'aSame') $('aDiff').hidden = e.target.value === '1'; calc(); });
+      root.addEventListener('change', e => { if (e.target.name === 'aSame') { $('aDiff').hidden = e.target.value !== '0'; $('aRe').hidden = e.target.value !== '2'; } calc(); });
       root.addEventListener('click', e => { const t = e.target.closest('[data-pdel]'); if (t) { parts.splice(+t.dataset.pdel,1); draw(); } });
       $('aAdd').addEventListener('click', () => { parts.push(''); draw(); setTimeout(()=>root.querySelector(`[data-pi="${parts.length-1}"]`)?.focus(),0); });
       draw();
       $('dSave').addEventListener('click', async () => {
         const nums = parts.map(toNum).filter(n => n > 0), k = nums.reduce((a,b)=>a+b,0);
-        const s = root.querySelector('input[name=aSame]:checked').value === '1', t = s ? k : toNum($('aT').value), msg = $('dMsg');
+        const md = root.querySelector('input[name=aSame]:checked').value, s = md === '1', msg = $('dMsg');
+        const t = s ? k : md === '2' ? k - toNum($('aReAmt').value) : toNum($('aT').value);
         if (!k) return msg.textContent = '国保連への請求額を入れてください。';
-        if (!s && !t) return msg.textContent = 'トワライズへの請求額を入れてください。';
-        if (!s && t !== k && !$('aReason').value) return msg.textContent = '立替しない理由を選んでください。';
-        const note = $('aMemo').value.trim(), pm = addM(sm,1), rsn = s ? '' : $('aReason').value;
+        if (md === '2' && !toNum($('aReAmt').value)) return msg.textContent = '返戻の再請求分の額を入れてください。';
+        if (md === '0' && !t) return msg.textContent = 'トワライズへの請求額を入れてください。';
+        if (md === '0' && t !== k && !$('aReason').value) return msg.textContent = '立替しない理由を選んでください。';
+        const note = $('aMemo').value.trim(), pm = addM(sm,1), rsn = s ? '' : md === '2' ? NF_REASONS[0] : $('aReason').value;
         $('dSave').disabled = true; msg.textContent = '保存しています…';
         try {
           await replaceDocs([...k10, ...t10], [
@@ -251,7 +272,7 @@ function openStepA(b, sm) {
   });
 }
 
-/* ================= ② トワライズ精算 ================= */
+/* ================= ④ トワライズ明細・精算 ================= */
 function openStepB(b, pm) {
   const rs = ofBase(b).filter(r => r.pm === pm);
   const fac = rs.filter(r => r.kind === 'T10');
@@ -259,23 +280,23 @@ function openStepB(b, pm) {
   let lines = rs.filter(r => r.kind === 'T20' || r.kind === 'T11').map(r => ({sm: r.sm || addM(pm,-3), type: r.offType || (r.kind==='T11' ? 'redo' : r.amount > 0 ? 'more' : 'henrei'), amt: Math.abs(r.amount)}));
   const feeRow = rs.filter(r => r.kind === 'T30'), lateRow = rs.filter(r => r.kind === 'T32'), paidRow = rs.filter(r => r.kind === 'B10');
   const facTot = sum(fac, ['T10']);
-  const sug = openItems(b).filter(o => !lines.some(l => l.sm === o.sm) && addM(o.sm,2) <= pm);
+  const sug = openItems(b).filter(o => !lines.some(l => l.sm === o.sm) && settleMonth(o.sm, settleTiming(o.t10, o.gap).early) <= pm);
   const risk = earlyRisk(b);
   openDrawer({
-    eyebrow:`② トワライズ精算の確認｜${b}`, title:`${ym(pm)}の精算`,
-    note:`<b>見る書類：</b>トワライズの精算書（買取額・相殺額・手数料の明細）と、尼信の通帳の入金額。<br>精算書の明細を上から順に写すと、計算どおりに入金されたかを自動で確かめます。`,
+    eyebrow:`④ トワライズ明細・精算の確認｜${b}`, title:`${ym(pm)}の立替入金`,
+    note:`<b>見る書類：</b>トワライズの明細（17日ごろにサイトからダウンロード。請求額・立替金額・清算金・手数料が載っています）と、尼信の通帳の入金額。<br>明細を上から順に写すと、計算どおりに入金されたかを自動で確かめます。`,
     body: noMe() + `
       <div class="sec"><h4><span class="n">1</span>今回の立替請求（①で入力済み）</h4>
         ${fac.length ? fac.map(r => `<div class="ro"><span>${mm(r.sm)}提供分の立替請求</span><b class="num">${yen(r.amount)}</b></div>`).join('') : `<div class="res warn" style="margin:0">この月の立替請求がまだありません。先に「① 国保連への請求」で${mm(addM(pm,-1))}提供分を入れてください。</div>`}</div>
-      <div class="sec"><h4><span class="n">2</span>相殺・清算（精算書の明細）</h4>
-        <p class="hint">過去の返戻分などが差し引かれている行を、1行ずつ入れます。なければ空のままで構いません。</p>
-        ${sug.length ? `<div class="col" style="gap:6px"><span class="hint">まだ相殺されていない差額（押すと明細に追加されます）</span><div class="suggest">${sug.map(o => `<button type="button" data-sug="${o.sm}|${o.open}">${mm(o.sm)}分 ${sgn(o.open)}円</button>`).join('')}</div></div>` : ''}
-        ${risk.state && risk.state !== 'ok' ? `<div class="res ${risk.state}" style="margin:0">未解消の不足額が立替額の ${(risk.ratio*100).toFixed(1)}％ です。${(S.settings.alertRatio*100).toFixed(0)}％を超えると早めの清算を求められる可能性があります（契約条件は要確認）。</div>` : ''}
+      <div class="sec"><h4><span class="n">2</span>清算金（明細の「清算金」）</h4>
+        <p class="hint">国保連の確定額と立替請求の差が、通常は2か月後（20％を超えると1か月後）にここで差し引かれます。提供月ごとに1行ずつ入れます。なければ空のままで構いません。</p>
+        ${sug.length ? `<div class="col" style="gap:6px"><span class="hint">この月に清算される見込みの差額（押すと明細に追加されます）</span><div class="suggest">${sug.map(o => `<button type="button" data-sug="${o.sm}|${o.open}">${mm(o.sm)}分 ${sgn(o.open)}円</button>`).join('')}</div></div>` : ''}
+        ${risk.state && risk.state !== 'ok' ? `<div class="res ${risk.state}" style="margin:0">${mm(risk.sm)}提供分の不足額が立替請求の ${(risk.ratio*100).toFixed(1)}％ です。${risk.state==='bad'?`${(S.settings.alertRatio*100).toFixed(0)}％を超えたため、清算が1か月早まり、${mm(settleMonth(risk.sm,true))}の立替入金で差し引かれます。`:`${(S.settings.alertRatio*100).toFixed(0)}％を超えると、清算が1か月早まります。`}</div>` : ''}
         <div class="lines" id="bLines"></div>
         <div><button type="button" class="btn small" id="bAdd">＋ 明細を追加</button></div></div>
       <div class="sec"><h4><span class="n">3</span>手数料</h4>
         <div class="fgrid">
-          <label class="f">手数料（円）<span class="sub">精算書の「手数料」欄</span><input class="amt" id="bFee" inputmode="numeric" value="${feeRow.length?yen(-sum(feeRow,['T30'])):''}" placeholder="0"></label>
+          <label class="f">手数料（円）<span class="sub">明細の「手数料」欄</span><input class="amt" id="bFee" inputmode="numeric" value="${feeRow.length?yen(-sum(feeRow,['T30'])):''}" placeholder="0"></label>
           <label class="f">遅延損害金（円）<span class="sub">あるときだけ。手数料と分けて入れます</span><input class="amt" id="bLate" inputmode="numeric" value="${lateRow.length?yen(-sum(lateRow,['T32'])):''}" placeholder="0"></label></div>
         <div class="row"><button type="button" class="btn small" id="bFeeGuess">目安を入れる（${yen(feeGuess(facTot))}円）</button><span class="hint">目安＝立替請求 × ${(S.settings.feeRate*100).toFixed(1)}％ ＋ ${yen(S.settings.feeFixed)}円</span></div></div>
       <div class="sec"><h4><span class="n">4</span>尼信の入金額</h4>
@@ -289,7 +310,7 @@ function openStepB(b, pm) {
           <select data-li="${i}" data-f="type" aria-label="内容">${Object.entries(OFF_TYPES).map(([k,v])=>`<option value="${k}" ${k===l.type?'selected':''}>${v.label}</option>`).join('')}</select>
           <input class="amt" data-li="${i}" data-f="amt" inputmode="numeric" value="${l.amt===''?'':yen(l.amt)}" placeholder="金額" aria-label="金額">
           <span class="hint">${OFF_TYPES[l.type].sign<0?'差し引く':'足す'}</span>
-          <button type="button" class="btn iconbtn x" data-ldel="${i}" aria-label="この明細を削除">✕</button></div>`).join('') || '<p class="hint">相殺の明細はありません。</p>';
+          <button type="button" class="btn iconbtn x" data-ldel="${i}" aria-label="この明細を削除">✕</button></div>`).join('') || '<p class="hint">清算金の明細はありません。</p>';
         calc();
       };
       const calc = () => {
@@ -298,7 +319,7 @@ function openStepB(b, pm) {
         const expect = facTot + offs.reduce((a,o)=>a+o.v,0) - fee - late;
         const res = !paidStr ? `<div class="res wait">入金待ち：計算上は ${yen(expect)}円 が入金される見込みです。</div>`
           : Math.abs(paid - expect) < 1 ? `<div class="res ok">✓ 計算どおりです。入金額 ${yen(paid)}円 と一致しました。</div>`
-          : `<div class="res bad">! 計算と ${sgn(paid - expect)}円 ずれています。精算書の明細に入れ漏れがないか確認してください。</div>`;
+          : `<div class="res bad">! 計算と ${sgn(paid - expect)}円 ずれています。明細の入れ漏れがないか確認してください。</div>`;
         const g = feeGuess(facTot), feeNote = fee && g && Math.abs(fee - g) / g > .2 ? `<div class="res warn">手数料が目安（${yen(g)}円）と ${yen(Math.abs(fee-g))}円 違います。遅延損害金が含まれていれば分けて入れてください。</div>` : '';
         $('bCalc').innerHTML = `<div class="cl"><span>立替請求</span><span class="num">${yen(facTot)}</span></div>` +
           offs.map(o => `<div class="cl"><span>${OFF_TYPES[o.type].label}（${mm(o.sm)}分）</span><span class="num">${sgn(o.v)}</span></div>`).join('') +
@@ -330,37 +351,38 @@ function openStepB(b, pm) {
   });
 }
 
-/* ================= ③ 支払決定 ================= */
+/* ================= ② 国保連 払出し通知 ================= */
 function openStepC(b, sm) {
   const all = ofBase(b), k30 = all.filter(r => r.kind === 'K30' && r.sm === sm);
   const t = sum(all, ['T10'], r => r.sm === sm), k = sum(all, ['K10'], r => r.sm === sm), off = sum(all, ['T20'], r => r.sm === sm);
   const rets = S.returns.filter(x => x.base === b && x.sm === sm), retSum = rets.reduce((a,x)=>a+toNum(x.amount),0);
   openDrawer({
-    eyebrow:`③ 国保連 支払決定の確認｜${b}`, title:`${ym(sm)}提供分の支払決定`,
-    note:`<b>見る書類：</b>国保連の支払決定額通知書（${mm(addM(sm,2))}15日ごろ）と返戻等一覧表。<br>立替請求との差が「返戻・未払い」で、後のトワライズ精算で相殺されます。返戻があれば「返戻台帳」に利用者ごとに記録します。`,
+    eyebrow:`② 国保連 払出し通知の確認｜${b}`, title:`${ym(sm)}提供分の確定額`,
+    note:`<b>見る書類：</b>国保連の払出し通知書（${mm(addM(sm,2))}5日ごろ。トワライズの口座＝山陰合同銀行への振込額）。<br>立替請求との差が、2か月後の清算額になります。払出し通知書は市町村番号ごとの合計なので、誰の分かは、10日に請求した資料（利用者ごとの金額）と照らし合わせて確かめ、「返戻台帳」に記録します。`,
     body: noMe() + `
       <div class="sec"><div class="ro"><span>国保連への請求（①）</span><b class="num">${yen(k)}</b></div><div class="ro"><span>立替請求（①）</span><b class="num">${yen(t)}</b></div>
         ${rets.length?`<div class="ro"><span>返戻台帳に記録済み（${rets.length}件）</span><b class="num">${yen(retSum)}</b></div>`:''}</div>
-      <div class="sec"><label class="f">支払決定額（円）<span class="sub">通知書の「支払決定額」</span><input class="amt" id="cK" inputmode="numeric" value="${k30.length?yen(sum(k30,['K30'])):''}"></label>
+      <div class="sec"><label class="f">国保連の確定額（円）<span class="sub">払出し通知書の合計（この拠点・この提供月の分）</span><input class="amt" id="cK" inputmode="numeric" value="${k30.length?yen(sum(k30,['K30'])):''}"></label>
         <label class="f">メモ（任意）<input id="cMemo" value="${esc(k30[0]?.memo||'')}" placeholder="例：返戻3名（受給者証の期限切れ）"></label>
         <div class="calc" id="cCalc"></div></div>`,
     footer: footerSave() + `<div class="spacer"></div><button type="button" class="btn" id="cRet">返戻を記録する</button>`,
     mount: root => {
       const calc = () => {
         const v = toNum($('cK').value), gap = v - t, open = gap - off;
-        $('cCalc').innerHTML = `<div class="cl"><span>支払決定額</span><span class="num">${yen(v)}</span></div><div class="cl"><span>立替請求</span><span class="num">${sgn(-t)}</span></div><div class="cl tot"><span>返戻・未払い</span><span class="num">${gap?sgn(gap):'0'}</span></div>` +
-          (off ? `<div class="cl"><span>②の精算で相殺済み</span><span class="num">${sgn(off)}</span></div>` : '') +
+        $('cCalc').innerHTML = `<div class="cl"><span>国保連の確定額</span><span class="num">${yen(v)}</span></div><div class="cl"><span>立替請求</span><span class="num">${sgn(-t)}</span></div><div class="cl tot"><span>返戻・未払い</span><span class="num">${gap?sgn(gap):'0'}</span></div>` +
+          (off ? `<div class="cl"><span>④の精算で相殺済み</span><span class="num">${sgn(off)}</span></div>` : '') +
           (!v ? '' : Math.abs(open) < 1 ? `<div class="res ok">✓ 差額はありません（または相殺済みです）。</div>`
-            : `<div class="res warn">${open<0?`${yen(-open)}円 が国保連から入っていません。返戻台帳に記録し、${mm(addM(sm,3))}ごろのトワライズ精算で差し引かれるか確認します。`:`${yen(open)}円 多く支払われています。月遅れ分や過去の返戻の再請求分が含まれている可能性があります。`}</div>`) +
+            : (() => { const tm = settleTiming(t, gap), when = settleMonth(sm, tm.early);
+                return `<div class="res warn">${open<0?`${yen(-open)}円 が国保連から入っていません。誰の分かを返戻台帳に記録します。`:`${yen(open)}円 多く支払われています。過去の返戻の再請求分などが入っている可能性があります。`}<br>清算：${tm.early?`不足額が立替請求の ${(tm.ratio*100).toFixed(1)}％ で${(S.settings.alertRatio*100).toFixed(0)}％を超えるため、<b>1か月早まり</b>`:'通常どおり2か月後に'}、${mm(when)}15日ごろの立替入金で差し引かれる見込みです。</div>`; })()) +
           (v && gap < 0 && Math.abs(retSum + gap) > 1 && rets.length ? `<div class="res warn">返戻台帳の合計（${yen(retSum)}円）と未払い額（${yen(-gap)}円）が合っていません。</div>` : '');
       };
       root.addEventListener('input', calc); calc();
       $('cRet').addEventListener('click', () => { closeDrawer(); openReturnEditor(null, {base:b, sm}); });
       $('dSave').addEventListener('click', async () => {
         const v = toNum($('cK').value), msg = $('dMsg');
-        if (!v) return msg.textContent = '支払決定額を入れてください。';
+        if (!v) return msg.textContent = '国保連の確定額を入れてください。';
         $('dSave').disabled = true; msg.textContent = '保存しています…';
-        try { await replaceDocs(k30, [{base:b, kind:'K30', sm, pm:addM(sm,2), amount:v, memo:$('cMemo').value.trim()}], `${b} ${ym(sm)}提供分の支払決定`); closeDrawer(); toast(`${b}の${mm(sm)}分の支払決定を保存しました`); }
+        try { await replaceDocs(k30, [{base:b, kind:'K30', sm, pm:addM(sm,2), amount:v, memo:$('cMemo').value.trim()}], `${b} ${ym(sm)}提供分の払出し通知`); closeDrawer(); toast(`${b}の${mm(sm)}分の確定額を保存しました`); }
         catch (err) { $('dSave').disabled = false; msg.textContent = '保存できませんでした。もう一度お試しください。'; }
       });
     }
@@ -381,19 +403,19 @@ function stepStatus(step, b, w) {
   if (step === 'C') { const sm = addM(w,-2); if (fs && sm < fs) return {state:'na'};
     if (!has(rs,'K30',r=>r.sm===sm)) return {state:'todo'};
     const g = sum(rs,['K30'],r=>r.sm===sm) - sum(rs,['T10'],r=>r.sm===sm);
-    return {state:'done', lines:[['支払決定',yen(sum(rs,['K30'],r=>r.sm===sm))],['立替との差',g?sgn(g):'0']]}; }
+    return {state:'done', lines:[['国保連の確定額',yen(sum(rs,['K30'],r=>r.sm===sm))],['清算の見込み',g?sgn(g):'0']]}; }
 }
 function attentionItems() {
   const items = [];
   BASES.forEach(b => {
-    openItems(b).forEach(o => items.push({sev: o.state==='open'?'bad':'warn', text:`${b}　${ym(o.sm)}提供分の差額 ${sgn(o.open)}円が${o.state==='open'?'3か月以上解消していません':'まだ相殺されていません'}`, act:`<button type="button" class="btn small" data-recon="${b}|${o.sm}">内訳を見る</button>`}));
+    openItems(b).forEach(o => items.push({sev: o.state==='open'?'bad':'warn', text:`${b}　${ym(o.sm)}提供分の差額 ${sgn(o.open)}円が${o.state==='open'?'清算予定の月を過ぎても解消していません':'まだ清算されていません'}`, act:`<button type="button" class="btn small" data-recon="${b}|${o.sm}">内訳を見る</button>`}));
     [...new Set(ofBase(b).map(r=>r.pm))].sort().slice(-6).forEach(pm => { const st = settlement(ofBase(b), pm); if (st.status === 'bad') items.push({sev:'bad', text:`${b}　${ym(pm)}の精算で、計算と入金が ${sgn(st.paid - st.expect)}円 ずれています`, act:`<button type="button" class="btn small" data-open="B" data-b="${b}" data-pm="${pm}">確認する</button>`}); });
-    const rk = earlyRisk(b); if (rk.state && rk.state !== 'ok') items.push({sev:rk.state, text:`${b}　未解消の不足額（${yen(-rk.short)}円）が立替額の ${(rk.ratio*100).toFixed(1)}％ です（早期清算の目安 ${(S.settings.alertRatio*100).toFixed(0)}％）`, act:`<button type="button" class="btn small" data-go="recon">突合を見る</button>`});
+    const rk = earlyRisk(b); if (rk.state && rk.state !== 'ok') items.push({sev:rk.state, text:`${b}　${ym(rk.sm)}提供分の不足額（${yen(-rk.short)}円）が立替請求の ${(rk.ratio*100).toFixed(1)}％ です。${rk.state==='bad'?`${(S.settings.alertRatio*100).toFixed(0)}％を超えたため、清算が1か月早まります（${mm(settleMonth(rk.sm,true))}の立替入金）`:`${(S.settings.alertRatio*100).toFixed(0)}％を超えると清算が1か月早まります`}`, act:`<button type="button" class="btn small" data-go="recon">突合を見る</button>`});
     anomalies(b).forEach(a => items.push({sev:'warn', text:`${b}　${ym(a.sm)}提供分の国保連請求が前月から ${(Math.abs(a.ch)*100).toFixed(1)}％ ${a.ch>0?'増えています':'減っています'}（${man(a.prev)}→${man(a.cur)}）`, act:`<button type="button" class="btn small" data-go="recon">突合を見る</button>`}));
   });
   const late = S.returns.filter(x => !['入金済','対象外'].includes(x.status) && x.plan && x.plan < nowM);
   if (late.length) items.push({sev:'bad', text:`再請求の予定月を過ぎた返戻が ${late.length}件 あります`, act:`<button type="button" class="btn small" data-go="returns">返戻台帳へ</button>`});
-  S.estimates.forEach(e => { const act = sum(ofBase(e.base),['T10'],r=>r.sm===e.sm); if (act && Math.abs(act - toNum(e.amount))/toNum(e.amount) >= .1 && !e.reason) items.push({sev:'warn', text:`${e.base}　${ym(e.sm)}の売上概算と実績の差が10％を超えています。理由が未入力です`, act:`<button type="button" class="btn small" data-go="cash">理由を入れる</button>`}); });
+  S.estimates.forEach(e => { const act = sum(ofBase(e.base),['K10'],r=>r.sm===e.sm); if (act && Math.abs(act - toNum(e.amount))/toNum(e.amount) >= .1 && !e.reason) items.push({sev:'warn', text:`${e.base}　${ym(e.sm)}提供分の売上概算と実績の差が10％を超えています。理由が未入力です`, act:`<button type="button" class="btn small" data-go="cash">理由を入れる</button>`}); });
   const fc = forecast(); const neg = fc.find(r => r.bal != null && r.bal < 0);
   if (neg) items.push({sev:'bad', text:`資金繰りの見込みで、${ym(neg.m)}末の残高がマイナス（${sgn(neg.bal)}円）になります`, act:`<button type="button" class="btn small" data-go="cash">資金繰りへ</button>`});
   const unchecked = S.rows.filter(r => !r.checked).length;
@@ -406,10 +428,10 @@ function renderHome() {
   const dl0 = kokuhoDeadline(w), left = Math.ceil((dl0 - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / 864e5);
   const phase = !isNow ? -1 : d <= dl0.getDate() ? 0 : d <= 14 ? 1 : d <= 20 ? 2 : 3;
   const cards = [
-    {k:'A', t:'国保連への請求', doc:'国保連の請求書（サマリ）／トワライズへの提出額', when:`〜${dl0.getMonth()+1}/${dl0.getDate()}（${WD[dl0.getDay()]}）`, desc:`${mm(addM(w,-1))}提供分の請求額を入れます`},
-    {k:'B', t:'トワライズ精算の確認', doc:'トワライズの精算書／尼信の通帳', when:'10日〜中旬', desc:`${mm(w)}に入金された立替金の内訳を入れます`},
-    {k:'C', t:'国保連 支払決定の確認', doc:'支払決定額通知書／返戻等一覧表', when:'15日ごろ', desc:`${mm(addM(w,-2))}提供分の支払決定額を入れます`},
-    {k:'D', t:'齋藤様へ報告', doc:'このツールの月次レポート', when:'月末', desc:'内訳を確認し、報告文をコピーして送ります'}
+    {k:'A', t:'国保連・トワライズへの請求', doc:'国保連の請求データ（サマリ）／トワライズへの請求額', when:`〜${dl0.getMonth()+1}/${dl0.getDate()}（${WD[dl0.getDay()]}）・目安は5〜6日`, desc:`${mm(addM(w,-1))}提供分の請求額を入れます。返戻の再請求分はトワライズに請求しません`},
+    {k:'C', t:'国保連 払出し通知の確認', doc:'払出し通知書／前月末の返戻の連絡', when:'5日ごろ', desc:`${mm(addM(w,-2))}提供分の確定額を入れます。立替との差が清算の見込みになり、誰の分かを返戻台帳に残します`},
+    {k:'D', t:'齋藤様へ報告・売上概算', doc:'このツールの月次レポート／資金繰り', when:'5〜10日', desc:'今月の請求額・先月の国保連からの入金・来月の清算見込みを送ります。売上概算は会計の先生にも伝えます'},
+    {k:'B', t:'トワライズ明細・精算の確認', doc:'トワライズの明細（17日ごろ）／尼信の通帳', when:'15日入金・17日明細', desc:`${mm(w)}に入金された立替金の内訳を入れ、入金額と合っているか確かめます`}
   ];
   const close = S.closes[w] || {};
   const stepHtml = cards.map((c, i) => {
@@ -433,7 +455,7 @@ function renderHome() {
   const docHtml = BASES.map(b => `<div class="col"><b style="font-size:14px">${b}</b>${DOCS.map(([k,n,s]) => { const v = docsState[`${BCODE[b]}_${k}`] || {}; return `<div class="docitem"><input type="checkbox" data-doc="${BCODE[b]}_${k}" ${v.done?'checked':''} aria-label="${b}の${n}を保存済み"><div class="nm">${n}<small>${s}${v.done&&v.by?`・${esc(v.by)}`:''}</small></div>${linkOk(v.url)?`<a href="${esc(v.url)}" target="_blank" rel="noopener">開く</a>`:`<button type="button" class="btn ghost small" data-doclink="${BCODE[b]}_${k}">リンク</button>`}</div>`; }).join('')}</div>`).join('');
   const items = attentionItems();
   const attn = items.length ? items.map(x => `<div class="it"><div class="t">${pill(x.sev, x.sev==='bad'?'! 要確認':x.sev==='warn'?'注意':'確認')}<span>${esc(x.text)}</span></div>${x.act}</div>`).join('') : '<p class="hint">確認が必要なことはありません。</p>';
-  const tl = [['1〜10日','国保連へ請求'],['10日〜中旬','トワライズ精算・入金'],['15日ごろ','国保連 支払決定'],['月末','齋藤様へ報告']].map(([a,b],i)=>`<div class="tl ${phase===i?'now':''}"><b>${a}</b>${b}</div>`).join('');
+  const tl = [['1〜10日','国保連・トワライズへ請求',1,10],['5日ごろ','国保連の払出し通知',4,7],['5〜10日','齋藤様へ報告・売上概算',5,10],['15日・17日','立替入金・トワライズの明細',13,20],['月末','返戻の連絡（点数のみ）',25,31]].map(([a,b,f,t])=>`<div class="tl ${isNow && d>=f && d<=t?'now':''}"><b>${a}</b>${b}</div>`).join('');
   const dlCls = isNow && left >= 0 ? (left === 0 ? 'today' : left <= 3 ? 'soon' : '') : '';
   $('main').innerHTML = `<div class="page">
     <section class="panel col" style="gap:14px">
@@ -461,7 +483,7 @@ function kpi5(pm) {
   const fs = feeSeries(list), cur = fs.find(x => x.pm === pm), fy = +pm.slice(0,4) - (+pm.slice(5,7) < 4 ? 1 : 0), fyStart = `${fy}-04`;
   const fyFee = fs.filter(x => x.pm >= fyStart && x.pm <= pm).reduce((a,x)=>a+x.fee,0);
   const fc = forecast(), minRow = fc.filter(r => r.bal != null).sort((a,b)=>a.bal-b.bal)[0];
-  const ests = basesInView().map(b => estOf(b, sm)).filter(Boolean), estSum = ests.reduce((a,e)=>a+toNum(e.amount),0), act = ests.reduce((a,e)=>a+sum(ofBase(e.base),['T10'],r=>r.sm===sm),0);
+  const ests = basesInView().map(b => estOf(b, sm)).filter(Boolean), estSum = ests.reduce((a,e)=>a+toNum(e.amount),0), act = ests.reduce((a,e)=>a+sum(ofBase(e.base),['K10'],r=>r.sm===sm),0);
   return [
     {l:`国保連請求（${mm(sm)}提供分）`, v:yen(k), s: kp ? `前月比 ${((k-kp)/kp*100).toFixed(1)}％` : '前月データなし'},
     {l:'未解消の差異', v:`${open.length}件`, s: open.length ? `残高 ${sgn(openSum)}円` : 'すべて解消', cls: open.some(o=>o.state==='open') ? 'bad' : open.length ? 'warn' : ''},
@@ -470,9 +492,17 @@ function kpi5(pm) {
     {l:'売上概算との差', v: ests.length && act ? sgn(act - estSum) : '—', s: ests.length && act ? `${((act-estSum)/estSum*100).toFixed(1)}％` : '概算または実績なし', cls: ests.length && act && Math.abs(act-estSum)/estSum >= .1 ? 'warn' : ''}
   ];
 }
-function reportText(pm, st, open, comment, kp) {
+function reportText(pm, st, open, comment, kp, rg) {
   return [
-    `【${S.base}】${ym(pm)} 精算のご報告`,
+    `【LINOA ${S.base}】${ym(pm)}のご報告`,
+    `・今月の請求額（${mm(rg.reqSm)}提供分）：${yen(rg.req)}円`,
+    `・先月の国保連からの入金（${mm(rg.paidSm)}提供分）：${rg.paidHas ? yen(rg.paid)+'円' : '未入力'}`,
+    `・来月の清算見込み（${mm(rg.setSm)}提供分）：${rg.setHas ? sgn(rg.gap)+'円' : '払出し通知待ち'}`,
+    ...rg.per.filter(x => x.has && x.gap).map(x => `　└ ${x.b}：${sgn(x.gap)}円（${x.early ? `立替請求の${(x.ratio*100).toFixed(1)}％のため1か月早まり` : '通常どおり2か月後'}、${mm(x.when)}の立替入金で清算）`),
+    ...rg.rets.map(x => `　└ 返戻 ${S.base==='合算'?x.base+' ':''}${x.uid || (x.count||1)+'名'}：${toNum(x.amount) ? sgn(-toNum(x.amount))+'円' : (x.pts ? yen(x.pts)+'点' : '金額未確定')}（${x.status}）`),
+    rg.rets.length && rg.setHas && Math.abs(rg.other) >= 1 ? `　└ 返戻以外の差（再請求分の入金など）：${sgn(rg.other)}円` : null,
+    '',
+    `■ ${ym(pm)}の立替入金の内訳`,
     `・${kp[0].l}：${kp[0].v}円（${kp[0].s}）`,
     `・立替請求：${yen(st.fac)}円`,
     (st.off || st.redo) ? `・相殺・清算：${sgn(st.off + st.redo)}円` : null,
@@ -488,7 +518,9 @@ function renderReport() {
   const list = view(), pms = pmList(list);
   if (!pms.length) { $('main').innerHTML = `<div class="page"><div class="panel empty"><b>まだレポートがありません</b><span>「今月の作業」で請求と精算を入れると、ここにレポートが出ます。</span></div></div>`; return; }
   if (!S.repPm || !pms.includes(S.repPm)) { const paid = pms.filter(p => list.some(r => r.pm === p && r.kind === 'B10')); S.repPm = pms.includes(S.work) ? S.work : (paid.at(-1) || pms.at(-1)); }
-  const pm = S.repPm, st = settlement(list, pm), open = basesInView().flatMap(openItems), close = S.closes[pm] || {}, kp = kpi5(pm);
+  const pm = S.repPm, st = settlement(list, pm), open = basesInView().flatMap(openItems), close = S.closes[pm] || {}, kp = kpi5(pm), rg = regular(pm);
+  const regRows = rg.rets.map(x => `<tr><td>返戻</td><td>${esc(x.base)}</td><td>${esc(x.uid || (x.count||1)+'名')}</td><td>${esc([x.code, x.reason].filter(Boolean).join('・') || '—')}</td><td class="num r">${toNum(x.amount) ? sgn(-toNum(x.amount)) : (x.pts ? yen(x.pts)+'点' : '未確定')}</td><td>${pill(x.status==='入金済'?'ok':x.status==='対象外'?'na':x.status==='点数のみ'?'bad':'warn', x.status)}</td></tr>`).join('')
+    + (rg.setHas && (Math.abs(rg.other) >= 1 || !rg.rets.length) ? `<tr><td>返戻以外</td><td colspan="3" class="hint">再請求分の入金、過去分の調整など（払出し通知書と10日の請求資料で確認）</td><td class="num r">${sgn(rg.other)}</td><td></td></tr>` : '');
   const items = []; const bySm = {};
   st.inM.filter(r => r.kind === 'T10').forEach(r => bySm[r.sm||''] = (bySm[r.sm||''] || 0) + r.amount);
   Object.keys(bySm).sort().forEach(k => items.push({lab:'立替請求', sub:`${mm(k)}提供分`, v:bySm[k]}));
@@ -504,24 +536,35 @@ function renderReport() {
   const perBase = S.base === '合算' ? `<div class="tablewrap"><table><thead><tr><th>拠点</th><th class="r">立替請求</th><th class="r">相殺・手数料</th><th class="r">尼信入金</th><th>状態</th></tr></thead><tbody>${BASES.map(b => { const s = settlement(ofBase(b), pm); return s.status==='none' ? `<tr><td>${b}</td><td colspan="4" class="hint">この月の精算はありません</td></tr>` : `<tr><td>${b}</td><td class="num r">${yen(s.fac+s.redo)}</td><td class="num r">${sgn(s.off+s.fee)}</td><td class="num r">${s.paidHas?yen(s.paid):'—'}</td><td>${pill(s.status)}</td></tr>`; }).join('')}</tbody></table></div>` : '';
   $('main').innerHTML = `<div class="page">
     <section class="panel"><div class="row">
-      <div class="ptitle" style="flex:1"><span class="eyebrow">齋藤様への月次報告</span><h1>${ym(pm)}の精算レポート</h1><p class="hint">トワライズから尼信へ入金があった月ごとに、入金額がどう決まったかを示します。</p></div>
-      <label class="f" style="width:190px">精算月<select id="pmSel">${pms.slice().reverse().map(p => `<option value="${p}" ${p===pm?'selected':''}>${ym(p)}</option>`).join('')}</select></label></div></section>
+      <div class="ptitle" style="flex:1"><span class="eyebrow">齋藤様への月次報告（毎月5〜10日）</span><h1>${ym(pm)}の月次レポート</h1><p class="hint">毎月お伝えしている3つの数字と、清算の見込みが誰の分かを示します。下段は、この月の立替入金がどう決まったかの内訳です。</p></div>
+      <label class="f" style="width:190px">報告する月<select id="pmSel">${pms.slice().reverse().map(p => `<option value="${p}" ${p===pm?'selected':''}>${ym(p)}</option>`).join('')}</select></label></div></section>
+    <section class="panel col" style="gap:14px">
+      <h2>毎月の3つの数字</h2>
+      <div class="kpis k3">
+        <div class="kpi"><span class="l">今月の請求額（${mm(rg.reqSm)}提供分）</span><span class="v">${yen(rg.req)}</span><span class="s">うちトワライズへ ${yen(rg.reqT)}円</span></div>
+        <div class="kpi"><span class="l">先月の国保連からの入金（${mm(rg.paidSm)}提供分）</span><span class="v">${rg.paidHas ? yen(rg.paid) : '未入力'}</span><span class="s">払出し通知書の額（トワライズの口座へ）</span></div>
+        <div class="kpi ${rg.per.some(x=>x.early)?'bad':''}"><span class="l">来月の清算見込み（${mm(rg.setSm)}提供分）</span><span class="v">${rg.setHas ? sgn(rg.gap) : '通知待ち'}</span><span class="s">${rg.per.filter(x=>x.has).map(x => `${S.base==='合算'?x.b+' ':''}${x.gap?sgn(x.gap):'0'}→${mm(x.when)}${x.early?'（1か月早まり）':''}`).join('／') || '払出し通知書（5日ごろ）を入れると出ます'}</span></div>
+      </div>
+      <div class="col" style="gap:6px"><h3 style="font-size:15px">清算見込みの内訳（誰の分か）</h3>
+        <div class="tablewrap"><table><thead><tr><th>区分</th><th>拠点</th><th>利用者ID</th><th>コード・事由</th><th class="r">金額</th><th>状態</th></tr></thead><tbody>${regRows || `<tr><td colspan="6" class="hint">${rg.setHas ? 'この提供月の返戻の記録はありません。' : '払出し通知書の額を入れると表示されます。'}</td></tr>`}</tbody></table></div>
+        <p class="hint">払出し通知書は市町村番号ごとの合計です。返戻のあった方は、10日に請求した資料と照らし合わせて「返戻台帳」に記録すると、ここに並びます。</p></div>
+    </section>
     <section class="kpis">${kp.map(x => `<div class="kpi panel ${x.cls||''}" style="padding:14px"><span class="l">${x.l}</span><span class="v">${x.v}</span><span class="s">${x.s}</span></div>`).join('')}</section>
     <div class="grid2">
       <section class="panel col" style="gap:14px">
         <div class="status-big ${st.status==='none'?'wait':st.status}">${st.status==='ok'?'✓ 一致':st.status==='bad'?'! 差あり':'… 入金待ち'}<span>${msg}</span></div>
-        <div class="col" style="gap:4px"><h3 style="font-size:15px">入金額の内訳</h3><div class="wf">${wf}</div></div>${perBase}</section>
+        <div class="col" style="gap:4px"><h3 style="font-size:15px">${ym(pm)}の立替入金の内訳</h3><div class="wf">${wf}</div></div>${perBase}</section>
       <div class="col" style="gap:18px">
         <section class="panel"><h2>12か月の推移</h2><div class="legend" style="margin:6px 0"><span><i style="background:var(--accent)"></i>立替請求</span><span><i style="background:var(--warn)"></i>尼信入金</span></div><div id="trend"></div></section>
-        <section class="panel"><h2>未解消の差異</h2><p class="hint">国保連の支払決定と立替請求の差のうち、まだ相殺されていないもの</p>
+        <section class="panel"><h2>未解消の差異</h2><p class="hint">国保連の確定額と立替請求の差のうち、まだ清算されていないもの</p>
           <div class="attn" style="margin-top:10px">${open.length ? open.map(o => `<div class="it"><div class="t">${pill(o.state)}<span>${S.base==='合算'?o.base+'　':''}${ym(o.sm)}提供分</span></div><span class="num">${sgn(o.open)}円</span></div>`).join('') : '<p class="hint">未解消の差異はありません。</p>'}</div></section></div></div>
     <section class="panel col" style="gap:12px">
       <div class="ptitle"><h2>報告文</h2><p class="hint">内容から自動で作ります。コメントを一言添えて、コピーしてChatworkなどに貼り付けてください。</p></div>
       <label class="f">今月のコメント（任意）<span class="sub">報告文の最後に入ります。保存すると他の人にも見えます</span><textarea id="cmt" rows="3" placeholder="例：6月分の返戻は9月の精算ですべて相殺されました。">${esc(close.comment||'')}</textarea></label>
-      <textarea id="reportText" rows="11" readonly aria-label="報告文"></textarea>
+      <textarea id="reportText" rows="16" readonly aria-label="報告文"></textarea>
       <div class="row"><button type="button" class="btn primary" id="copyBtn">報告文をコピー</button><button type="button" class="btn" id="saveCmt">コメントを保存</button><button type="button" class="btn" id="markDone">${close.reportedAt ? '報告済みを取り消す' : '報告済みにする'}</button>${close.reportedAt?`<span class="hint">${new Date(close.reportedAt).toLocaleDateString('ja-JP')} に報告済み${close.reportedBy?`（${esc(close.reportedBy)}）`:''}</span>`:''}</div></section></div>`;
   renderTrend(list, pms, pm);
-  const upd = () => { $('reportText').value = reportText(pm, st, open, $('cmt').value.trim(), kp); }; upd();
+  const upd = () => { $('reportText').value = reportText(pm, st, open, $('cmt').value.trim(), kp, rg); }; upd();
   $('cmt').addEventListener('input', upd);
   $('pmSel').addEventListener('change', e => { S.repPm = e.target.value; renderReport(); });
   $('copyBtn').addEventListener('click', async () => { const t = $('reportText'); try { await navigator.clipboard.writeText(t.value); toast('報告文をコピーしました'); } catch (e) { t.select(); toast('文章を選択しました。Ctrl+C でコピーしてください'); } });
@@ -560,7 +603,7 @@ function renderCash() {
   const fs = feeSeries(S.rows.filter(r => S.base==='合算' || r.base===S.base));
   const fyFee = fs.filter(x => x.pm >= `${+nowM.slice(0,4) - (+nowM.slice(5,7)<4?1:0)}-04`).reduce((a,x)=>a+x.fee,0);
   const avgApr = fs.length ? fs.reduce((a,x)=>a+x.apr,0)/fs.length : 0;
-  const estSm = S.estSm || nowM;
+  const estSm = S.estSm || addM(nowM,-1);
   $('main').innerHTML = `<div class="page">
     <section class="panel"><div class="ptitle"><span class="eyebrow">お金の見通し</span><h1>資金繰り</h1><p class="hint">今後6か月の入金見込みと支出から、月末の残高を見通します。入金は、確定・請求済み・推計の順に自動で埋まります。</p></div></section>
     <section class="panel col" style="gap:14px">
@@ -569,17 +612,17 @@ function renderCash() {
       ${minRow ? `<div class="kpis k4"><div class="kpi"><span class="l">いちばん少なくなる月</span><span class="v">${ym(minRow.m)}末</span></div><div class="kpi ${minRow.bal<0?'bad':''}"><span class="l">その月末の残高</span><span class="v">${yen(minRow.bal)}</span></div><div class="kpi"><span class="l">毎月の支出</span><span class="v">${yen(fc[0].costs)}</span></div><div class="kpi"><span class="l">6か月の入金見込み</span><span class="v">${man(fc.reduce((a,r)=>a+r.inflow,0))}</span></div></div>` : ''}
       <div id="cashChart"></div>
       <div class="tablewrap"><table><thead><tr><th>月</th><th>御所</th><th>大和高田</th><th class="r">入金見込み</th><th class="r">支出</th><th class="r">月末残高</th></tr></thead><tbody>${fc.map(r => `<tr class="${minRow && r.m===minRow.m ? (r.bal<0?'badrow':'minrow') : ''}"><td>${ym(r.m)}</td>${BASES.map(b => { const p = r.parts.find(x => x.b === b); return `<td>${p ? `<span class="num">${yen(p.v)}</span><br><span class="hint">${p.kind}</span>` : '<span class="hint">—</span>'}</td>`; }).join('')}<td class="num r"><b>${yen(r.inflow)}</b></td><td class="num r">${r.costs?sgn(-r.costs):'—'}</td><td class="num r"><b>${r.bal==null?'—':yen(r.bal)}</b></td></tr>`).join('')}</tbody></table></div>
-      <p class="hint">推計は「売上概算（提出済み）」または直近3か月の立替請求の平均から、手数料の目安と、3か月前提供分の未解消差額を加減しています。給与日と入金日のずれなど月の途中の動きは含みません。</p>
+      <p class="hint">推計は「売上概算（お伝えした額）」または直近3か月の立替請求の平均から、手数料の目安と、3か月前提供分の未解消差額を加減しています。給与日と入金日のずれなど月の途中の動きは含みません。</p>
     </section>
     <section class="panel col" style="gap:14px">
-      <div class="row"><div class="ptitle" style="flex:1"><h2>トワライズへ提出する売上概算</h2><p class="hint">提供月ごとの見込み額を作り、提出した額を残します。実績が出たら、差が10％を超えた理由を記録します。</p></div>
+      <div class="row"><div class="ptitle" style="flex:1"><h2>売上概算（会計の先生・齋藤様へ 5日ごろ）</h2><p class="hint">今月の売上の見込みを、5日ごろに会計の先生（三光会計社）と齋藤様にお伝えします。確定するのは17日ごろのトワライズの明細です。お伝えした額を残し、実績との差が10％を超えたら理由を記録します。</p></div>
         <label class="f" style="width:180px">提供月<select id="estSm">${monthOpts(estSm, addM(nowM,-6), addM(nowM,2))}</select></label></div>
-      <div class="fgrid">${BASES.map(b => { const e = estOf(b, estSm), sug = avgT10(b, estSm), prev = sum(ofBase(b),['T10'],r=>r.sm===addM(estSm,-1)); return `<div class="calc"><div class="row"><b>${b}</b>${e?pill('done','✓ 提出済み'):pill('todo')}</div>
-        <div class="cl"><span>直近3か月の立替請求の平均</span><span class="num">${sug?yen(sug):'—'}</span></div><div class="cl"><span>前月の実績</span><span class="num">${prev?yen(prev):'—'}</span></div>
-        <label class="f">提出する概算額（円）<input class="amt" data-est="${b}" inputmode="numeric" value="${e?yen(e.amount):sug?yen(sug):''}"></label>
-        <div class="row"><button type="button" class="btn small primary" data-estsave="${b}">提出した額として保存</button><button type="button" class="btn small" data-estcopy="${b}">提出用の文面をコピー</button></div></div>`; }).join('')}</div>
+      <div class="fgrid">${BASES.map(b => { const e = estOf(b, estSm), sug = sum(ofBase(b),['K10'],r=>r.sm===estSm) || avgT10(b, estSm), prev = sum(ofBase(b),['K10'],r=>r.sm===addM(estSm,-1)); return `<div class="calc"><div class="row"><b>${b}</b>${e?pill('done','✓ お伝え済み'):pill('todo')}</div>
+        <div class="cl"><span>${sum(ofBase(b),['K10'],r=>r.sm===estSm) ? `${mm(estSm)}提供分の国保連への請求額` : '直近3か月の立替請求の平均'}</span><span class="num">${sug?yen(sug):'—'}</span></div><div class="cl"><span>${mm(addM(estSm,-1))}提供分の請求額</span><span class="num">${prev?yen(prev):'—'}</span></div>
+        <label class="f">お伝えする概算額（円）<input class="amt" data-est="${b}" inputmode="numeric" value="${e?yen(e.amount):sug?yen(sug):''}"></label>
+        <div class="row"><button type="button" class="btn small primary" data-estsave="${b}">お伝えした額として保存</button><button type="button" class="btn small" data-estcopy="${b}">お知らせの文面をコピー</button></div></div>`; }).join('')}</div>
       <h3 style="font-size:15px">概算と実績の比較</h3>
-      <div class="tablewrap"><table><thead><tr><th>提供月</th><th>拠点</th><th class="r">売上概算</th><th class="r">立替請求の実績</th><th class="r">差</th><th>差の理由</th></tr></thead><tbody>${S.estimates.slice().sort((a,b)=>b.sm.localeCompare(a.sm)||a.base.localeCompare(b.base)).map(e => { const act = sum(ofBase(e.base),['T10'],r=>r.sm===e.sm), d = act ? (act - toNum(e.amount))/toNum(e.amount) : null, big = d != null && Math.abs(d) >= .1; return `<tr class="${big && !e.reason ? 'warnrow' : ''}"><td>${ym(e.sm)}</td><td>${e.base}</td><td class="num r">${yen(e.amount)}</td><td class="num r">${act?yen(act):'—'}</td><td class="num r">${d==null?'—':`${sgn(act-toNum(e.amount))}（${(d*100).toFixed(1)}％）`}</td><td style="min-width:220px">${big ? `<input data-estreason="${e.base}|${e.sm}" value="${esc(e.reason||'')}" placeholder="差が出た理由を入力（例：利用者2名が入院）">` : `<span class="hint">${esc(e.reason||'')}</span>`}</td></tr>`; }).join('') || '<tr><td colspan="6" class="hint">まだ売上概算の記録がありません。</td></tr>'}</tbody></table></div>
+      <div class="tablewrap"><table><thead><tr><th>提供月</th><th>拠点</th><th class="r">売上概算</th><th class="r">国保連請求の実績</th><th class="r">差</th><th>差の理由</th></tr></thead><tbody>${S.estimates.slice().sort((a,b)=>b.sm.localeCompare(a.sm)||a.base.localeCompare(b.base)).map(e => { const act = sum(ofBase(e.base),['K10'],r=>r.sm===e.sm), d = act ? (act - toNum(e.amount))/toNum(e.amount) : null, big = d != null && Math.abs(d) >= .1; return `<tr class="${big && !e.reason ? 'warnrow' : ''}"><td>${ym(e.sm)}</td><td>${e.base}</td><td class="num r">${yen(e.amount)}</td><td class="num r">${act?yen(act):'—'}</td><td class="num r">${d==null?'—':`${sgn(act-toNum(e.amount))}（${(d*100).toFixed(1)}％）`}</td><td style="min-width:220px">${big ? `<input data-estreason="${e.base}|${e.sm}" value="${esc(e.reason||'')}" placeholder="差が出た理由を入力（例：利用者2名が入院）">` : `<span class="hint">${esc(e.reason||'')}</span>`}</td></tr>`; }).join('') || '<tr><td colspan="6" class="hint">まだ売上概算の記録がありません。</td></tr>'}</tbody></table></div>
     </section>
     <section class="panel col" style="gap:14px">
       <div class="ptitle"><h2>立替手数料のコスト（${S.base}）</h2><p class="hint">実効年率は「手数料 ÷ 立替額 × 12」で、立替期間を約30日とみた推計です。銀行借入などと比べるときの目安になります。</p></div>
@@ -593,12 +636,12 @@ function renderCash() {
   $('main').querySelectorAll('[data-estsave]').forEach(bt => bt.addEventListener('click', async () => {
     const b = bt.dataset.estsave, v = toNum($('main').querySelector(`[data-est="${b}"]`).value); if (!v) return toast('概算額を入れてください');
     const prev = estOf(b, estSm);
-    try { await db.doc(`estimates/${BCODE[b]}_${estSm}`).set({base:b, sm:estSm, amount:v, reason: prev?.reason||'', savedAt:new Date().toISOString(), by:S.me||''}); logIt('売上概算', `${b} ${ym(estSm)}提供分の概算 ${yen(v)}円${prev?`（変更前 ${yen(prev.amount)}円）`:''}`); toast('売上概算を保存しました'); } catch (e) { toast('保存できませんでした'); }
+    try { await db.doc(`estimates/${BCODE[b]}_${estSm}`).set({base:b, sm:estSm, amount:v, reason: prev?.reason||'', savedAt:new Date().toISOString(), by:S.me||''}); logIt('売上概算', `${b} ${ym(estSm)}提供分の概算 ${yen(v)}円をお伝え${prev?`（変更前 ${yen(prev.amount)}円）`:''}`); toast('売上概算を保存しました'); } catch (e) { toast('保存できませんでした'); }
   }));
   $('main').querySelectorAll('[data-estcopy]').forEach(bt => bt.addEventListener('click', async () => {
-    const b = bt.dataset.estcopy, v = toNum($('main').querySelector(`[data-est="${b}"]`).value), prev = sum(ofBase(b),['T10'],r=>r.sm===addM(estSm,-1));
-    const t = `【LINOA ${b}】${ym(estSm)}サービス提供分の売上概算をお送りします。\n概算額：${yen(v)}円\n（参考：${ym(addM(estSm,-1))}提供分の請求額 ${prev?yen(prev)+'円':'—'}）\nよろしくお願いいたします。`;
-    try { await navigator.clipboard.writeText(t); toast('提出用の文面をコピーしました'); } catch (e) { toast('コピーできませんでした'); }
+    const b = bt.dataset.estcopy, v = toNum($('main').querySelector(`[data-est="${b}"]`).value), prev = sum(ofBase(b),['K10'],r=>r.sm===addM(estSm,-1));
+    const t = `【LINOA ${b}】${ym(estSm)}サービス提供分の売上の見込みをお知らせします。\n概算額：${yen(v)}円\n（参考：${ym(addM(estSm,-1))}提供分の請求額 ${prev?yen(prev)+'円':'—'}）\n確定額は、17日ごろのトワライズの明細でお知らせします。\nよろしくお願いいたします。`;
+    try { await navigator.clipboard.writeText(t); toast('お知らせの文面をコピーしました'); } catch (e) { toast('コピーできませんでした'); }
   }));
   $('main').querySelectorAll('[data-estreason]').forEach(inp => inp.addEventListener('change', async () => {
     const [b, sm] = inp.dataset.estreason.split('|'), e = estOf(b, sm); try { await db.doc(`estimates/${BCODE[b]}_${sm}`).set({...e, reason: inp.value.trim()}); toast('理由を保存しました'); } catch (er) { toast('保存できませんでした'); }
@@ -630,25 +673,26 @@ function renderRecon() {
   const blocks = basesInView().map(b => {
     const rs = reconRows(ofBase(b)).reverse(), rk = earlyRisk(b);
     if (!rs.length) return `<section class="panel"><h2>${b}</h2><p class="hint">まだデータがありません。</p></section>`;
-    return `<section class="panel col" style="gap:12px"><div class="row"><h2>${b}</h2>${rk.state && rk.state!=='ok' ? pill(rk.state, `早期清算の目安まで ${(rk.ratio*100).toFixed(1)}％／${(S.settings.alertRatio*100).toFixed(0)}％`) : ''}<div class="spacer"></div><span class="hint">行を押すと、その月の明細が見られます</span></div><div class="tablewrap"><table>
-      <thead><tr><th>提供月</th><th class="r">国保連請求</th><th class="r">立替請求</th><th class="r">立替しない額</th><th class="r">支払決定</th><th class="r">返戻・未払い</th><th class="r">相殺済み</th><th class="r">未解消</th><th>状態</th></tr></thead><tbody>` +
-      rs.map(r => `<tr class="click ${r.state==='open'?'badrow':r.state==='warn'?'warnrow':''}" tabindex="0" data-recon="${b}|${r.sm}"><td>${ym(r.sm)}</td><td class="num r">${yen(r.k10)}</td><td class="num r">${yen(r.t10)}</td><td class="num r">${r.nf?sgn(r.nf):'0'}</td><td class="num r">${r.hasK30?yen(r.k30):'—'}</td><td class="num r">${r.gap==null?'—':r.gap?sgn(r.gap):'0'}</td><td class="num r">${r.off?sgn(r.off):'0'}</td><td class="num r"><b>${r.open==null?'—':r.open?sgn(r.open):'0'}</b></td><td>${pill(r.state)}</td></tr>`).join('') + `</tbody></table></div></section>`;
+    return `<section class="panel col" style="gap:12px"><div class="row"><h2>${b}</h2>${rk.state && rk.state!=='ok' ? pill(rk.state, `${mm(rk.sm)}分の不足 ${(rk.ratio*100).toFixed(1)}％／清算が早まる基準 ${(S.settings.alertRatio*100).toFixed(0)}％`) : ''}<div class="spacer"></div><span class="hint">行を押すと、その月の明細が見られます</span></div><div class="tablewrap"><table>
+      <thead><tr><th>提供月</th><th class="r">国保連請求</th><th class="r">立替請求</th><th class="r">立替しない額</th><th class="r">国保連の確定額</th><th class="r">返戻・未払い</th><th class="r">清算済み</th><th class="r">未解消</th><th>清算予定</th><th>状態</th></tr></thead><tbody>` +
+      rs.map(r => `<tr class="click ${r.state==='open'?'badrow':r.state==='warn'?'warnrow':''}" tabindex="0" data-recon="${b}|${r.sm}"><td>${ym(r.sm)}</td><td class="num r">${yen(r.k10)}</td><td class="num r">${yen(r.t10)}</td><td class="num r">${r.nf?sgn(r.nf):'0'}</td><td class="num r">${r.hasK30?yen(r.k30):'—'}</td><td class="num r">${r.gap==null?'—':r.gap?sgn(r.gap):'0'}</td><td class="num r">${r.off?sgn(r.off):'0'}</td><td class="num r"><b>${r.open==null?'—':r.open?sgn(r.open):'0'}</b></td><td>${r.hasK30 && r.gap ? (() => { const tm = settleTiming(r.t10, r.gap); return `${mm(settleMonth(r.sm, tm.early))}${tm.early?'<br><span class="pill bad">1か月早まり</span>':''}`; })() : '—'}</td><td>${pill(r.state)}</td></tr>`).join('') + `</tbody></table></div></section>`;
   }).join('');
   $('main').innerHTML = `<div class="page">
-    <section class="panel col" style="gap:10px"><div class="ptitle"><span class="eyebrow">提供月ごとの照合</span><h1>突合</h1><p class="hint">提供月でそろえて、請求 → 支払決定 → 相殺 の順に差額を追います。「未解消」が0になれば、その月の精算は終わりです。</p></div>
-      <div class="legend-text"><span><b>立替しない額</b>＝国保連請求 − 立替請求</span><span><b>返戻・未払い</b>＝支払決定 − 立替請求</span><span><b>未解消</b>＝返戻・未払い − 相殺済み</span></div>
-      <div class="row" style="gap:8px">${pill('solved')}<span class="hint">差額なし</span>${pill('warn')}<span class="hint">2か月以内・次の精算で相殺見込み</span>${pill('open')}<span class="hint">3か月以上残っている</span>${pill('pay')}<span class="hint">支払決定がまだ</span></div></section>${blocks}</div>`;
+    <section class="panel col" style="gap:10px"><div class="ptitle"><span class="eyebrow">提供月ごとの照合</span><h1>突合</h1><p class="hint">提供月でそろえて、請求 → 国保連の確定額 → 清算 の順に差額を追います。「未解消」が0になれば、その月の清算は終わりです。差額は通常2か月後の立替入金で差し引かれ、立替請求の${(S.settings.alertRatio*100).toFixed(0)}％を超えると1か月早まります。</p></div>
+      <div class="legend-text"><span><b>立替しない額</b>＝国保連請求 − 立替請求（主に返戻の再請求分）</span><span><b>返戻・未払い</b>＝国保連の確定額 − 立替請求</span><span><b>未解消</b>＝返戻・未払い − 清算済み</span></div>
+      <div class="row" style="gap:8px">${pill('solved')}<span class="hint">差額なし</span>${pill('warn')}<span class="hint">清算予定の月まで待つ</span>${pill('open')}<span class="hint">清算予定を過ぎても残っている</span>${pill('pay')}<span class="hint">払出し通知がまだ</span></div></section>${blocks}</div>`;
 }
 function openReconDetail(b, sm) {
   const rs = ofBase(b).filter(r => r.sm === sm).sort((a,c) => ORDER.indexOf(a.kind) - ORDER.indexOf(c.kind));
   const r = reconRows(ofBase(b)).find(x => x.sm === sm); if (!r) return;
   const rets = S.returns.filter(x => x.base === b && x.sm === sm), retSum = rets.reduce((a,x)=>a+toNum(x.amount),0);
   const steps = [['国保連への請求', yen(r.k10), '①で入力'], ['立替請求', yen(r.t10), '①で入力'], ['立替しない額', r.nf?sgn(r.nf):'0', '国保連請求 − 立替請求'],
-    ['支払決定', r.hasK30?yen(r.k30):'未入力', `③で入力（${mm(addM(sm,2))}15日ごろ）`], ['返戻・未払い', r.gap==null?'—':r.gap?sgn(r.gap):'0', '支払決定 − 立替請求'],
-    ['相殺済み', r.off?sgn(r.off):'0', '②の精算で差し引かれた額'], ['未解消', r.open==null?'—':r.open?sgn(r.open):'0', '返戻・未払い − 相殺済み']];
-  const advice = r.state === 'open' ? `3か月以上解消していません。トワライズの精算書で相殺されているか確認し、相殺されていれば「② トワライズ精算」で明細を追加してください。${r.redo?`この月には立替し直し ${sgn(r.redo)}円 があり、関係している可能性があります。`:''}`
-    : r.state === 'warn' ? '次回以降のトワライズ精算で相殺される見込みです。精算書が届いたら「② トワライズ精算」の候補から追加できます。'
-    : r.state === 'pay' ? '国保連の支払決定通知書が届いたら「③ 支払決定」で入力してください。' : 'この月の精算は終わっています。';
+    ['国保連の確定額', r.hasK30?yen(r.k30):'未入力', `②で入力（${mm(addM(sm,2))}5日ごろの払出し通知書）`], ['返戻・未払い', r.gap==null?'—':r.gap?sgn(r.gap):'0', '国保連の確定額 − 立替請求'],
+    ['清算済み', r.off?sgn(r.off):'0', '④の立替入金で差し引かれた額'], ['未解消', r.open==null?'—':r.open?sgn(r.open):'0', '返戻・未払い − 清算済み']];
+  const tmD = r.hasK30 && r.gap ? settleTiming(r.t10, r.gap) : null;
+  const advice = r.state === 'open' ? `清算予定の月（${tmD?mm(settleMonth(sm, tmD.early)):'—'}）を過ぎても解消していません。トワライズの明細で清算されているか確認し、清算されていれば「④ トワライズ明細・精算」で追加してください。${r.redo?`この月には立替し直し ${sgn(r.redo)}円 があり、関係している可能性があります。`:''}`
+    : r.state === 'warn' ? `${tmD && tmD.early ? `不足額が立替請求の ${(tmD.ratio*100).toFixed(1)}％ で${(S.settings.alertRatio*100).toFixed(0)}％を超えるため、1か月早まり、` : '通常どおり2か月後に、'}${tmD?mm(settleMonth(sm, tmD.early)):''}15日ごろの立替入金で差し引かれる見込みです。明細が届いたら「④ トワライズ明細・精算」の候補から追加できます。`
+    : r.state === 'pay' ? '国保連の払出し通知書（5日ごろ）が届いたら「② 国保連 払出し通知」で入力してください。' : 'この月の清算は終わっています。';
   openDrawer({eyebrow:`突合の明細｜${b}`, title:`${ym(sm)}提供分`,
     body:`<div class="col" style="gap:14px">
       <div class="calc">${steps.map(([l,v,s],i) => `<div class="cl ${i===6?'tot':''}"><span>${l}<br><span class="hint" style="font-weight:400">${s}</span></span><span class="num">${v}</span></div>`).join('')}<div class="res ${r.state==='open'?'bad':r.state==='warn'?'warn':r.state==='pay'?'wait':'ok'}">${advice}</div></div>
@@ -656,7 +700,7 @@ function openReconDetail(b, sm) {
       ${rets.length ? `<div class="tablewrap"><table><thead><tr><th>利用者ID</th><th>コード</th><th class="r">金額</th><th>状態</th></tr></thead><tbody>${rets.map(x => `<tr><td>${esc(x.uid||'—')}${x.count>1?`（${x.count}名）`:''}</td><td class="code">${esc(x.code||'—')}</td><td class="num r">${yen(x.amount)}</td><td>${esc(x.status)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="hint">この月の返戻の記録はありません。</p>'}
       <h4 style="font-size:15px">この提供月に関係する行</h4>
       <div class="tablewrap"><table><thead><tr><th>区分</th><th>処理月</th><th class="r">金額</th><th>メモ</th></tr></thead><tbody>${rs.map(x => `<tr><td>${KINDS[x.kind].name}</td><td>${ym(x.pm)}</td><td class="num r">${sgn(x.amount)}</td><td class="memo">${esc(x.memo)}</td></tr>`).join('')}</tbody></table></div></div>`,
-    footer:`<button type="button" class="btn" data-close="1">閉じる</button>${r.hasK30?'':`<button type="button" class="btn primary" id="goC">③ 支払決定を入力</button>`}`,
+    footer:`<button type="button" class="btn" data-close="1">閉じる</button>${r.hasK30?'':`<button type="button" class="btn primary" id="goC">② 払出し通知を入力</button>`}`,
     mount: () => { $('goC')?.addEventListener('click', () => { closeDrawer(); openStepC(b, sm); }); $('rdAdd').addEventListener('click', () => { closeDrawer(); openReturnEditor(null, {base:b, sm}); }); }
   });
 }
@@ -669,23 +713,23 @@ function renderReturns() {
   const cnt = s => all.filter(x => x.status === s).reduce((a,x)=>a+(+x.count||1),0), amt = s => all.filter(x => x.status === s).reduce((a,x)=>a+toNum(x.amount),0);
   const openAmt = all.filter(x => !['入金済','対象外'].includes(x.status)).reduce((a,x)=>a+toNum(x.amount),0);
   $('main').innerHTML = `<div class="page">
-    <section class="panel"><div class="row"><div class="ptitle" style="flex:1"><span class="eyebrow">利用者ごとの追跡</span><h1>返戻台帳</h1><p class="hint">国保連から返戻された分を、利用者ID・理由・再請求の予定と結果まで追います。氏名や受給者証番号は入れず、事業所内のID（例：GS-012）で記録してください。</p></div><button type="button" class="btn primary" id="retAdd">＋ 返戻を記録</button></div></section>
-    <section class="kpis">${[['調査中', cnt('調査中'), amt('調査中')],['再請求待ち', cnt('再請求待ち'), amt('再請求待ち')],['再請求済', cnt('再請求済'), amt('再請求済')],['入金済', cnt('入金済'), amt('入金済')]].map(([l,n,a]) => `<div class="kpi panel" style="padding:14px"><span class="l">${l}</span><span class="v">${n}名</span><span class="s">${yen(a)}円</span></div>`).join('')}<div class="kpi panel ${openAmt?'warn':''}" style="padding:14px"><span class="l">まだ入金されていない額</span><span class="v">${yen(openAmt)}</span><span class="s">調査中＋再請求待ち＋再請求済</span></div></section>
+    <section class="panel"><div class="row"><div class="ptitle" style="flex:1"><span class="eyebrow">利用者ごとの追跡</span><h1>返戻台帳</h1><p class="hint">返戻の方を、月末の連絡（点数のみ）→ 5日ごろの払出し通知で金額確定 → 翌月10日の再請求 → 入金まで追います。再請求分はトワライズには請求しません。氏名や受給者証番号は入れず、事業所内のID（例：GS-012）で記録してください。</p></div><button type="button" class="btn primary" id="retAdd">＋ 返戻を記録</button></div></section>
+    <section class="kpis">${[['点数のみ', cnt('点数のみ'), amt('点数のみ')],['再請求待ち', cnt('再請求待ち'), amt('再請求待ち')],['再請求済', cnt('再請求済'), amt('再請求済')],['入金済', cnt('入金済'), amt('入金済')]].map(([l,n,a]) => `<div class="kpi panel" style="padding:14px"><span class="l">${l}</span><span class="v">${n}名</span><span class="s">${yen(a)}円</span></div>`).join('')}<div class="kpi panel ${openAmt?'warn':''}" style="padding:14px"><span class="l">まだ入金されていない額</span><span class="v">${yen(openAmt)}</span><span class="s">点数のみ＋再請求待ち＋再請求済</span></div></section>
     <section class="panel col" style="gap:12px">
       <div class="subtabs" role="tablist">${[['open','対応中'],['all','すべて'],...RET_STATUS.map(s=>[s,s])].map(([k,l]) => `<button type="button" role="tab" data-rf="${k}" aria-selected="${k===f}">${l}</button>`).join('')}</div>
       <div class="tablewrap"><table><thead><tr><th>提供月</th><th>拠点</th><th>利用者ID</th><th>事由</th><th>エラーコード</th><th class="r">金額</th><th>再請求予定</th><th>状態</th><th>メモ</th><th></th></tr></thead><tbody>${
-        shown.length ? shown.map(x => { const late = !['入金済','対象外'].includes(x.status) && x.plan && x.plan < nowM; return `<tr class="${late?'badrow':''}"><td>${ym(x.sm)}</td><td>${esc(x.base)}</td><td>${esc(x.uid||'—')}${(+x.count||1)>1?`<br><span class="hint">${x.count}名分</span>`:''}</td><td>${esc(x.reason||'—')}</td><td class="code">${esc(x.code||'—')}</td><td class="num r">${yen(x.amount)}</td><td>${x.plan?ym(x.plan):'—'}${late?'<br><span class="pill bad">予定月を過ぎています</span>':''}</td><td>${pill(x.status==='入金済'?'ok':x.status==='対象外'?'na':x.status==='調査中'?'bad':'warn', x.status)}</td><td class="memo">${esc(x.memo)}</td><td><button type="button" class="btn small" data-retedit="${x.id}">編集</button></td></tr>`; }).join('')
-        : `<tr><td colspan="10"><div class="empty"><b>この条件の返戻はありません</b><span>③ 支払決定で未払いが出たときや、返戻等一覧表が届いたときに記録します。</span></div></td></tr>`}</tbody></table></div></section>
+        shown.length ? shown.map(x => { const late = !['入金済','対象外'].includes(x.status) && x.plan && x.plan < nowM; return `<tr class="${late?'badrow':''}"><td>${ym(x.sm)}</td><td>${esc(x.base)}</td><td>${esc(x.uid||'—')}${(+x.count||1)>1?`<br><span class="hint">${x.count}名分</span>`:''}</td><td>${esc(x.reason||'—')}</td><td class="code">${esc(x.code||'—')}</td><td class="num r">${toNum(x.amount) ? yen(x.amount) : x.pts ? `<span class="hint">${yen(x.pts)}点</span>` : '—'}</td><td>${x.plan?ym(x.plan):'—'}${late?'<br><span class="pill bad">予定月を過ぎています</span>':''}</td><td>${pill(x.status==='入金済'?'ok':x.status==='対象外'?'na':x.status==='点数のみ'?'bad':'warn', x.status)}</td><td class="memo">${esc(x.memo)}</td><td><button type="button" class="btn small" data-retedit="${x.id}">編集</button></td></tr>`; }).join('')
+        : `<tr><td colspan="10"><div class="empty"><b>この条件の返戻はありません</b><span>月末に返戻の連絡が来たら点数で記録し、5日ごろの払出し通知で金額を入れます。</span></div></td></tr>`}</tbody></table></div></section>
     <section class="panel col" style="gap:12px"><div class="ptitle"><h2>主なエラーコード</h2><p class="hint">返戻等一覧表に書かれたコードの目安です。正式な内容は国保連のエラーコード一覧で確認してください。</p></div>
       <div class="tablewrap"><table><thead><tr><th>コード</th><th>種類</th><th>内容</th><th>直すのは</th></tr></thead><tbody>${ERR_CODES.map(([c,t,d,w]) => `<tr><td class="code">${c}</td><td>${t}</td><td>${d}</td><td>${w}</td></tr>`).join('')}</tbody></table></div></section></div>`;
   $('retAdd').addEventListener('click', () => openReturnEditor(null, {}));
   $('main').querySelectorAll('[data-rf]').forEach(bt => bt.addEventListener('click', () => { S.ret.status = bt.dataset.rf; renderReturns(); }));
 }
 function openReturnEditor(id, preset) {
-  const x = id ? S.returns.find(r => r.id === id) : {base: preset.base || (S.base==='合算'?'御所':S.base), sm: preset.sm || addM(nowM,-2), uid:'', count:1, reason:'', code:'', amount:'', plan: addM(nowM,1), status:'調査中', memo:''};
+  const x = id ? S.returns.find(r => r.id === id) : {base: preset.base || (S.base==='合算'?'御所':S.base), sm: preset.sm || addM(nowM,-2), uid:'', count:1, reason:'', code:'', amount:'', pts:'', plan: addM(nowM,1), status:'点数のみ', memo:''};
   if (!x) return; let confirmDel = false;
   openDrawer({eyebrow: id ? '返戻台帳を編集' : '返戻を記録', title: id ? `${ym(x.sm)}提供分 ${esc(x.uid||'')}` : '返戻を記録',
-    note:'<b>見る書類：</b>国保連の返戻等一覧表。金額は給付費（国保連から入るはずだった額）で入れます。点数しか分からないときは、下の換算を使えます。',
+    note:'<b>見る書類：</b>月末の返戻の連絡（点数のみ）と、5日ごろの払出し通知書。<br>月末の時点では点数しか分からないので、まず点数で記録し、払出し通知で金額が確定したら入れます。払出し通知書は市町村番号ごとの合計なので、10日に請求した資料と照らし合わせて利用者を特定します。<br>再請求（翌月10日）するときは、<b>トワライズには請求しません</b>。',
     body: noMe() + `<div class="fgrid">
       <label class="f">拠点<select id="rBase">${BASES.map(b=>`<option ${b===x.base?'selected':''}>${b}</option>`).join('')}</select></label>
       <label class="f">提供月<select id="rSm">${monthOpts(x.sm)}</select></label>
@@ -693,8 +737,9 @@ function openReturnEditor(id, preset) {
       <label class="f">人数<input class="amt" id="rCnt" inputmode="numeric" value="${x.count||1}"></label>
       <label class="f">事由<span class="sub">返戻等一覧表の事由（A〜Eなど）</span><input id="rReason" value="${esc(x.reason)}" placeholder="例：A"></label>
       <label class="f">エラーコード<input id="rCode" list="codeList" value="${esc(x.code)}" placeholder="例：EG12"><datalist id="codeList">${ERR_CODES.map(([c,t,d])=>`<option value="${c}">${t}：${d}</option>`).join('')}</datalist></label>
-      <label class="f">金額（給付費・円）<input class="amt" id="rAmt" inputmode="numeric" value="${x.amount===''?'':yen(x.amount)}"></label>
-      <label class="f">再請求の予定月<select id="rPlan"><option value="">未定</option>${monthOpts(x.plan, addM(nowM,-12), addM(nowM,6))}</select></label>
+      <label class="f">点数（月末の連絡）<span class="sub">金額が分からないうちは点数だけで保存できます</span><input class="amt" id="rPts" inputmode="numeric" value="${x.pts?yen(x.pts):''}"></label>
+      <label class="f">金額（給付費・円）<span class="sub">払出し通知で確定した額</span><input class="amt" id="rAmt" inputmode="numeric" value="${x.amount===''||x.amount==null?'':yen(x.amount)}"></label>
+      <label class="f">再請求の予定月<span class="sub">翌月10日の請求（トワライズには請求しない）</span><select id="rPlan"><option value="">未定</option>${monthOpts(x.plan, addM(nowM,-12), addM(nowM,6))}</select></label>
       <label class="f">状態<select id="rStatus">${RET_STATUS.map(s=>`<option ${s===x.status?'selected':''}>${s}</option>`).join('')}</select></label>
     </div><div id="rCodeHint" style="margin-top:10px"></div>
     <label class="f" style="margin-top:14px">メモ<input id="rMemo" value="${esc(x.memo)}" placeholder="例：受給者証の更新が国保連に未反映。市町村に確認中"></label>
@@ -707,11 +752,13 @@ function openReturnEditor(id, preset) {
       $('hUse').addEventListener('click', () => { const v = conv(); if (v) $('rAmt').value = yen(v); });
       hint();
       $('dSave').addEventListener('click', async () => {
-        const amt = toNum($('rAmt').value); if (!amt) return $('dMsg').textContent = '金額を入れてください。';
-        const data = {base:$('rBase').value, sm:$('rSm').value, uid:$('rUid').value.trim(), count: Math.max(1, toNum($('rCnt').value)||1), reason:$('rReason').value.trim(), code:$('rCode').value.trim().toUpperCase(), amount:amt, plan:$('rPlan').value, status:$('rStatus').value, memo:$('rMemo').value.trim(), updatedAt:new Date().toISOString(), by:S.me||''};
+        const amt = toNum($('rAmt').value), pts = toNum($('rPts').value);
+        if (!amt && !pts) return $('dMsg').textContent = '点数か金額を入れてください。';
+        if (!amt && $('rStatus').value !== '点数のみ' && $('rStatus').value !== '対象外') return $('dMsg').textContent = '金額が確定していないときは、状態を「点数のみ」にしてください。';
+        const data = {base:$('rBase').value, sm:$('rSm').value, uid:$('rUid').value.trim(), count: Math.max(1, toNum($('rCnt').value)||1), reason:$('rReason').value.trim(), code:$('rCode').value.trim().toUpperCase(), amount:amt, pts, plan:$('rPlan').value, status:$('rStatus').value, memo:$('rMemo').value.trim(), updatedAt:new Date().toISOString(), by:S.me||''};
         const {id:_omit, ...prev} = x;
         try { if (id) await db.doc('returns/'+id).set({...prev, ...data}); else await db.collection('returns').add({...data, createdAt:data.updatedAt});
-          logIt('返戻', `${data.base} ${ym(data.sm)}提供分 ${data.uid||''}${data.count>1?`（${data.count}名）`:''} ${yen(amt)}円 を「${data.status}」で${id?'更新':'記録'}`); closeDrawer(); toast('返戻台帳を保存しました'); }
+          logIt('返戻', `${data.base} ${ym(data.sm)}提供分 ${data.uid||''}${data.count>1?`（${data.count}名）`:''} ${amt?yen(amt)+'円':yen(pts)+'点'} を「${data.status}」で${id?'更新':'記録'}`); closeDrawer(); toast('返戻台帳を保存しました'); }
         catch (e) { $('dMsg').textContent = '保存できませんでした。'; }
       });
       $('rDel')?.addEventListener('click', async () => { if (!confirmDel) { confirmDel = true; $('rDel').textContent = 'もう一度押すと削除します'; return; } try { await db.doc('returns/'+id).delete(); logIt('削除', `返戻台帳 ${x.base} ${ym(x.sm)} ${x.uid||''} を削除`); closeDrawer(); toast('削除しました'); } catch (e) { $('dMsg').textContent = '削除できませんでした。'; } });
@@ -793,31 +840,38 @@ function renderSettings() {
     <section class="panel"><div class="ptitle"><span class="eyebrow">設定・引き継ぎ</span><h1>設定・使い方</h1><p class="hint">毎月の流れ、ことばの意味、契約条件、バックアップをまとめています。引き継ぎのときはこのページから読んでもらいます。</p></div></section>
     <section class="panel col" style="gap:14px"><h2>毎月の流れ</h2><p class="hint">${mm(addM(nowM,-1))}にサービスを提供した分を例にすると、次のように進みます。「今月の作業」の4つのカードが、それぞれの書類に対応しています。</p>
       <div class="flow">
-        <div class="fc"><span class="eyebrow">翌月1〜10日</span><b>① 国保連へ請求</b><span>国保連に請求書を送り、同じ額をトワライズに立替請求します。月遅れ請求などはトワライズに請求しないことがあります。</span><span class="hint">入れる数字：国保連の請求額、立替請求額</span></div>
-        <div class="fc"><span class="eyebrow">翌月10日〜中旬</span><b>② トワライズ精算</b><span>立替金から、過去の返戻の相殺分と手数料を引いた額が尼信に入金されます。</span><span class="hint">入れる数字：精算書の相殺明細、手数料、通帳の入金額</span></div>
-        <div class="fc"><span class="eyebrow">翌々月15日ごろ</span><b>③ 国保連 支払決定</b><span>国保連がトワライズに支払います。返戻があると立替額より少なくなるので、返戻台帳に記録します。</span><span class="hint">入れる数字：支払決定額、返戻の内訳</span></div>
-        <div class="fc"><span class="eyebrow">月末</span><b>④ 報告</b><span>月次レポートで内訳を確認し、報告文を齋藤様に送ります。書類の保管チェックも済ませます。</span><span class="hint">操作：コピーして貼り付け、報告済みにする</span></div></div>
+        <div class="fc"><span class="eyebrow">翌月1〜10日（目安5〜6日）</span><b>① 国保連・トワライズへ請求</b><span>国保連に請求し、同じタイミングでトワライズに立替を請求します。返戻の再請求分はトワライズには請求しません（二重の立替を防ぐため）。</span><span class="hint">入れる数字：国保連の請求額、立替請求額</span></div>
+        <div class="fc"><span class="eyebrow">翌月15日・17日</span><b>④ トワライズ明細・精算</b><span>15日ごろに立替金が入金され、17日ごろにサイトで明細が見られます。立替金から、2か月前の清算金と手数料が差し引かれています。</span><span class="hint">入れる数字：明細の清算金・手数料、通帳の入金額</span></div>
+        <div class="fc"><span class="eyebrow">翌月末</span><b>返戻の連絡</b><span>返戻があると連絡が来ます。この時点では点数しか分からないので、返戻台帳に点数で記録します。</span><span class="hint">入れる数字：利用者ID・点数</span></div>
+        <div class="fc"><span class="eyebrow">翌々月5日ごろ</span><b>② 国保連 払出し通知</b><span>国保連の確定額が分かります。立替請求との差が清算額で、通常は2か月後、立替請求の20％を超えると1か月後の立替入金で差し引かれます。</span><span class="hint">入れる数字：払出し通知書の額、返戻の金額</span></div>
+        <div class="fc"><span class="eyebrow">毎月5〜10日</span><b>③ 齋藤様へ報告・売上概算</b><span>今月の請求額・先月の国保連からの入金・来月の清算見込みを送ります。売上の見込みは会計の先生にも伝えます。</span><span class="hint">操作：報告文をコピーして送り、報告済みにする</span></div></div>
     </section>
     <section class="panel col" style="gap:14px"><h2>ことばの意味</h2><dl class="dl">
       <dt>提供月</dt><dd>サービスを提供した月。売上はこの月で数えます。</dd>
       <dt>処理月・精算月</dt><dd>請求や入金が実際に起きた月。お金の動きはこの月で数えます。</dd>
-      <dt>立替しない額</dt><dd>国保連には請求したが、トワライズには立替請求していない額（月遅れ請求など）。</dd>
-      <dt>返戻・未払い</dt><dd>国保連の支払決定額と立替請求額の差。国保連から入らなかった分です。</dd>
-      <dt>相殺</dt><dd>トワライズが、返戻などで足りなかった分を後の入金から差し引くこと。提供月の3か月後の精算が目安です。</dd>
+      <dt>立替しない額</dt><dd>国保連には請求したが、トワライズには立替請求していない額。主に返戻の再請求分です。</dd>
+      <dt>払出し通知書</dt><dd>国保連が5日ごろに出す、確定した支払額の通知。トワライズの口座（山陰合同銀行）に振り込まれる額で、市町村番号ごとの合計が載っています。</dd>
+      <dt>返戻・未払い</dt><dd>国保連の確定額と立替請求額の差。国保連から入らなかった分（マイナス）や、再請求分が入った分（プラス）です。</dd>
+      <dt>清算（相殺）</dt><dd>立替請求と国保連の確定額の差を、後の立替入金で差し引くこと。通常は2か月後（例：5月提供分は7月提供分の立替入金で）。</dd>
+      <dt>20％ルール</dt><dd>清算額が立替請求の20％を超えると、清算が1か月早まります。返戻の再請求分までトワライズに請求すると、清算額が膨らんで当たりやすくなります。</dd>
+      <dt>売上概算</dt><dd>5日ごろに会計の先生と齋藤様にお伝えする、今月の売上の見込み。確定は17日ごろのトワライズの明細です。</dd>
       <dt>未解消</dt><dd>返戻・未払いのうち、まだ相殺されていない額。0になればその月は精算済みです。</dd>
       <dt>立替し直し</dt><dd>一度入金されなかった分を、トワライズがあらためて立て替えたもの。</dd>
       <dt>実効年率</dt><dd>手数料を年利に直した目安。手数料 ÷ 立替額 × 12 で、立替期間を約30日とみた推計です。</dd></dl></section>
     <section class="panel col" style="gap:10px"><h2>よくある質問</h2>
       <details><summary>間違えて入力したときは？</summary><p>「今月の作業」の該当カードで「確認・修正」を押し、正しい数字に直して保存します。その書類の分はまるごと置き換わり、変更前と変更後が変更履歴に残ります。1行だけ直したいときは「台帳・履歴」の「編集」からも直せます。</p></details>
-      <details><summary>月遅れ請求はどう入れますか？</summary><p>① の画面で「請求書を追加」を押し、2枚目として入れます。トワライズに請求しない場合は「金額が違う」を選び、理由に「月遅れ請求分」を選びます。</p></details>
-      <details><summary>精算で計算と入金が合わないときは？</summary><p>精算書の相殺明細に入れ漏れがないかを確認します。② の画面には、まだ相殺されていない差額が候補として出るので、精算書と見比べて追加してください。それでも合わない場合は、トワライズに明細を問い合わせます。</p></details>
+      <details><summary>返戻の再請求分はどう入れますか？</summary><p>① の画面で「請求書を追加」を押し、再請求分を2枚目として入れます。トワライズへの立替請求は「返戻の再請求分を除く（新規分だけ）」を選び、再請求分の額を入れます。同じ方の分をトワライズに2回請求すると二重の立替になり、清算額が膨らんで20％ルールに当たりやすくなるためです。</p></details>
+      <details><summary>清算が1か月早まるのはどんなときですか？</summary><p>国保連の確定額と立替請求の差（不足額）が、立替請求の20％を超えたときです。御所の請求が月500万円なら約100万円、大和高田が月200万円なら約40万円が目安です。② の画面で確定額を入れると、何月の立替入金で清算されるかが表示されます。</p></details>
+      <details><summary>誰の分が入っていないかは、どう調べますか？</summary><p>払出し通知書は市町村番号ごとの合計で、利用者ごとの内訳は載っていません。10日に請求した資料（利用者ごとの名前と金額）と、市町村番号ごとに照らし合わせると特定できます。分かったら返戻台帳に記録すると、月次レポートの「清算見込みの内訳」に並びます。</p></details>
+      <details><summary>売上概算は誰に、いつ伝えますか？</summary><p>5日ごろに、会計の先生（三光会計社）と齋藤様にお伝えします。「資金繰り」の画面で額を決め、文面をコピーして送り、「お伝えした額として保存」を押します。確定は17日ごろのトワライズの明細です。</p></details>
+      <details><summary>精算で計算と入金が合わないときは？</summary><p>明細の清算金に入れ漏れがないかを確認します。④ の画面には、まだ清算されていない差額が候補として出るので、明細と見比べて追加してください。それでも合わない場合は、トワライズに明細を問い合わせます。</p></details>
       <details><summary>担当者が休むときは？</summary><p>このページと「今月の作業」の締切・書類の欄を見れば、代わりの人も同じ手順で進められます。入力した人の名前は左下で選び、確認は別の人が「台帳」のチェックで行います。</p></details>
       <details><summary>データが消えないか心配です</summary><p>月に1回、下の「バックアップ」で全データを書き出して、Googleドライブなどに保存してください。このツールのページを削除したり公開を取り消したりすると、保存データも消える場合があります。</p></details></section>
-    <section class="panel col" style="gap:14px"><h2>契約条件・チェックの基準</h2><p class="hint">トワライズとの契約書で確認した値に合わせてください。② の手数料の目安や、早期清算の注意に使います。</p>
+    <section class="panel col" style="gap:14px"><h2>契約条件・チェックの基準</h2><p class="hint">トワライズとの契約書で確認した値に合わせてください。④ の手数料の目安や、清算が1か月早まる注意に使います。</p>
       <div class="fgrid" style="max-width:720px">
         <label class="f">手数料率（％）<input class="amt" id="sRate" inputmode="decimal" value="${(st.feeRate*100).toFixed(2)}"></label>
-        <label class="f">定額手数料（円）<input class="amt" id="sFixed" inputmode="numeric" value="${yen(st.feeFixed)}"></label>
-        <label class="f">早期清算の目安（％）<span class="sub">未解消の不足額が立替額の何％を超えると清算が早まるか（要確認）</span><input class="amt" id="sAlert" inputmode="decimal" value="${(st.alertRatio*100).toFixed(0)}"></label>
+        <label class="f">定額手数料（円）<span class="sub">過去の明細からの逆算では3,850円（契約書で要確認）</span><input class="amt" id="sFixed" inputmode="numeric" value="${yen(st.feeFixed)}"></label>
+        <label class="f">清算が1か月早まる基準（％）<span class="sub">清算額（不足額）が立替請求の何％を超えると、2か月後の清算が1か月後になるか</span><input class="amt" id="sAlert" inputmode="decimal" value="${(st.alertRatio*100).toFixed(0)}"></label>
         <label class="f">異常値の基準（前月比％）<span class="sub">国保連請求がこれ以上増減したら注意を出す</span><input class="amt" id="sAnom" inputmode="decimal" value="${(st.anomaly*100).toFixed(0)}"></label></div>
       <div><button type="button" class="btn primary" id="sSave">保存する</button></div></section>
     <section class="panel col" style="gap:14px"><h2>入力する人</h2><p class="hint">ここで登録した名前を左下で選ぶと、入力・確認・報告の記録に名前が残ります。</p>
@@ -834,7 +888,7 @@ function renderSettings() {
   $('sSave').addEventListener('click', async () => {
     const rate = toNum($('sRate').value)/100, fixed = toNum($('sFixed').value), alert = toNum($('sAlert').value)/100, anom = toNum($('sAnom').value)/100;
     if (!(rate >= 0 && rate < .2) || !(alert > 0 && alert < 1) || !(anom > 0 && anom < 1)) return toast('数値を確認してください');
-    try { await saveSettings({feeRate:rate, feeFixed:fixed, alertRatio:alert, anomaly:anom}, `契約条件を更新（手数料${(rate*100).toFixed(2)}％＋${yen(fixed)}円、早期清算の目安${(alert*100).toFixed(0)}％）`); toast('設定を保存しました'); } catch (e) { toast('保存できませんでした'); }
+    try { await saveSettings({feeRate:rate, feeFixed:fixed, alertRatio:alert, anomaly:anom}, `契約条件を更新（手数料${(rate*100).toFixed(2)}％＋${yen(fixed)}円、清算が早まる基準${(alert*100).toFixed(0)}％）`); toast('設定を保存しました'); } catch (e) { toast('保存できませんでした'); }
   });
   $('mAdd').addEventListener('click', async () => { const n = $('mName').value.trim(); if (!n) return; try { await saveSettings({members:[...(st.members||[]), n]}, `入力する人に「${n}」を追加`); renderSettings(); drawMe(); } catch (e) { toast('保存できませんでした'); } });
   $('main').querySelectorAll('[data-mdel]').forEach(bt => bt.addEventListener('click', async () => { const m = [...st.members]; const [n] = m.splice(+bt.dataset.mdel,1); try { await saveSettings({members:m}, `入力する人から「${n}」を削除`); renderSettings(); drawMe(); } catch (e) { toast('保存できませんでした'); } }));
