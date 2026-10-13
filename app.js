@@ -188,7 +188,7 @@ let drawerCleanup = null;
 function openDrawer({eyebrow, title, note, body, footer, mount}) {
   $('drawerRoot').innerHTML = `<div class="backdrop" data-close="1"></div><aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="dTitle">
     <div class="dh"><div class="col" style="gap:2px;flex:1"><span class="eyebrow">${eyebrow||''}</span><h3 id="dTitle">${title}</h3></div><button type="button" class="btn iconbtn" data-close="1" aria-label="閉じる">✕</button></div>
-    <div class="db">${note?`<div class="docnote">${ICON_DOC}<div>${note}</div></div>`:''}${body}</div>
+    <div class="db">${note?`<div class="docnote">${note.includes('class="chips"')?'':ICON_DOC}<div class="col" style="gap:8px;min-width:0">${note}</div></div>`:''}${body}</div>
     <div class="df">${footer||''}</div></aside>`;
   $('drawerRoot').querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeDrawer));
   const root = $('drawerRoot').querySelector('.drawer');
@@ -201,7 +201,7 @@ function openDrawer({eyebrow, title, note, body, footer, mount}) {
 }
 function closeDrawer(){ $('drawerRoot').innerHTML = ''; document.body.style.overflow = ''; drawerCleanup && drawerCleanup(); drawerCleanup = null; if (pendingRender) { pendingRender = false; render(); } }
 const footerSave = (label='保存する') => `<button type="button" class="btn primary" id="dSave">${label}</button><button type="button" class="btn" data-close="1">キャンセル</button><span class="hint" id="dMsg" role="status"></span>`;
-const noMe = () => !S.me ? `<div class="res warn" style="margin:0 0 14px">左下の「入力する人」で名前を選ぶと、変更履歴に名前が残ります。</div>` : '';
+const noMe = () => !S.me ? `<div class="res warn" style="margin:0 0 14px;display:flex;gap:8px;align-items:center">${ic('user',16)}左下で名前を選ぶと、履歴に残ります</div>` : '';
 
 /* ================= ① 国保連への請求 ================= */
 function openStepA(b, sm) {
@@ -214,7 +214,7 @@ function openStepA(b, sm) {
   const dl0 = kokuhoDeadline(addM(sm,1));
   openDrawer({
     eyebrow:`① 国保連への請求｜${b}`, title:`${ym(sm)}提供分の請求`,
-    note:`<b>見る書類：</b>国保連に送った請求データ（サマリ）の合計欄と、トワライズへ請求した額。<br>締切は <b>${dl0.getMonth()+1}月${dl0.getDate()}日（${WD[dl0.getDay()]}）</b>（いつもは5〜6日に請求）。返戻の再請求分などで請求が何枚かに分かれるときは、行を追加してください。<br><b>ルール：</b>返戻の再請求分は、トワライズには請求しません。同じ方の分を2回立て替えることになり、清算額が膨らんで「20％ルール」に当たりやすくなるためです。`,
+    note:`<div class="chips">${chip('doc','請求データ（サマリ）の合計')}${chip('repeat','トワライズへの請求額')}${chip('calendar',`締切 ${dl0.getMonth()+1}/${dl0.getDate()}（${WD[dl0.getDay()]}）`)}</div><div class="rule">${ic('warn',15)}<span>返戻の再請求分は、トワライズに請求しない<small>（二重の立替になり、20％ルールに当たりやすくなるため）</small></span></div>`,
     body: noMe() + `
       <div class="sec"><h4><span class="n">1</span>国保連への請求額</h4>
         <div class="lines" id="aParts"></div>
@@ -285,7 +285,7 @@ function openStepB(b, pm) {
   const risk = earlyRisk(b);
   openDrawer({
     eyebrow:`④ トワライズ明細・精算の確認｜${b}`, title:`${ym(pm)}の立替入金`,
-    note:`<b>見る書類：</b>トワライズの明細（17日ごろにサイトからダウンロード。請求額・立替金額・清算金・手数料が載っています）と、尼信の通帳の入金額。<br>明細を上から順に写すと、計算どおりに入金されたかを自動で確かめます。`,
+    note:`<div class="chips">${chip('receipt','トワライズの明細（17日ごろ）')}${chip('bank','尼信の通帳')}</div><div class="rule">${ic('check',15)}<span>明細を上から写すと、入金が計算どおりか自動でチェック</span></div>`,
     body: noMe() + `
       <div class="sec"><h4><span class="n">1</span>今回の立替請求（①で入力済み）</h4>
         ${fac.length ? fac.map(r => `<div class="ro"><span>${mm(r.sm)}提供分の立替請求</span><b class="num">${yen(r.amount)}</b></div>`).join('') : `<div class="res warn" style="margin:0">この月の立替請求がまだありません。先に「① 国保連への請求」で${mm(addM(pm,-1))}提供分を入れてください。</div>`}</div>
@@ -359,7 +359,7 @@ function openStepC(b, sm) {
   const rets = S.returns.filter(x => x.base === b && x.sm === sm), retSum = rets.reduce((a,x)=>a+toNum(x.amount),0);
   openDrawer({
     eyebrow:`② 国保連 払出し通知の確認｜${b}`, title:`${ym(sm)}提供分の確定額`,
-    note:`<b>見る書類：</b>国保連の払出し通知書（${mm(addM(sm,2))}5日ごろ。トワライズの口座＝山陰合同銀行への振込額）。<br>立替請求との差が、2か月後の清算額になります。払出し通知書は市町村番号ごとの合計なので、誰の分かは、10日に請求した資料（利用者ごとの金額）と照らし合わせて確かめ、「返戻台帳」に記録します。`,
+    note:`<div class="chips">${chip('mail',`払出し通知書（${mm(addM(sm,2))}5日ごろ）`)}${chip('bank','トワライズの口座への振込額')}</div><div class="rule">${ic('calc',15)}<span>立替請求との差 ＝ 清算の見込み</span></div><div class="rule">${ic('search',15)}<span>誰の分かは、10日の請求資料と照らし合わせて返戻台帳へ<small>（通知書は市町村番号ごとの合計）</small></span></div>`,
     body: noMe() + `
       <div class="sec"><div class="ro"><span>国保連への請求（①）</span><b class="num">${yen(k)}</b></div><div class="ro"><span>立替請求（①）</span><b class="num">${yen(t)}</b></div>
         ${rets.length?`<div class="ro"><span>返戻台帳に記録済み（${rets.length}件）</span><b class="num">${yen(retSum)}</b></div>`:''}</div>
@@ -429,10 +429,10 @@ function renderHome() {
   const dl0 = kokuhoDeadline(w), left = Math.ceil((dl0 - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / 864e5);
   const phase = !isNow ? -1 : d <= dl0.getDate() ? 0 : d <= 14 ? 1 : d <= 20 ? 2 : 3;
   const cards = [
-    {k:'A', t:'国保連・トワライズへの請求', doc:'国保連の請求データ（サマリ）／トワライズへの請求額', when:`〜${dl0.getMonth()+1}/${dl0.getDate()}（${WD[dl0.getDay()]}）・目安は5〜6日`, desc:`${mm(addM(w,-1))}提供分の請求額を入れます。返戻の再請求分はトワライズに請求しません`},
-    {k:'C', t:'国保連 払出し通知の確認', doc:'払出し通知書／前月末の返戻の連絡', when:'5日ごろ', desc:`${mm(addM(w,-2))}提供分の確定額を入れます。立替との差が清算の見込みになり、誰の分かを返戻台帳に残します`},
-    {k:'D', t:'齋藤様へ報告・売上概算', doc:'このツールの月次レポート／資金繰り', when:'5〜10日', desc:'今月の請求額・先月の国保連からの入金・来月の清算見込みを送ります。売上概算は会計の先生にも伝えます'},
-    {k:'B', t:'トワライズ明細・精算の確認', doc:'トワライズの明細（17日ごろ）／尼信の通帳', when:'15日入金・17日明細', desc:`${mm(w)}に入金された立替金の内訳を入れ、入金額と合っているか確かめます`}
+    {k:'A', t:'国保連・トワライズへ請求', doc:'請求データ（サマリ）', when:`〜${dl0.getMonth()+1}/${dl0.getDate()}（${WD[dl0.getDay()]}）`, desc:`${mm(addM(w,-1))}提供分の請求額`},
+    {k:'C', t:'国保連の払出し通知', doc:'払出し通知書', when:'5日ごろ', desc:`${mm(addM(w,-2))}提供分の確定額`},
+    {k:'D', t:'齋藤様へ報告', doc:'月次レポート', when:'5〜10日', desc:'3つの数字を送る'},
+    {k:'B', t:'トワライズ明細', doc:'明細・尼信の通帳', when:'15・17日', desc:`${mm(w)}の立替入金`}
   ];
   const close = S.closes[w] || {}, nx = nextStep(w), nxK = nx.cur ? nx.cur.k : null;
   const stepHtml = cards.map((c, i) => {
@@ -450,17 +450,17 @@ function renderHome() {
       allDone = !!close.reportedAt;
       body = `<div class="basebox"><div class="bt"><b>${ym(w)}分</b>${close.reportedAt ? pill('done','✓ 報告済み') : pill('todo')}</div>${close.reportedAt?`<div class="bv"><span>${new Date(close.reportedAt).toLocaleDateString('ja-JP')} 報告済み${close.reportedBy?`（${esc(close.reportedBy)}）`:''}</span></div>`:''}<div><button type="button" class="btn small ${close.reportedAt?'':'primary'}" data-goreport="1">レポートを開く</button></div></div>`;
     }
-    return `<article class="step ${allDone?'done':''} ${c.k===nxK?'is-next':''}">${c.k===nxK?'<span class="ribbon">次はこれ</span>':''}<div class="head"><div class="no">${allDone?'✓':i+1}</div><div class="col" style="gap:2px"><span class="eyebrow">${c.when}</span><h3>${c.t}</h3></div></div><p class="hint">${c.desc}</p><div class="doc">${ICON_DOC}<span>見る書類：${c.doc}</span></div>${body}</article>`;
+    return `<article class="step ${allDone?'done':''} ${c.k===nxK?'is-next':''}">${c.k===nxK?'<span class="ribbon">次はこれ</span>':''}<div class="head"><div class="no">${allDone?ic('check',18):ic(STEP_META[c.k].ic,18)}</div><div class="col" style="gap:2px"><span class="eyebrow">${STEP_META[c.k].no}　${c.when}</span><h3>${c.t}</h3></div></div><div class="chips">${chip('yen', c.desc, 'plain')}${chip('doc', c.doc, 'plain')}</div>${body}</article>`;
   }).join('');
   const docsState = close.docs || {};
   const docHtml = BASES.map(b => `<div class="col"><b style="font-size:14px">${b}</b>${DOCS.map(([k,n,s]) => { const v = docsState[`${BCODE[b]}_${k}`] || {}; return `<div class="docitem"><input type="checkbox" data-doc="${BCODE[b]}_${k}" ${v.done?'checked':''} aria-label="${b}の${n}を保存済み"><div class="nm">${n}<small>${s}${v.done&&v.by?`・${esc(v.by)}`:''}</small></div>${linkOk(v.url)?`<a href="${esc(v.url)}" target="_blank" rel="noopener">開く</a>`:`<button type="button" class="btn ghost small" data-doclink="${BCODE[b]}_${k}">リンク</button>`}</div>`; }).join('')}</div>`).join('');
   const items = attentionItems();
   const attn = items.length ? items.map(x => `<div class="it"><div class="t">${pill(x.sev, x.sev==='bad'?'! 要確認':x.sev==='warn'?'注意':'確認')}<span>${esc(x.text)}</span></div>${x.act}</div>`).join('') : '<p class="hint">確認が必要なことはありません。</p>';
-  const tl = [['1〜10日','国保連・トワライズへ請求',1,10],['5日ごろ','国保連の払出し通知',4,7],['5〜10日','齋藤様へ報告・売上概算',5,10],['15日・17日','立替入金・トワライズの明細',13,20],['月末','返戻の連絡（点数のみ）',25,31]].map(([a,b,f,t])=>`<div class="tl ${isNow && d>=f && d<=t?'now':''}"><b>${a}</b>${b}</div>`).join('');
+  const tl = [['1〜10日','① 請求',1,10,'send'],['5日ごろ','② 払出し通知',4,7,'mail'],['5〜10日','③ 報告',5,10,'chat'],['15・17日','④ 立替入金・明細',13,20,'receipt'],['月末','返戻の連絡',25,31,'return']].map(([a,b,f,t,n])=>`<div class="tl ${isNow && d>=f && d<=t?'now':''}"><b>${ic(n,14)} ${a}</b>${b}</div>`).join('');
   const dlCls = isNow && left >= 0 ? (left === 0 ? 'today' : left <= 3 ? 'soon' : '') : '';
   $('main').innerHTML = `<div class="page">${guideBanner()}${nextCardHtml(w)}
     <section class="panel col" style="gap:14px">
-      <div class="monthbar"><button type="button" class="btn navbtn" data-wm="-1" aria-label="前の月">‹</button><h1>${ym(w)}の作業</h1><button type="button" class="btn navbtn" data-wm="1" aria-label="次の月">›</button>${w!==nowM?`<button type="button" class="btn ghost" data-wm="0">今月に戻る</button>`:''}<div class="spacer"></div><span class="hint">左のカードから順に、届いた書類の数字を入れていきます</span></div>
+      <div class="monthbar"><button type="button" class="btn navbtn" data-wm="-1" aria-label="前の月">‹</button><h1>${ym(w)}の作業</h1><button type="button" class="btn navbtn" data-wm="1" aria-label="次の月">›</button>${w!==nowM?`<button type="button" class="btn ghost" data-wm="0">今月に戻る</button>`:''}<div class="spacer"></div></div>
       <div class="deadline ${dlCls}"><span class="hint">国保連 請求の締切</span><span class="big">${dl0.getMonth()+1}月${dl0.getDate()}日（${WD[dl0.getDay()]}）</span>${isNow?(left>0?`<span>あと <b>${left}日</b></span>`:left===0?'<b>今日が締切です</b>':'<span class="hint">締切は過ぎました</span>'):''}<span class="hint">10日が土日祝のときは翌営業日</span></div>
       <div class="timeline">${tl}</div>
     </section>
@@ -542,9 +542,9 @@ function renderReport() {
     <section class="panel col regular" style="gap:14px">
       <h2>毎月の3つの数字</h2>
       <div class="kpis k3">
-        <div class="kpi"><span class="l">今月の請求額（${mm(rg.reqSm)}提供分）</span><span class="v">${yen(rg.req)}</span><span class="s">うちトワライズへ ${yen(rg.reqT)}円</span></div>
-        <div class="kpi"><span class="l">先月の国保連からの入金（${mm(rg.paidSm)}提供分）</span><span class="v">${rg.paidHas ? yen(rg.paid) : '未入力'}</span><span class="s">払出し通知書の額（トワライズの口座へ）</span></div>
-        <div class="kpi ${rg.per.some(x=>x.early)?'bad':''}"><span class="l">来月の清算見込み（${mm(rg.setSm)}提供分）</span><span class="v">${rg.setHas ? sgn(rg.gap) : '通知待ち'}</span><span class="s">${rg.per.filter(x=>x.has).map(x => `${S.base==='合算'?x.b+' ':''}${x.gap?sgn(x.gap):'0'}→${mm(x.when)}${x.early?'（1か月早まり）':''}`).join('／') || '払出し通知書（5日ごろ）を入れると出ます'}</span></div>
+        <div class="kpi"><span class="l">${ic('send',15)} 今月の請求額（${mm(rg.reqSm)}提供分）</span><span class="v">${yen(rg.req)}</span><span class="s">うちトワライズへ ${yen(rg.reqT)}円</span></div>
+        <div class="kpi"><span class="l">${ic('building',15)} 先月の国保連からの入金（${mm(rg.paidSm)}提供分）</span><span class="v">${rg.paidHas ? yen(rg.paid) : '未入力'}</span><span class="s">払出し通知書の額（トワライズの口座へ）</span></div>
+        <div class="kpi ${rg.per.some(x=>x.early)?'bad':''}"><span class="l">${ic('calc',15)} 来月の清算見込み（${mm(rg.setSm)}提供分）</span><span class="v">${rg.setHas ? sgn(rg.gap) : '通知待ち'}</span><span class="s">${rg.per.filter(x=>x.has).map(x => `${S.base==='合算'?x.b+' ':''}${x.gap?sgn(x.gap):'0'}→${mm(x.when)}${x.early?'（1か月早まり）':''}`).join('／') || '払出し通知書（5日ごろ）を入れると出ます'}</span></div>
       </div>
       <div class="col" style="gap:6px"><h3 style="font-size:15px">清算見込みの内訳（誰の分か）</h3>
         <div class="tablewrap"><table><thead><tr><th>区分</th><th>拠点</th><th>利用者ID</th><th>コード・事由</th><th class="r">金額</th><th>状態</th></tr></thead><tbody>${regRows || `<tr><td colspan="6" class="hint">${rg.setHas ? 'この提供月の返戻の記録はありません。' : '払出し通知書の額を入れると表示されます。'}</td></tr>`}</tbody></table></div>
@@ -730,7 +730,7 @@ function openReturnEditor(id, preset) {
   const x = id ? S.returns.find(r => r.id === id) : {base: preset.base || (S.base==='合算'?'御所':S.base), sm: preset.sm || addM(nowM,-2), uid:'', count:1, reason:'', code:'', amount:'', pts:'', plan: addM(nowM,1), status:'点数のみ', memo:''};
   if (!x) return; let confirmDel = false;
   openDrawer({eyebrow: id ? '返戻台帳を編集' : '返戻を記録', title: id ? `${ym(x.sm)}提供分 ${esc(x.uid||'')}` : '返戻を記録',
-    note:'<b>見る書類：</b>月末の返戻の連絡（点数のみ）と、5日ごろの払出し通知書。<br>月末の時点では点数しか分からないので、まず点数で記録し、払出し通知で金額が確定したら入れます。払出し通知書は市町村番号ごとの合計なので、10日に請求した資料と照らし合わせて利用者を特定します。<br>再請求（翌月10日）するときは、<b>トワライズには請求しません</b>。',
+    note:`<div class="chips">${chip('return','月末：点数のみ')}${chip('mail','5日ごろ：金額が確定')}${chip('send','翌月10日：再請求')}</div><div class="rule">${ic('warn',15)}<span>再請求はトワライズに請求しない</span></div><div class="rule">${ic('search',15)}<span>利用者は、10日の請求資料と照らし合わせて特定</span></div>`,
     body: noMe() + `<div class="fgrid">
       <label class="f">拠点<select id="rBase">${BASES.map(b=>`<option ${b===x.base?'selected':''}>${b}</option>`).join('')}</select></label>
       <label class="f">提供月<select id="rSm">${monthOpts(x.sm)}</select></label>
@@ -841,11 +841,11 @@ function renderSettings() {
     <section class="panel"><div class="ptitle"><span class="eyebrow">設定・引き継ぎ</span><h1>設定・使い方</h1><p class="hint">毎月の流れ、ことばの意味、契約条件、バックアップをまとめています。引き継ぎのときはこのページから読んでもらいます。</p></div></section>
     <section class="panel col" style="gap:14px"><h2>毎月の流れ</h2><p class="hint">${mm(addM(nowM,-1))}にサービスを提供した分を例にすると、次のように進みます。「今月の作業」の4つのカードが、それぞれの書類に対応しています。</p>
       <div class="flow">
-        <div class="fc"><span class="eyebrow">翌月1〜10日（目安5〜6日）</span><b>① 国保連・トワライズへ請求</b><span>国保連に請求し、同じタイミングでトワライズに立替を請求します。返戻の再請求分はトワライズには請求しません（二重の立替を防ぐため）。</span><span class="hint">入れる数字：国保連の請求額、立替請求額</span></div>
-        <div class="fc"><span class="eyebrow">翌月15日・17日</span><b>④ トワライズ明細・精算</b><span>15日ごろに立替金が入金され、17日ごろにサイトで明細が見られます。立替金から、2か月前の清算金と手数料が差し引かれています。</span><span class="hint">入れる数字：明細の清算金・手数料、通帳の入金額</span></div>
-        <div class="fc"><span class="eyebrow">翌月末</span><b>返戻の連絡</b><span>返戻があると連絡が来ます。この時点では点数しか分からないので、返戻台帳に点数で記録します。</span><span class="hint">入れる数字：利用者ID・点数</span></div>
-        <div class="fc"><span class="eyebrow">翌々月5日ごろ</span><b>② 国保連 払出し通知</b><span>国保連の確定額が分かります。立替請求との差が清算額で、通常は2か月後、立替請求の20％を超えると1か月後の立替入金で差し引かれます。</span><span class="hint">入れる数字：払出し通知書の額、返戻の金額</span></div>
-        <div class="fc"><span class="eyebrow">毎月5〜10日</span><b>③ 齋藤様へ報告・売上概算</b><span>今月の請求額・先月の国保連からの入金・来月の清算見込みを送ります。売上の見込みは会計の先生にも伝えます。</span><span class="hint">操作：報告文をコピーして送り、報告済みにする</span></div></div>
+        <div class="fc"><span class="fc-ic">${ic('send',20)}</span><span class="eyebrow">翌月1〜10日（目安5〜6日）</span><b>① 国保連・トワライズへ請求</b><span>国保連に請求し、同じタイミングでトワライズに立替を請求します。返戻の再請求分はトワライズには請求しません（二重の立替を防ぐため）。</span><span class="hint">入れる数字：国保連の請求額、立替請求額</span></div>
+        <div class="fc"><span class="fc-ic">${ic('receipt',20)}</span><span class="eyebrow">翌月15日・17日</span><b>④ トワライズ明細・精算</b><span>15日ごろに立替金が入金され、17日ごろにサイトで明細が見られます。立替金から、2か月前の清算金と手数料が差し引かれています。</span><span class="hint">入れる数字：明細の清算金・手数料、通帳の入金額</span></div>
+        <div class="fc"><span class="fc-ic">${ic('return',20)}</span><span class="eyebrow">翌月末</span><b>返戻の連絡</b><span>返戻があると連絡が来ます。この時点では点数しか分からないので、返戻台帳に点数で記録します。</span><span class="hint">入れる数字：利用者ID・点数</span></div>
+        <div class="fc"><span class="fc-ic">${ic('mail',20)}</span><span class="eyebrow">翌々月5日ごろ</span><b>② 国保連 払出し通知</b><span>国保連の確定額が分かります。立替請求との差が清算額で、通常は2か月後、立替請求の20％を超えると1か月後の立替入金で差し引かれます。</span><span class="hint">入れる数字：払出し通知書の額、返戻の金額</span></div>
+        <div class="fc"><span class="fc-ic">${ic('chat',20)}</span><span class="eyebrow">毎月5〜10日</span><b>③ 齋藤様へ報告・売上概算</b><span>今月の請求額・先月の国保連からの入金・来月の清算見込みを送ります。売上の見込みは会計の先生にも伝えます。</span><span class="hint">操作：報告文をコピーして送り、報告済みにする</span></div></div>
     </section>
     <section class="panel col" style="gap:14px"><h2>ことばの意味</h2><dl class="dl">
       <dt>提供月</dt><dd>サービスを提供した月。売上はこの月で数えます。</dd>

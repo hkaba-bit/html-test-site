@@ -8,6 +8,49 @@ function gSave(patch) { const g = {...gLoad(), ...patch}; try { localStorage.set
 const gWait = ms => new Promise(r => setTimeout(r, ms));
 const gReduce = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* ---------- アイコン（線画・currentColor） ---------- */
+const IC = {
+  home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  doc:'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8M8 17h5"/>',
+  send:'<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  chat:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/>',
+  receipt:'<path d="M5 2v20l2.5-1.5L10 22l2-1.5 2 1.5 2.5-1.5L19 22V2l-2.5 1.5L14 2l-2 1.5L10 2 7.5 3.5z"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+  'return':'<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-2"/>',
+  calendar:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  yen:'<path d="M6 3l6 8 6-8"/><path d="M12 11v10M7 13h10M7 17h10"/>',
+  calc:'<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8"/><path d="M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h8"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  warn:'<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  swap:'<path d="M7 7h13M7 7l3-3M7 7l3 3M17 17H4m13 0-3-3m3 3-3 3"/>',
+  menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+  flag:'<path d="M5 22V3"/><path d="M5 4h12l-2.5 4L17 12H5"/>',
+  save:'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',
+  copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
+  percent:'<path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',
+  building:'<rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h.01M15 7h.01M9 11h.01M15 11h.01M9 15h.01M15 15h.01M10 21v-3h4v3"/>',
+  repeat:'<path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>',
+  bank:'<path d="M3 10h18M12 3 3 8h18z"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18"/>',
+  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  play:'<path d="M7 4v16l13-8z"/>',
+  book:'<path d="M2 8l10-4 10 4-10 4z"/><path d="M6 10v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/>',
+  sliders:'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'
+};
+const ic = (n, s = 18) => `<svg class="i" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n] || ''}</svg>`;
+const chip = (n, t, cls = '') => `<span class="chip ${cls}">${ic(n, 15)}<span>${t}</span></span>`;
+const STEP_META = {
+  A:{ic:'send', no:'①', s:'請求', when:'1〜10日'},
+  C:{ic:'mail', no:'②', s:'払出し通知', when:'5日ごろ'},
+  D:{ic:'chat', no:'③', s:'報告', when:'5〜10日'},
+  B:{ic:'receipt', no:'④', s:'明細', when:'15・17日'}
+};
+
 /* ---------- 次にやること ---------- */
 function flowSteps(w) {
   const close = S.closes[w] || {}, dl0 = kokuhoDeadline(w);
@@ -15,14 +58,10 @@ function flowSteps(w) {
   const doneOf = k => BASES.every(b => okState(stepStatus(k, b, w).state));
   const openBase = k => BASES.find(b => !okState(stepStatus(k, b, w).state)) || '';
   return [
-    {k:'A', no:'①', t:'国保連・トワライズへの請求', from:1, to:dl0.getDate(), when:`1〜${dl0.getDate()}日（目安5〜6日）`, done:doneOf('A'), base:openBase('A'),
-      doc:'国保連の請求データ（サマリ）／トワライズへの請求額', why:`${mm(addM(w,-1))}提供分の請求額を入れます。返戻の再請求分はトワライズに請求しません。`},
-    {k:'C', no:'②', t:'国保連 払出し通知の確認', from:4, to:10, when:'5日ごろ', done:doneOf('C'), base:openBase('C'),
-      doc:'国保連の払出し通知書', why:`${mm(addM(w,-2))}提供分の確定額を入れると、来月の清算見込みと「誰の分か」が出ます。`},
-    {k:'D', no:'③', t:'齋藤様へ報告・売上概算', from:5, to:10, when:'5〜10日', done:!!close.reportedAt, base:'',
-      doc:'このツールの月次レポート／資金繰り', why:'3つの数字と返戻の内訳をコピーして送ります。売上の見込みは会計の先生にも伝えます。'},
-    {k:'B', no:'④', t:'トワライズ明細・精算の確認', from:15, to:31, when:'15日入金・17日明細', done:doneOf('B'), base:openBase('B'),
-      doc:'トワライズの明細／尼信の通帳', why:`${mm(w)}の立替入金の内訳を入れ、入金額と合っているか確かめます。`}
+    {k:'A', no:'①', t:'国保連・トワライズへの請求', from:1, to:dl0.getDate(), when:`1〜${dl0.getDate()}日`, done:doneOf('A'), base:openBase('A'), doc:'請求データ（サマリ）', why:`${mm(addM(w,-1))}提供分の請求額を入れる`},
+    {k:'C', no:'②', t:'国保連 払出し通知の確認', from:4, to:10, when:'5日ごろ', done:doneOf('C'), base:openBase('C'), doc:'払出し通知書', why:`${mm(addM(w,-2))}提供分の確定額を入れる`},
+    {k:'D', no:'③', t:'齋藤様へ報告・売上概算', from:5, to:10, when:'5〜10日', done:!!close.reportedAt, base:'', doc:'月次レポート', why:'3つの数字をコピーして送る'},
+    {k:'B', no:'④', t:'トワライズ明細・精算の確認', from:15, to:31, when:'15日入金・17日明細', done:doneOf('B'), base:openBase('B'), doc:'トワライズ明細・通帳', why:`${mm(w)}の立替入金を確かめる`}
   ];
 }
 function nextStep(w) {
@@ -40,44 +79,41 @@ function goNext(k, b) {
   if (k === 'A') openStepA(b, addM(S.work,-1)); else if (k === 'C') openStepC(b, addM(S.work,-2)); else openStepB(b, S.work);
 }
 const STEP_TOUR = {A:['monthly',0], C:['monthly',6], D:['report',0], B:['monthly',11]};
+function stepperHtml(n) {
+  return `<ol class="stepper">${n.st.map(s => { const m = STEP_META[s.k], cur = n.cur && s.k === n.cur.k;
+    return `<li class="${s.done?'is-done':cur?'is-cur':''}"><span class="node">${s.done ? ic('check', 18) : ic(m.ic, 18)}</span><b>${m.no} ${m.s}</b><small>${m.when}</small></li>`; }).join('')}</ol>`;
+}
 function nextCardHtml(w) {
-  const n = nextStep(w), doneN = n.st.filter(s => s.done).length, d = today.getDate(), isNow = w === nowM;
-  const list = n.st.map(s => `<li class="${s.done?'is-done':n.cur&&s.k===n.cur.k?'is-cur':''}"><span class="mk" aria-hidden="true">${s.done?'✓':s.no}</span><span class="tx">${s.t}<small>${s.when}</small></span></li>`).join('');
+  const n = nextStep(w), doneN = n.st.filter(s => s.done).length;
   let main;
-  if (n.all) main = `<span class="eyebrow">次にやること</span><h2>${ym(w)}の作業はすべて終わりました</h2>
-      <p>おつかれさまでした。次は${mm(addM(w,1))}1日からの請求です。月末に返戻の連絡が来たら、返戻台帳に点数で記録しておきます。</p>
-      <div class="row"><button type="button" class="btn" data-go="returns">返戻台帳を開く</button></div>`;
-  else if (n.cur) {
-    const c = n.cur, who = c.base ? `（${c.base}${BASES.filter(b => b !== c.base && !['done','ok','na'].includes(stepStatus(c.k,b,w).state)).length?' から':''}）` : '';
-    main = `<span class="eyebrow">次にやること${n.overdue?'　<span class="pill bad">目安の日を過ぎています</span>':''}</span>
-      <h2><span class="no">${c.no}</span>${c.t}${who}</h2><p>${c.why}</p>
-      <div class="nc-meta"><span>${ICON_DOC}手元に用意：${c.doc}</span><span>時期：${c.when}</span></div>
-      <div class="row"><button type="button" class="btn primary" data-nextgo="${c.k}|${c.base}">はじめる</button><button type="button" class="btn ghost" data-tourstart="${STEP_TOUR[c.k].join('|')}">やり方を見る</button></div>`;
-  } else {
-    const u = n.upcoming;
-    main = `<span class="eyebrow">次にやること</span><h2>次は${u.from}日ごろから：${u.no} ${u.t}</h2>
-      <p>${isNow ? `今日（${d}日）の時点で、やるべき作業は終わっています。` : ''}${u.why}</p>
-      <div class="row"><button type="button" class="btn" data-nextgo="${u.k}|${u.base}">先に開いておく</button><button type="button" class="btn ghost" data-tourstart="${STEP_TOUR[u.k].join('|')}">やり方を見る</button></div>`;
+  if (n.all) main = `<div class="nc-hero"><span class="nc-ic ok">${ic('check', 30)}</span><div><span class="eyebrow">次にやること</span><h2>今月の作業は完了</h2></div></div>
+      <div class="chips">${chip('calendar', `次は${mm(addM(w,1))}1日から請求`)}${chip('return', '月末の返戻の連絡は返戻台帳へ')}</div>
+      <div class="row"><button type="button" class="btn" data-go="returns">${ic('return',16)}返戻台帳</button></div>`;
+  else {
+    const c = n.cur || n.upcoming, m = STEP_META[c.k], soon = !n.cur;
+    main = `<div class="nc-hero"><span class="nc-ic">${ic(m.ic, 30)}</span><div><span class="eyebrow">${soon ? `次は${c.from}日ごろから` : '次にやること'}${n.overdue?' <span class="pill bad">目安を過ぎています</span>':''}</span>
+        <h2>${c.no} ${c.t}</h2></div></div>
+      <p class="nc-why">${c.why}${c.base ? `（${c.base}から）` : ''}</p>
+      <div class="chips">${chip('doc', c.doc)}${chip('calendar', c.when)}</div>
+      <div class="row"><button type="button" class="btn ${soon?'':'primary'} big" data-nextgo="${c.k}|${c.base}">${ic('play',16)}${soon ? '先に開いておく' : 'はじめる'}</button><button type="button" class="btn ghost" data-tourstart="${STEP_TOUR[c.k].join('|')}">${ic('book',16)}やり方を見る</button></div>`;
   }
   return `<section class="panel nextcard" id="nextCard"><div class="nc-main">${main}</div>
-    <div class="nc-side"><div class="nc-prog"><b>${ym(w)}の進み具合</b><span class="num">${doneN} / 4</span></div>
-      <div class="nc-bar" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="${doneN}" aria-label="今月の進み具合">${n.st.map(s => `<i class="${s.done?'on':n.cur&&s.k===n.cur.k?'cur':''}"></i>`).join('')}</div>
-      <ol class="nc-list">${list}</ol></div></section>`;
+    <div class="nc-side"><div class="nc-prog"><b>${mm(w)}の進み具合</b><span class="num">${doneN}<small> / 4</small></span></div>${stepperHtml(n)}</div></section>`;
 }
 function guideBanner() {
   const g = gLoad(); if (g.seen) return '';
-  return `<section class="panel welcome" id="welcome"><div class="col" style="gap:4px;flex:1;min-width:240px"><span class="eyebrow">はじめての方へ</span><h2>実際の画面で、使い方を順番に案内します</h2>
-    <p class="hint">画面の上に説明が出て、次へ進むたびに該当の場所を案内します。約3分です。デモのサンプルなので、触っても大丈夫です。</p></div>
-    <div class="row"><button type="button" class="btn primary" data-tourstart="intro|0">3分で全体を見る</button><button type="button" class="btn" data-go="learn">レクチャー一覧</button><button type="button" class="btn ghost" data-guideclose="1">あとで</button></div></section>`;
+  return `<section class="panel welcome" id="welcome"><span class="nc-ic">${ic('book', 28)}</span><div class="col" style="gap:2px;flex:1;min-width:220px"><span class="eyebrow">はじめての方へ</span><h2>実際の画面で、使い方を案内します</h2>
+    <div class="chips">${chip('clock','約3分')}${chip('check','触っても大丈夫（デモ）')}</div></div>
+    <div class="row"><button type="button" class="btn primary big" data-tourstart="intro|0">${ic('play',16)}はじめる</button><button type="button" class="btn" data-go="learn">${ic('list',16)}講座一覧</button><button type="button" class="btn ghost" data-guideclose="1">あとで</button></div></section>`;
 }
 function savedNext(msg) {
   setTimeout(() => {
-    const n = nextStep(S.work); let text = '', btn = '';
-    if (n.all) text = '今月の作業はすべて終わりました';
-    else if (n.cur) { text = `次は ${n.cur.no} ${n.cur.t}${n.cur.base?`（${n.cur.base}）`:''}`; btn = `<button type="button" class="btn small primary" data-nextgo="${n.cur.k}|${n.cur.base}">進む</button>`; }
-    else text = `次は${n.upcoming.from}日ごろから ${n.upcoming.no} ${n.upcoming.t}`;
+    const n = nextStep(S.work); let text = '', btn = '', icn = 'check';
+    if (n.all) text = '今月の作業はすべて完了';
+    else if (n.cur) { text = `次は ${n.cur.no} ${STEP_META[n.cur.k].s}${n.cur.base?`（${n.cur.base}）`:''}`; icn = STEP_META[n.cur.k].ic; btn = `<button type="button" class="btn small primary" data-nextgo="${n.cur.k}|${n.cur.base}">進む${ic('arrow',14)}</button>`; }
+    else text = `次は${n.upcoming.from}日ごろ ${n.upcoming.no} ${STEP_META[n.upcoming.k].s}`;
     const el = document.createElement('div'); el.className = 'nextbar'; el.setAttribute('role','status');
-    el.innerHTML = `<div class="col" style="gap:2px;min-width:0"><b>✓ ${esc(msg)}</b><span>${text}</span></div>${btn}<button type="button" class="btn iconbtn" data-nbclose="1" aria-label="閉じる">✕</button>`;
+    el.innerHTML = `<span class="nb-ok">${ic('check',18)}</span><div class="col" style="gap:0;min-width:0"><b>${esc(msg)}</b><span>${ic(icn,14)} ${text}</span></div>${btn}<button type="button" class="btn iconbtn" data-nbclose="1" aria-label="閉じる">✕</button>`;
     $('toastRoot').replaceChildren(el);
     setTimeout(() => { if (el.isConnected) el.remove(); }, 12000);
   }, 450);
@@ -85,64 +121,64 @@ function savedNext(msg) {
 
 /* ---------- 講座 ---------- */
 const TOURS = {
-  intro:{title:'はじめに：画面の見方', min:3, next:'monthly', learn:['このツールで何ができるか','「次にやること」の見方','毎月の4ステップと注意の出かた'], steps:[
-    {tab:'home', title:'このツールでできること', body:'国保連への請求、トワライズの立替・清算、齋藤様への報告までを、<b>毎月同じ手順</b>で進めるためのツールです。届いた書類の数字を入れるだけで、差額の計算と報告文は自動で作られます。<br>ここから、画面の見方を順番に案内します。'},
-    {tab:'home', sel:'#baseSeg', title:'拠点を切り替える', body:'御所・大和高田・合算を切り替えます。入力は拠点ごと、確認と報告は<b>合算</b>で見るのが基本です。'},
-    {tab:'home', sel:'#menu', title:'メニュー', body:'毎月の作業は「今月の作業」だけで進められます。ほかの画面は、確かめたいときに開きます。この「使い方レクチャー」もメニューから開けます。'},
-    {tab:'home', sel:'#nextCard', title:'次にやること', body:'今日の日付と入力の状況から、<b>次にやることを1つだけ</b>表示します。迷ったら「はじめる」を押してください。右側は今月の進み具合です。'},
-    {tab:'home', sel:'.deadline', title:'請求の締切', body:'国保連の請求締切です。10日が土日祝のときは翌営業日に自動でずらしています。いつもは5〜6日に請求します。'},
-    {tab:'home', sel:'.timeline', title:'1か月の流れ', body:'1か月の作業の順番です。今日の位置に「今ここ」が付きます。月末には返戻の連絡（点数のみ）が来ます。'},
-    {tab:'home', sel:'.steps', title:'毎月の4つのステップ', body:'① 請求 → ② 払出し通知 → ③ 報告 → ④ トワライズ明細 の順に、届いた書類の数字を拠点ごとに入れます。終わったカードは番号が ✓ に変わり、次のカードに「次はこれ」が付きます。'},
-    {tab:'home', sel:'.attn', title:'確認が必要なこと', body:'清算されていない差額、計算と入金のずれ、20％ルールに近づいた月などを自動で拾います。ボタンから該当の画面に移れます。'},
-    {tab:'home', sel:'.docgrid', title:'書類の保管', body:'国保連の通知はシステムから消えることがあります。保存したらチェックを付け、保存先のリンクを残します。'},
-    {tab:'home', sel:'.me', title:'入力する人', body:'入力の前に、ここで自分の名前を選びます。誰がいつ何を入れたかが記録に残り、引き継ぎのときに役立ちます。'},
-    {tab:'home', title:'画面の見方は以上です', body:'続けて「毎月の4ステップ」で、実際の入力のしかたを見てみましょう。'}
+  intro:{title:'画面の見方', ic:'home', min:3, next:'monthly', learn:[['flag','次にやることの見方'],['list','4つのステップ'],['warn','注意の出かた']], steps:[
+    {tab:'home', ic:'home', title:'このツールでできること', body:'書類の数字を入れるだけで、差額の計算と報告文ができます。', pts:[['send','① 請求'],['mail','② 払出し通知'],['chat','③ 報告'],['receipt','④ 明細']]},
+    {tab:'home', sel:'#baseSeg', ic:'swap', title:'拠点を切り替える', body:'入力は拠点ごと、確認と報告は合算で。'},
+    {tab:'home', sel:'#menu', ic:'menu', title:'メニュー', body:'毎月の作業は「今月の作業」だけで進められます。', pts:[['book','使い方レクチャーもここ']]},
+    {tab:'home', sel:'#nextCard', ic:'flag', title:'次にやること', body:'迷ったら、ここの「はじめる」を押すだけ。', pts:[['doc','用意する書類'],['calendar','時期'],['check','今月の進み具合']]},
+    {tab:'home', sel:'.deadline', ic:'calendar', title:'請求の締切', body:'土日祝は自動で翌営業日にずらします。', pts:[['clock','いつもは5〜6日に請求']]},
+    {tab:'home', sel:'.timeline', ic:'clock', title:'1か月の流れ', body:'今日の位置に「今ここ」が付きます。'},
+    {tab:'home', sel:'.steps', ic:'list', title:'4つのステップ', body:'左から順に、書類の数字を入れます。', pts:[['check','終わると ✓'],['flag','次は「次はこれ」']]},
+    {tab:'home', sel:'.attn', ic:'warn', title:'確認が必要なこと', body:'ずれや清算待ちを自動で拾います。', pts:[['search','ボタンで該当の画面へ']]},
+    {tab:'home', sel:'.docgrid', ic:'folder', title:'書類の保管', body:'保存したら、チェックとリンクを残します。', pts:[['warn','国保連の通知は消えることがある']]},
+    {tab:'home', sel:'.me', ic:'user', title:'入力する人', body:'入力の前に、自分の名前を選びます。', pts:[['check','誰が入れたか記録に残る']]},
+    {tab:'home', ic:'check', title:'画面の見方は以上です', body:'次は、実際の入力のしかたへ。'}
   ]},
-  monthly:{title:'毎月の4ステップ', min:6, next:'report', learn:['①請求で、返戻の再請求分をトワライズに請求しない入れ方','②払出し通知で、清算の時期（20％ルール）を読む','④明細で、入金が計算どおりかを確かめる'], steps:[
-    {tab:'home', sel:'[data-open="A"][data-b="御所"]', title:'① 請求：入力をはじめる', body:'毎月1〜10日に、前月提供分の請求額を入れます。拠点ごとの「入力する」（入力済みなら「確認・修正」）を押すと、入力画面が右から開きます。'},
-    {drawer:['A','御所'], sel:'.drawer .docnote', title:'手元に用意する書類とルール', body:'上の枠に、用意する書類・締切・ルールが出ます。<b>返戻の再請求分はトワライズに請求しない</b>（二重の立替になり、20％ルールに当たりやすくなるため）。'},
-    {drawer:['A','御所'], sel:'#aParts', title:'国保連への請求額', body:'請求データ（サマリ）の合計を入れます。返戻の再請求分を別に請求したときは「請求を追加」で行を足します。'},
-    {drawer:['A','御所'], sel:'.drawer .choice', title:'トワライズへの請求額', body:'ふだんは「国保連の請求と同じ金額」。再請求分があるときは<b>「返戻の再請求分を除く」</b>を選び、その額を入れます。'},
-    {drawer:['A','御所'], sel:'#aCalc', title:'自動の計算', body:'「立替しない額」が自動で出ます。お伝えした売上概算と10％以上違うときは注意が出ます。'},
-    {drawer:['A','御所'], sel:'.drawer .df', title:'保存する', body:'「保存する」で記録されます。保存すると、画面の下に<b>次にやること</b>が出ます。（ツアー中は保存しなくて大丈夫です）'},
-    {drawer:['C','御所'], sel:'.drawer .docnote', title:'② 払出し通知（5日ごろ）', body:'国保連の払出し通知書が届いたら、2か月前の提供月の確定額を入れます。通知書は<b>市町村番号ごとの合計</b>なので、誰の分かは10日の請求資料と照らし合わせます。'},
-    {drawer:['C','御所'], sel:'#cK', title:'確定額を入れる', body:'この拠点・この提供月の分の合計を入れます。'},
-    {drawer:['C','御所'], sel:'#cCalc', title:'清算の見込みと時期', body:'立替請求との差が<b>清算の見込み</b>です。通常は2か月後、不足が立替請求の20％を超えると<b>1か月早まる</b>ことも、ここに出ます。'},
-    {drawer:['C','御所'], sel:'#cRet', title:'誰の分かを残す', body:'差が返戻によるものなら、利用者を特定して返戻台帳に記録します。月次レポートの「誰の分か」に並びます。'},
-    {tab:'home', sel:'[data-goreport]', title:'③ 報告（5〜10日）', body:'払出し通知まで入れたら、月次レポートを開いて齋藤様に報告します。やり方は「報告のしかた」の講座で案内します。'},
-    {drawer:['B','御所'], sel:'.drawer .docnote', title:'④ トワライズ明細（15日・17日）', body:'15日ごろに立替金が入金され、17日ごろに明細が見られます。明細の中身を上から入れます。'},
-    {drawer:['B','御所'], sel:'.drawer .suggest', optional:true, title:'清算金の候補', body:'この月に清算される見込みの差額がボタンで出ます。明細の清算金と同じなら、押すだけで入ります。'},
-    {drawer:['B','御所'], sel:'#bFee', title:'手数料', body:'明細の手数料を入れます。「目安を入れる」で、1.2％＋定額の計算値も入れられます。遅延損害金があれば分けて入れます。'},
-    {drawer:['B','御所'], sel:'#bPaid', title:'通帳の入金額', body:'尼信に入った額を入れます。まだ入金されていなければ空のままで保存できます。'},
-    {drawer:['B','御所'], sel:'#bCalc', title:'入金のチェック', body:'立替額 − 清算金 − 手数料 の計算と、実際の入金が合えば<b>「✓ 計算どおり」</b>と出ます。ずれていれば、明細の入れ漏れを確かめます。'},
-    {tab:'home', title:'毎月の4ステップは以上です', body:'この順番を毎月くり返します。迷ったら「今月の作業」の一番上、「次にやること」を見てください。続けて「報告のしかた」へ進みましょう。'}
+  monthly:{title:'毎月の4ステップ', ic:'list', min:6, next:'report', learn:[['return','再請求分の入れ方'],['percent','清算の時期（20％）'],['check','入金のチェック']], steps:[
+    {tab:'home', sel:'[data-open="A"][data-b="御所"]', ic:'send', title:'① 請求をはじめる', body:'拠点ごとに「入力する」を押します。', pts:[['calendar','毎月1〜10日'],['doc','請求データ（サマリ）']]},
+    {drawer:['A','御所'], sel:'.drawer .docnote', ic:'doc', title:'用意する書類とルール', body:'画面の上にいつも出ています。', pts:[['warn','再請求分はトワライズに請求しない']]},
+    {drawer:['A','御所'], sel:'#aParts', ic:'yen', title:'国保連への請求額', body:'サマリの合計を入れます。', pts:[['send','再請求分は「請求を追加」で別の行に']]},
+    {drawer:['A','御所'], sel:'.drawer .choice', ic:'repeat', title:'トワライズへの請求額', body:'ふだんは「同じ金額」を選びます。', pts:[['return','再請求分があれば「除く」を選ぶ']]},
+    {drawer:['A','御所'], sel:'#aCalc', ic:'calc', title:'自動の計算', body:'立替しない額が出ます。', pts:[['warn','売上概算と10％以上違うと注意']]},
+    {drawer:['A','御所'], sel:'.drawer .df', ic:'save', title:'保存する', body:'保存すると、画面の下に「次は」が出ます。', pts:[['check','ツアー中は保存しなくてOK']]},
+    {drawer:['C','御所'], sel:'.drawer .docnote', ic:'mail', title:'② 払出し通知', body:'2か月前の提供月の確定額を入れます。', pts:[['calendar','5日ごろ'],['doc','払出し通知書']]},
+    {drawer:['C','御所'], sel:'#cK', ic:'yen', title:'確定額', body:'この拠点・この月の合計を入れます。'},
+    {drawer:['C','御所'], sel:'#cCalc', ic:'calc', title:'清算の見込み', body:'差額と、清算される月が出ます。', pts:[['clock','通常は2か月後'],['percent','20％超で1か月早まる']]},
+    {drawer:['C','御所'], sel:'#cRet', ic:'return', title:'誰の分かを残す', body:'返戻なら返戻台帳へ。', pts:[['search','10日の請求資料と照らし合わせる']]},
+    {tab:'home', sel:'[data-goreport]', ic:'chat', title:'③ 報告', body:'月次レポートから送ります。', pts:[['calendar','5〜10日'],['book','「報告のしかた」で詳しく']]},
+    {drawer:['B','御所'], sel:'.drawer .docnote', ic:'receipt', title:'④ トワライズ明細', body:'明細の中身を上から入れます。', pts:[['calendar','15日入金・17日明細']]},
+    {drawer:['B','御所'], sel:'.drawer .suggest', optional:true, ic:'repeat', title:'清算金の候補', body:'明細と同じ額なら、押すだけで入ります。'},
+    {drawer:['B','御所'], sel:'#bFee', ic:'percent', title:'手数料', body:'明細の手数料を入れます。', pts:[['calc','「目安を入れる」で自動計算']]},
+    {drawer:['B','御所'], sel:'#bPaid', ic:'bank', title:'通帳の入金額', body:'尼信に入った額を入れます。'},
+    {drawer:['B','御所'], sel:'#bCalc', ic:'check', title:'入金のチェック', body:'合えば「✓ 計算どおり」と出ます。', pts:[['warn','ずれたら明細の入れ漏れを確認']]},
+    {tab:'home', ic:'flag', title:'4ステップは以上です', body:'迷ったら「次にやること」へ。'}
   ]},
-  report:{title:'報告のしかた（齋藤様・会計の先生）', min:3, next:'track', learn:['毎月の3つの数字の意味','「誰の分か」の内訳の見方','売上概算を5日ごろに伝える手順'], steps:[
-    {tab:'report', sel:'.regular .kpis', title:'毎月の3つの数字', body:'齋藤様に毎月お伝えしている3つの数字です。<b>今月の請求額・先月の国保連からの入金・来月の清算見込み</b>。'},
-    {tab:'report', sel:'.regular table', title:'誰の分か', body:'清算見込みの内訳です。返戻台帳に記録した方が並び、それ以外の差は「返戻以外」にまとまります。+10万円と−5万円で+5万円、のような中身もここで分かります。'},
-    {tab:'report', sel:'#reportText', title:'報告文', body:'内容から自動で作られます。必要なら上の欄にコメントを足します。'},
-    {tab:'report', sel:'#copyBtn', title:'コピーして送る', body:'コピーしてChatworkなどに貼り付けます。'},
-    {tab:'report', sel:'#markDone', title:'報告済みにする', body:'送ったら押します。「今月の作業」の③に ✓ が付き、次にやることが進みます。'},
-    {tab:'cash', sel:'#estSec', title:'売上概算（5日ごろ）', body:'今月の売上の見込みを、<b>会計の先生と齋藤様</b>にお伝えします。額を確かめて文面をコピーし、「お伝えした額として保存」を押します。確定は17日ごろのトワライズの明細です。'},
-    {tab:'cash', title:'報告のしかたは以上です', body:'続けて「差額と返戻を追う」で、差額の追いかけ方を見てみましょう。'}
+  report:{title:'報告のしかた', ic:'chat', min:3, next:'track', learn:[['chat','3つの数字'],['user','誰の分か'],['yen','売上概算']], steps:[
+    {tab:'report', sel:'.regular .kpis', ic:'chat', title:'毎月の3つの数字', body:'これを齋藤様に送ります。', pts:[['send','今月の請求額'],['building','先月の国保連からの入金'],['calc','来月の清算見込み']]},
+    {tab:'report', sel:'.regular table', ic:'user', title:'誰の分か', body:'返戻の方と、それ以外の差に分けて出ます。', pts:[['yen','＋10万と−5万で＋5万、の中身が分かる']]},
+    {tab:'report', sel:'#reportText', ic:'doc', title:'報告文', body:'自動で作られます。'},
+    {tab:'report', sel:'#copyBtn', ic:'copy', title:'コピーして送る', body:'Chatworkに貼り付けます。'},
+    {tab:'report', sel:'#markDone', ic:'check', title:'報告済みにする', body:'今月の作業の③に ✓ が付きます。'},
+    {tab:'cash', sel:'#estSec', ic:'yen', title:'売上概算', body:'会計の先生と齋藤様へ伝えます。', pts:[['calendar','5日ごろに見込み'],['receipt','17日の明細で確定']]},
+    {tab:'cash', ic:'flag', title:'報告のしかたは以上です', body:'次は、差額と返戻の追い方へ。'}
   ]},
-  track:{title:'差額と返戻を追う', min:3, next:'handover', learn:['突合で「未解消」と清算予定を読む','返戻を点数で記録し、金額確定・再請求まで追う'], steps:[
-    {tab:'recon', sel:'#main table', title:'突合：提供月ごとの照合', body:'提供月ごとに、請求 → 国保連の確定額 → 清算 の順に差額を追います。<b>「未解消」が0</b>ならその月は終わりです。'},
-    {tab:'recon', sel:'#main tbody tr', title:'清算予定と明細', body:'「清算予定」の列に、何月の立替入金で清算されるかが出ます。20％を超えた月は「1か月早まり」と出ます。行を押すと、その月の明細と返戻の記録が見られます。'},
-    {tab:'returns', sel:'#main .kpis', title:'返戻台帳', body:'返戻の方を、<b>点数のみ → 再請求待ち → 再請求済 → 入金済</b>まで追います。'},
-    {tab:'returns', sel:'#retAdd', title:'返戻を記録する', body:'月末に返戻の連絡が来たら、ここから記録します。氏名は入れず、事業所内のIDで記録します。'},
-    {drawer:['R'], sel:'#rPts', title:'点数と金額', body:'月末は点数だけ分かります。5日ごろの払出し通知で金額が確定したら、金額を入れて状態を「再請求待ち」にします。'},
-    {drawer:['R'], sel:'#rPlan', title:'再請求', body:'翌月10日に再請求します。<b>トワライズには請求しません。</b>入金を確かめたら「入金済」にします。'},
-    {tab:'returns', title:'差額と返戻の追い方は以上です', body:'最後に「引き継ぎと設定」で、ほかの人に渡すときの準備を見ておきましょう。'}
+  track:{title:'差額と返戻を追う', ic:'search', min:3, next:'handover', learn:[['search','未解消の見方'],['calendar','清算予定'],['return','返戻の4つの状態']], steps:[
+    {tab:'recon', sel:'#main table', ic:'search', title:'突合', body:'提供月ごとに差額を追います。', pts:[['check','「未解消」が0なら完了']]},
+    {tab:'recon', sel:'#main tbody tr', ic:'calendar', title:'清算予定', body:'何月に清算されるかが出ます。', pts:[['percent','20％超は「1か月早まり」'],['search','行を押すと明細']]},
+    {tab:'returns', sel:'#main .kpis', ic:'return', title:'返戻台帳', body:'4つの状態で追います。', pts:[['doc','点数のみ'],['clock','再請求待ち'],['send','再請求済'],['check','入金済']]},
+    {tab:'returns', sel:'#retAdd', ic:'return', title:'返戻を記録', body:'月末の連絡が来たら、ここから。', pts:[['user','氏名ではなくIDで']]},
+    {drawer:['R'], sel:'#rPts', ic:'calc', title:'点数と金額', body:'月末は点数、5日ごろに金額を入れます。'},
+    {drawer:['R'], sel:'#rPlan', ic:'send', title:'再請求', body:'翌月10日に再請求します。', pts:[['warn','トワライズには請求しない']]},
+    {tab:'returns', ic:'flag', title:'以上です', body:'最後は、引き継ぎの準備へ。'}
   ]},
-  handover:{title:'引き継ぎと設定', min:2, next:null, learn:['引き継ぐ方が最初に読む場所','契約条件・入力する人・バックアップ','台帳の確認チェック'], steps:[
-    {tab:'settings', sel:'.flow', title:'毎月の流れ', body:'引き継ぐ方は、まずここを読みます。5つの時期と、それぞれで入れる数字がまとまっています。'},
-    {tab:'settings', sel:'#main details', title:'よくある質問', body:'返戻の再請求分の扱い、20％ルール、誰の分かの調べ方など、迷いやすい点の答えです。'},
-    {tab:'settings', sel:'#sFixed', title:'契約条件', body:'手数料の定額や、清算が1か月早まる基準（20％）はここで変えられます。契約書の値に合わせます。'},
-    {tab:'settings', sel:'#mName', title:'入力する人', body:'担当者の名前を登録します。左下で選ぶと、入力・確認・報告の記録に名前が残ります。'},
-    {tab:'settings', sel:'#bkJson', title:'バックアップ', body:'月に1回、全データを書き出してGoogleドライブなどに保存します。'},
-    {tab:'ledger', sel:'#main table', title:'台帳と確認チェック', body:'入れた数字はすべてここに1行ずつ残ります。入力した人とは<b>別の人</b>が、書類と見比べてチェックを付けます。'},
-    {tab:'learn', title:'すべての講座が終わりました', body:'おつかれさまでした。毎月の作業は「今月の作業」の「次にやること」から始めれば進められます。分からなくなったら、右下の「使い方」からいつでも見直せます。'}
+  handover:{title:'引き継ぎと設定', ic:'shield', min:2, next:null, learn:[['book','最初に読む場所'],['sliders','契約条件'],['shield','バックアップ']], steps:[
+    {tab:'settings', sel:'.flow', ic:'book', title:'毎月の流れ', body:'引き継ぐ方は、まずここを読みます。'},
+    {tab:'settings', sel:'#main details', ic:'search', title:'よくある質問', body:'迷いやすい点の答えです。'},
+    {tab:'settings', sel:'#sFixed', ic:'sliders', title:'契約条件', body:'手数料と20％の基準を変えられます。', pts:[['doc','契約書の値に合わせる']]},
+    {tab:'settings', sel:'#mName', ic:'user', title:'入力する人', body:'担当者の名前を登録します。'},
+    {tab:'settings', sel:'#bkJson', ic:'shield', title:'バックアップ', body:'月に1回、書き出して保存します。', pts:[['folder','Googleドライブなどへ']]},
+    {tab:'ledger', sel:'#main table', ic:'list', title:'台帳と確認チェック', body:'別の人が書類と見比べてチェックします。'},
+    {tab:'learn', ic:'check', title:'すべて受講しました', body:'右下の「使い方」で、いつでも見直せます。'}
   ]}
 };
 const TOUR_ORDER = ['intro','monthly','report','track','handover'];
@@ -203,14 +239,14 @@ async function showStep() {
   if (el) { gScrollTo(el); await gWait(gReduce() ? 30 : 350); }
   const n = t.steps.length, last = TR.i === n - 1;
   TR.root.querySelector('.tour-card').innerHTML = `
-    <div class="tc-top"><span class="eyebrow">${esc(t.title)}</span><span class="tc-count num">${TR.i+1} / ${n}</span></div>
+    <div class="tc-top"><span class="tc-course">${ic(t.ic, 14)}${esc(t.title)}</span><span class="tc-count num">${TR.i+1} / ${n}</span></div>
     <div class="tc-prog"><i style="width:${((TR.i+1)/n*100).toFixed(1)}%"></i></div>
-    <h3 id="tourTitle">${s.title}</h3><p>${s.body}</p>
-    <div class="tc-act"><button type="button" class="btn ghost small" data-tour="end">終了</button><span class="spacer"></span>
-      ${TR.i > 0 ? '<button type="button" class="btn small" data-tour="prev">戻る</button>' : ''}
-      ${last && t.next ? `<button type="button" class="btn small" data-tour="done">一覧へ</button><button type="button" class="btn small primary" data-tour="nextcourse">続けて「${esc(TOURS[t.next].title)}」へ</button>`
-        : `<button type="button" class="btn small primary" data-tour="next">${last ? '完了' : '次へ'}</button>`}</div>
-    <p class="tc-key hint">← → キーでも進めます。Escで終了。</p>`;
+    <div class="tc-head"><span class="tc-ic">${ic(s.ic || 'flag', 26)}</span><div class="col" style="gap:2px;min-width:0"><h3 id="tourTitle">${s.title}</h3><p>${s.body}</p></div></div>
+    ${s.pts ? `<ul class="tc-pts">${s.pts.map(([i, x]) => `<li>${ic(i, 16)}<span>${x}</span></li>`).join('')}</ul>` : ''}
+    <div class="tc-act"><button type="button" class="btn ghost small" data-tour="end">終了</button><span class="tc-key" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd></span><span class="spacer"></span>
+      ${TR.i > 0 ? `<button type="button" class="btn small iconbtn" data-tour="prev" aria-label="戻る">${ic('arrow',16).replace('<svg','<svg style="transform:scaleX(-1)"')}</button>` : ''}
+      ${last && t.next ? `<button type="button" class="btn small" data-tour="done">一覧へ</button><button type="button" class="btn small primary" data-tour="nextcourse">次の講座へ${ic('arrow',14)}</button>`
+        : `<button type="button" class="btn small primary" data-tour="next">${last ? '完了' : '次へ'}${last ? ic('check',14) : ic('arrow',14)}</button>`}</div>`;
   placeTour();
   TR.root.querySelector('[data-tour="next"],[data-tour="nextcourse"]')?.focus({preventScroll:true});
 }
@@ -254,38 +290,65 @@ function placeTour() {
   Object.assign(card.style, {left:left+'px', top:top+'px', right:'', bottom:''});
 }
 
+/* ---------- お金の流れの図 ---------- */
+function moneyFlowSvg() {
+  const node = (x, y, w, name, sub, icn, cls = '') => `<g class="mf-node ${cls}"><rect x="${x}" y="${y}" width="${w}" height="64" rx="12"/>
+    <g transform="translate(${x+14},${y+20})" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mf-ic">${IC[icn]}</g>
+    <text x="${x+48}" y="${y+29}" class="mf-name">${name}</text><text x="${x+48}" y="${y+48}" class="mf-sub">${sub}</text></g>`;
+  const lab = (x, y, no, t, anchor = 'start') => `<g class="mf-lab"><text x="${x}" y="${y}" text-anchor="${anchor}"><tspan class="mf-no">${no}</tspan> ${t}</text></g>`;
+  return `<svg class="mf" viewBox="0 0 760 270" role="img" aria-label="お金の流れ：LINOAが国保連とトワライズに請求し、トワライズが立て替えて入金。国保連の支払はトワライズに入り、差額は後の立替入金で清算される">
+    <defs><marker id="mfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" class="mf-head"/></marker></defs>
+    ${node(10, 103, 160, 'LINOA', '御所・大和高田', 'home', 'me')}
+    ${node(300, 14, 170, '国保連', '審査・支払', 'building')}
+    ${node(300, 192, 170, 'トワライズ', '立替・清算', 'repeat')}
+    ${node(590, 192, 160, '尼崎信用金庫', 'LINOAの口座', 'bank', 'me')}
+    <path d="M170 122 C 235 122 235 46 296 46" class="mf-line" marker-end="url(#mfa)"/>
+    <path d="M170 150 C 235 150 235 224 296 224" class="mf-line" marker-end="url(#mfa)"/>
+    <path d="M385 78 L 385 188" class="mf-line dash" marker-end="url(#mfa)"/>
+    <path d="M470 224 L 586 224" class="mf-line" marker-end="url(#mfa)"/>
+    ${lab(186, 70, '①', '請求 1〜10日')}
+    ${lab(186, 196, '①', '立替を請求')}
+    ${lab(396, 128, '②', '確定・支払（翌々月）')}
+    ${lab(396, 147, '', '払出し通知は5日ごろ')}
+    ${lab(528, 212, '④', '立替入金 15日', 'middle')}
+    <g class="mf-note"><rect x="520" y="14" width="230" height="122" rx="12"/>
+      <text x="536" y="40" class="mf-name">差額の清算</text>
+      <text x="536" y="64" class="mf-sub">差額 ＝ 確定額 − 立替請求</text>
+      <text x="536" y="86" class="mf-sub">→ 2か月後の立替入金で清算</text>
+      <text x="536" y="108" class="mf-sub">→ 20％を超えると1か月早まる</text>
+      <text x="536" y="126" class="mf-sub">（再請求分は立替を請求しない）</text></g>
+  </svg>`;
+}
+
 /* ---------- レクチャー一覧 ---------- */
 function renderLearn() {
   const g = gLoad(), done = g.done || {}, nDone = TOUR_ORDER.filter(k => done[k]).length;
   const nextId = TOUR_ORDER.find(k => !done[k]);
   const cards = TOUR_ORDER.map((k, i) => { const t = TOURS[k], ok = !!done[k], isNext = k === nextId;
     return `<article class="course ${ok?'is-done':''} ${isNext?'is-next':''}">
-      <div class="c-head"><span class="c-no">${ok?'✓':i+1}</span><div class="col" style="gap:2px;min-width:0"><h3>${t.title}</h3><span class="hint">約${t.min}分・${t.steps.length}ステップ${ok?'・受講済み':''}</span></div>${isNext?'<span class="pill wait">次はこれ</span>':''}</div>
-      <ul>${t.learn.map(x => `<li>${x}</li>`).join('')}</ul>
-      <div><button type="button" class="btn ${isNext?'primary':''}" data-tourstart="${k}|0">${ok?'もう一度見る':'はじめる'}</button></div></article>`; }).join('');
-  const rows = [
-    ['毎月1〜10日（目安5〜6日）','① 国保連・トワライズへ請求','請求データ（サマリ）／トワライズへの請求額','返戻の再請求分はトワライズに請求しない','A'],
-    ['5日ごろ','② 国保連 払出し通知','払出し通知書','誰の分かを10日の請求資料と照らし合わせる','C'],
-    ['5〜10日','③ 齋藤様へ報告・売上概算','月次レポート／資金繰り','3つの数字をコピーして送り、報告済みにする','D'],
-    ['15日・17日','④ トワライズ明細・精算','トワライズの明細／尼信の通帳','入金が「✓ 計算どおり」になるか確かめる','B'],
-    ['月末','返戻の連絡','返戻の連絡（点数のみ）','返戻台帳に点数で記録する','R']
+      <div class="c-head"><span class="c-ic">${ok ? ic('check', 24) : ic(t.ic, 24)}</span><div class="col" style="gap:0;min-width:0"><span class="hint">講座 ${i+1}</span><h3>${t.title}</h3></div></div>${isNext?'<span class="ribbon">次はこれ</span>':''}
+      <div class="chips col">${t.learn.map(([n, x]) => chip(n, x)).join('')}</div>
+      <div class="c-foot">${chip('clock', `約${t.min}分`, 'plain')}<button type="button" class="btn ${isNext?'primary':''}" data-tourstart="${k}|0">${ic(ok?'repeat':'play',16)}${ok?'もう一度':'はじめる'}</button></div></article>`; }).join('');
+  const flow = [
+    ['A','send','1〜10日','請求','請求データ'],
+    ['C','mail','5日ごろ','払出し通知','払出し通知書'],
+    ['D','chat','5〜10日','報告','月次レポート'],
+    ['B','receipt','15・17日','明細','トワライズ明細'],
+    ['R','return','月末','返戻の連絡','点数のみ']
   ];
+  const hand = [['book','講座を5つ受講','約17分'],['user','名前を登録','設定・使い方'],['repeat','先月分を一緒に入力','前任者と①〜④'],['check','確認は別の人','台帳のチェック'],['search','困ったら','よくある質問']];
   $('main').innerHTML = `<div class="page">
-    <section class="panel"><div class="row"><div class="ptitle" style="flex:1"><span class="eyebrow">使い方レクチャー</span><h1>実際の画面で、順番に覚える</h1>
-      <p class="hint">講座を始めると、画面の上に説明が出て、該当の場所を順番に案内します。デモのサンプルなので、触っても本番には影響しません。上から順に受講するのがおすすめです。</p></div>
-      <div class="learn-prog"><b class="num">${nDone} / ${TOUR_ORDER.length}</b><span class="hint">受講済み</span><div class="nc-bar">${TOUR_ORDER.map(k => `<i class="${done[k]?'on':''}"></i>`).join('')}</div></div></div></section>
+    <section class="panel learn-head"><span class="nc-ic">${ic('book', 30)}</span><div class="col" style="gap:4px;flex:1;min-width:220px"><span class="eyebrow">使い方レクチャー</span><h1>実際の画面で、順番に覚える</h1>
+      <div class="chips">${chip('play','画面の上で案内')}${chip('check','デモなので触ってOK')}${chip('clock','全部で約17分')}</div></div>
+      <div class="learn-prog"><span class="num"><b>${nDone}</b> / ${TOUR_ORDER.length}</span><span class="hint">受講済み</span><div class="nc-bar">${TOUR_ORDER.map(k => `<i class="${done[k]?'on':''}"></i>`).join('')}</div></div></section>
     <section class="courses">${cards}</section>
-    <section class="panel col" style="gap:12px"><div class="ptitle"><h2>毎月のチェックリスト</h2><p class="hint">引き継ぎのときは、この表と「今月の作業」の「次にやること」だけで回せるようにしています。</p></div>
-      <div class="tablewrap"><table><thead><tr><th>時期</th><th>やること</th><th>手元に用意する書類</th><th>ポイント</th><th></th></tr></thead><tbody>
-      ${rows.map(([a,b,c,d,k]) => `<tr><td>${a}</td><td><b>${b}</b></td><td>${c}</td><td>${d}</td><td>${k==='R'?'<button type="button" class="btn small" data-go="returns">開く</button>':`<button type="button" class="btn small" data-tourstart="${STEP_TOUR[k].join('|')}">やり方</button>`}</td></tr>`).join('')}</tbody></table></div></section>
-    <section class="panel col" style="gap:12px"><h2>引き継ぐときの進め方</h2>
-      <ol class="handover">
-        <li><b>講座を5つ受講する</b><span>このページの上から順に。全部で約17分です。</span></li>
-        <li><b>入力する人に名前を登録する</b><span>「設定・使い方」で登録し、左下で選びます。</span></li>
-        <li><b>先月分を一緒に入れてみる</b><span>前任者と画面を見ながら、①〜④を1回ずつ入れます。</span></li>
-        <li><b>確認は別の人が行う</b><span>「台帳・履歴」で、書類と見比べてチェックを付けます。</span></li>
-        <li><b>困ったら「よくある質問」</b><span>「設定・使い方」の下にあります。</span></li>
-      </ol></section></div>`;
+    <section class="panel col" style="gap:14px"><div class="row"><h2>${ic('repeat',20)} お金の流れ</h2><span class="hint">番号は「今月の作業」のステップと同じです</span></div>
+      <div class="mf-wrap">${moneyFlowSvg()}</div></section>
+    <section class="panel col" style="gap:14px"><div class="row"><h2>${ic('calendar',20)} 毎月の流れ</h2><span class="hint">押すと、その部分のやり方を案内します</span></div>
+      <ol class="mflow">${flow.map(([k, n, d, t, doc]) => `<li><button type="button" class="mf-step" ${k==='R'?'data-go="returns"':`data-tourstart="${STEP_TOUR[k].join('|')}"`}>
+        <span class="node">${ic(n, 22)}</span><span class="pill wait">${d}</span><b>${k==='R'?'':STEP_META[k].no+' '}${t}</b><span class="hint">${ic('doc',13)} ${doc}</span></button></li>`).join('')}</ol></section>
+    <section class="panel col" style="gap:14px"><h2>${ic('shield',20)} 引き継ぐときは</h2>
+      <ol class="hand">${hand.map(([n, t, s], i) => `<li><span class="node">${ic(n, 20)}</span><b>${i+1}. ${t}</b><span class="hint">${s}</span></li>`).join('')}</ol></section></div>`;
 }
 
 /* ---------- イベント ---------- */
