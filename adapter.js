@@ -1,6 +1,6 @@
 /* デモ版：claude.ai の保存機能の代わりに、ブラウザの localStorage にデータを保存する */
 (function () {
-  const KEY = 'linoa-ledger-demo-v1';
+  const KEY = 'linoa-ledger-demo-v2';
   const SEED = window.__SEED__;
   const COLS = ['entries', 'closes', 'returns', 'estimates', 'logs', 'settings'];
   let store;
