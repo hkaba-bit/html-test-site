@@ -178,7 +178,7 @@ const TOURS = {
     {tab:'settings', sel:'#mName', ic:'user', title:'入力する人', body:'担当者の名前を登録します。'},
     {tab:'settings', sel:'#bkJson', ic:'shield', title:'バックアップ', body:'月に1回、書き出して保存します。', pts:[['folder','Googleドライブなどへ']]},
     {tab:'ledger', sel:'#main table', ic:'list', title:'台帳と確認チェック', body:'別の人が書類と見比べてチェックします。'},
-    {tab:'learn', ic:'check', title:'すべて受講しました', body:'右下の「使い方」で、いつでも見直せます。'}
+    {tab:'learn', ic:'check', title:'すべて受講しました', body:'画面上の「この画面の使い方」で、いつでも見直せます。'}
   ]}
 };
 const TOUR_ORDER = ['intro','monthly','report','track','handover'];
@@ -362,11 +362,70 @@ document.addEventListener('click', e => {
   const ts = e.target.closest('[data-tourstart]'); if (ts) { const [id, at] = ts.dataset.tourstart.split('|'); startTour(id, at); return; }
   const ng = e.target.closest('[data-nextgo]'); if (ng) { const [k, b] = ng.dataset.nextgo.split('|'); ng.closest('.nextbar')?.remove(); goNext(k, b); return; }
   if (e.target.closest('[data-nbclose]')) { e.target.closest('.nextbar')?.remove(); return; }
-  if (e.target.closest('[data-guideclose]')) { gSave({seen:true}); $('welcome')?.remove(); toast('右下の「使い方」から、いつでも見られます'); return; }
+  if (e.target.closest('[data-guideclose]')) { gSave({seen:true}); $('welcome')?.remove(); toast('画面上の「この画面の使い方」から、いつでも見られます'); return; }
   if (e.target.closest('#helpFab')) { const c = CONTEXT_TOUR[S.tab] || 'intro'; const [id, at] = Array.isArray(c) ? c : [c, 0]; startTour(id, at); }
 }, true);
-(function () {
-  const b = document.createElement('button'); b.type = 'button'; b.id = 'helpFab'; b.className = 'helpfab';
-  b.innerHTML = '<span aria-hidden="true">?</span>使い方'; b.setAttribute('aria-label', 'この画面の使い方を見る');
-  document.body.appendChild(b);
-})();
+
+
+/* ================= 画面の階層・導線 ================= */
+const MENU_GROUPS = [
+  ['毎月の作業', ['home']],
+  ['報告・見通し', ['report','cash']],
+  ['確認・追跡', ['recon','returns','ledger']],
+  ['ヘルプ・設定', ['learn','settings']]
+];
+const PAGE_INFO = {
+  home:{lead:'次にやることから順に進めます'},
+  report:{lead:'齋藤様への月1回の報告'},
+  cash:{lead:'売上概算と入金の見通し'},
+  recon:{lead:'提供月ごとの差額の照合'},
+  returns:{lead:'返戻の方を入金まで追う'},
+  ledger:{lead:'入力したすべての記録'},
+  learn:{lead:'実際の画面で使い方を覚える'},
+  settings:{lead:'流れ・契約条件・バックアップ'}
+};
+const groupOf = t => (MENU_GROUPS.find(g => g[1].includes(t)) || ['',''])[0];
+function crumbHtml() {
+  const m = MENU.find(x => x[0] === S.tab) || MENU[0];
+  return `<div class="crumb-path"><button type="button" class="crumb-home" data-go="home">${ic('home',14)}<span>ホーム</span></button>${ic('arrow',12)}<span class="crumb-grp">${groupOf(S.tab)}</span>${ic('arrow',12)}<b>${m[1]}</b><span class="crumb-lead">${PAGE_INFO[S.tab]?.lead||''}</span></div>
+    <div class="crumb-ctx">${chip('home', `表示：${S.base}`, 'plain')}${S.tab==='home'?'':chip('calendar', `${ym(S.work)}の作業`, 'plain')}<button type="button" class="btn small" id="helpTop">${ic('book',15)}この画面の使い方</button></div>`;
+}
+/* 月ごとの流れの中で、前後の画面へ進むための帯 */
+const FLOW_NAV = {
+  report:{prev:['home','今月の作業'], next:['cash','売上概算を伝える','資金繰り','estSec']},
+  cash:{prev:['report','月次レポート'], next:['home','今月の作業へ戻る','次にやることを確認']},
+  recon:{prev:['home','今月の作業'], next:['returns','返戻台帳','誰の分かを記録']},
+  returns:{prev:['recon','突合'], next:['home','今月の作業へ戻る','次にやることを確認']},
+  ledger:{prev:['home','今月の作業']},
+  learn:{next:['home','今月の作業をはじめる','次にやることから']},
+  settings:{prev:['learn','使い方レクチャー'], next:['home','今月の作業へ戻る','次にやることを確認']}
+};
+function flowNavHtml(tab) {
+  const f = FLOW_NAV[tab]; if (!f) return '';
+  return `<nav class="flownav" aria-label="前後の画面">${f.prev ? `<button type="button" class="btn" data-go="${f.prev[0]}">${ic('arrow',16).replace('<svg','<svg style="transform:scaleX(-1)"')}<span class="col" style="gap:0;align-items:flex-start"><small>戻る</small>${f.prev[1]}</span></button>` : '<span></span>'}
+    ${f.next ? `<button type="button" class="btn primary" data-go="${f.next[0]}" ${f.next[3]?`data-anchor="${f.next[3]}"`:''}><span class="col" style="gap:0;align-items:flex-end"><small>${f.next[2]||'次へ'}</small>${f.next[1]}</span>${ic('arrow',16)}</button>` : ''}</nav>`;
+}
+/* 入力画面の上：拠点の切り替えと、3つの手順 */
+function drawerFlow(k, b, w) {
+  const okState = s => ['done','ok','na'].includes(s);
+  const tabs = BASES.map(x => { const st = stepStatus(k, x, w || S.work).state, ok = okState(st), cur = x === b;
+    return `<button type="button" class="dtab ${cur?'is-cur':''} ${ok?'is-done':''}" ${cur?'aria-current="true"':`data-dswitch="${k}|${x}"`}>${ok ? ic('check',14) : ic('home',14)}${x}${ok?'':'<small>未完了</small>'}</button>`; }).join('');
+  const m = STEP_META[k];
+  return `<div class="dflow"><div class="dtabs" role="group" aria-label="拠点">${tabs}</div>
+    <ol class="dsteps"><li>${ic('doc',15)}書類を用意</li><li>${ic(m.ic==='receipt'?'calc':'yen',15)}数字を入れる</li><li>${ic('save',15)}確認して保存</li></ol></div>`;
+}
+/* 保存のあと：同じ作業の別の拠点が残っていれば、そのまま開く */
+function savedNextAuto(msg, k) {
+  setTimeout(() => {
+    const n = nextStep(S.work);
+    if (n.cur && n.cur.k === k && n.cur.base && !$('drawerRoot').innerHTML) {
+      toast(`${msg}　次は${n.cur.base}`);
+      goNext(n.cur.k, n.cur.base);
+    } else savedNext(msg);
+  }, 350);
+}
+document.addEventListener('click', e => {
+  const ds = e.target.closest('[data-dswitch]'); if (ds) { const [k, b] = ds.dataset.dswitch.split('|'); closeDrawer(); goNext(k, b); return; }
+  const an = e.target.closest('[data-anchor]'); if (an) { const id = an.dataset.anchor; setTimeout(() => document.getElementById(id)?.scrollIntoView({block:'start', behavior: gReduce()?'auto':'smooth'}), 60); }
+  if (e.target.closest('#helpTop')) { const c = CONTEXT_TOUR[S.tab] || 'intro'; const [id, at] = Array.isArray(c) ? c : [c, 0]; startTour(id, at); }
+});

@@ -185,10 +185,10 @@ async function saveSettings(patch, text) { const next = {...S.settings, ...patch
 
 /* ================= ドロワー ================= */
 let drawerCleanup = null;
-function openDrawer({eyebrow, title, note, body, footer, mount}) {
+function openDrawer({eyebrow, title, note, body, footer, mount, pre}) {
   $('drawerRoot').innerHTML = `<div class="backdrop" data-close="1"></div><aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="dTitle">
     <div class="dh"><div class="col" style="gap:2px;flex:1"><span class="eyebrow">${eyebrow||''}</span><h3 id="dTitle">${title}</h3></div><button type="button" class="btn iconbtn" data-close="1" aria-label="閉じる">✕</button></div>
-    <div class="db">${note?`<div class="docnote">${note.includes('class="chips"')?'':ICON_DOC}<div class="col" style="gap:8px;min-width:0">${note}</div></div>`:''}${body}</div>
+    <div class="db">${pre||''}${note?`<div class="docnote">${note.includes('class="chips"')?'':ICON_DOC}<div class="col" style="gap:8px;min-width:0">${note}</div></div>`:''}${body}</div>
     <div class="df">${footer||''}</div></aside>`;
   $('drawerRoot').querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeDrawer));
   const root = $('drawerRoot').querySelector('.drawer');
@@ -215,6 +215,7 @@ function openStepA(b, sm) {
   openDrawer({
     eyebrow:`① 国保連への請求｜${b}`, title:`${ym(sm)}提供分の請求`,
     note:`<div class="chips">${chip('doc','請求データ（サマリ）の合計')}${chip('repeat','トワライズへの請求額')}${chip('calendar',`締切 ${dl0.getMonth()+1}/${dl0.getDate()}（${WD[dl0.getDay()]}）`)}</div><div class="rule">${ic('warn',15)}<span>返戻の再請求分は、トワライズに請求しない<small>（二重の立替になり、20％ルールに当たりやすくなるため）</small></span></div>`,
+    pre: drawerFlow('A', b, addM(sm,1)),
     body: noMe() + `
       <div class="sec"><h4><span class="n">1</span>国保連への請求額</h4>
         <div class="lines" id="aParts"></div>
@@ -232,7 +233,7 @@ function openStepA(b, sm) {
           <label class="f">立替しない理由<span class="sub">国保連には請求するが、トワライズには請求しない分の理由</span>
             <select id="aReason"><option value="">選んでください</option>${NF_REASONS.map(x=>`<option ${x===reason?'selected':''}>${x}</option>`).join('')}</select></label></div></div>
       <div class="sec"><label class="f">メモ（任意）<input id="aMemo" value="${esc(memo)}" placeholder="例：②は8月分の月遅れ請求"></label><div class="calc" id="aCalc"></div></div>`,
-    footer: footerSave(),
+    footer: footerSave('保存して次へ'),
     mount: root => {
       const draw = () => {
         $('aParts').innerHTML = parts.map((v,i) => `<div class="partline"><span class="hint">${'①②③④⑤⑥'[i]}枚目</span><input class="amt" data-pi="${i}" inputmode="numeric" value="${v===''?'':yen(v)}" placeholder="0" aria-label="${i+1}枚目の請求額"><button type="button" class="btn iconbtn" data-pdel="${i}" aria-label="この行を削除" ${parts.length===1?'disabled':''}>✕</button></div>`).join('');
@@ -266,7 +267,7 @@ function openStepA(b, sm) {
             {base:b, kind:'K10', sm, pm, amount:k, parts:nums, note, memo: [nums.length>1 ? nums.map((n,i)=>`${'①②③④⑤⑥'[i]}${yen(n)}`).join(' ') : '', note].filter(Boolean).join('／')},
             {base:b, kind:'T10', sm, pm, amount:t, reason:rsn, memo: rsn}
           ], `${b} ${ym(sm)}提供分の請求`);
-          closeDrawer(); savedNext(`${b}の${mm(sm)}分の請求を保存しました`);
+          closeDrawer(); savedNextAuto(`${b}の${mm(sm)}分の請求を保存しました`, 'A');
         } catch (err) { $('dSave').disabled = false; msg.textContent = '保存できませんでした。もう一度お試しください。'; }
       });
     }
@@ -286,6 +287,7 @@ function openStepB(b, pm) {
   openDrawer({
     eyebrow:`④ トワライズ明細・精算の確認｜${b}`, title:`${ym(pm)}の立替入金`,
     note:`<div class="chips">${chip('receipt','トワライズの明細（17日ごろ）')}${chip('bank','尼信の通帳')}</div><div class="rule">${ic('check',15)}<span>明細を上から写すと、入金が計算どおりか自動でチェック</span></div>`,
+    pre: drawerFlow('B', b, pm),
     body: noMe() + `
       <div class="sec"><h4><span class="n">1</span>今回の立替請求（①で入力済み）</h4>
         ${fac.length ? fac.map(r => `<div class="ro"><span>${mm(r.sm)}提供分の立替請求</span><b class="num">${yen(r.amount)}</b></div>`).join('') : `<div class="res warn" style="margin:0">この月の立替請求がまだありません。先に「① 国保連への請求」で${mm(addM(pm,-1))}提供分を入れてください。</div>`}</div>
@@ -303,7 +305,7 @@ function openStepB(b, pm) {
       <div class="sec"><h4><span class="n">4</span>尼信の入金額</h4>
         <label class="f">通帳に入金された額（円）<span class="sub">まだ入金されていなければ空のままで保存できます</span><input class="amt" id="bPaid" inputmode="numeric" value="${paidRow.length?yen(sum(paidRow,['B10'])):''}" placeholder="未入金"></label>
         <div class="calc" id="bCalc"></div></div>`,
-    footer: footerSave(),
+    footer: footerSave('保存して次へ'),
     mount: root => {
       const draw = () => {
         $('bLines').innerHTML = lines.map((l,i) => `<div class="line">
@@ -345,7 +347,7 @@ function openStepB(b, pm) {
         if (late) docs.push({base:b, kind:'T32', pm, amount:-late});
         if (paidStr) docs.push({base:b, kind:'B10', pm, amount: toNum(paidStr)});
         $('dSave').disabled = true; msg.textContent = '保存しています…';
-        try { await replaceDocs(editable, docs, `${b} ${ym(pm)}の精算`); closeDrawer(); savedNext(`${b}の${mm(pm)}の精算を保存しました`); }
+        try { await replaceDocs(editable, docs, `${b} ${ym(pm)}の精算`); closeDrawer(); savedNextAuto(`${b}の${mm(pm)}の精算を保存しました`, 'B'); }
         catch (err) { $('dSave').disabled = false; msg.textContent = '保存できませんでした。もう一度お試しください。'; }
       });
     }
@@ -360,13 +362,14 @@ function openStepC(b, sm) {
   openDrawer({
     eyebrow:`② 国保連 払出し通知の確認｜${b}`, title:`${ym(sm)}提供分の確定額`,
     note:`<div class="chips">${chip('mail',`払出し通知書（${mm(addM(sm,2))}5日ごろ）`)}${chip('bank','トワライズの口座への振込額')}</div><div class="rule">${ic('calc',15)}<span>立替請求との差 ＝ 清算の見込み</span></div><div class="rule">${ic('search',15)}<span>誰の分かは、10日の請求資料と照らし合わせて返戻台帳へ<small>（通知書は市町村番号ごとの合計）</small></span></div>`,
+    pre: drawerFlow('C', b, addM(sm,2)),
     body: noMe() + `
       <div class="sec"><div class="ro"><span>国保連への請求（①）</span><b class="num">${yen(k)}</b></div><div class="ro"><span>立替請求（①）</span><b class="num">${yen(t)}</b></div>
         ${rets.length?`<div class="ro"><span>返戻台帳に記録済み（${rets.length}件）</span><b class="num">${yen(retSum)}</b></div>`:''}</div>
       <div class="sec"><label class="f">国保連の確定額（円）<span class="sub">払出し通知書の合計（この拠点・この提供月の分）</span><input class="amt" id="cK" inputmode="numeric" value="${k30.length?yen(sum(k30,['K30'])):''}"></label>
         <label class="f">メモ（任意）<input id="cMemo" value="${esc(k30[0]?.memo||'')}" placeholder="例：返戻3名（受給者証の期限切れ）"></label>
         <div class="calc" id="cCalc"></div></div>`,
-    footer: footerSave() + `<div class="spacer"></div><button type="button" class="btn" id="cRet">返戻を記録する</button>`,
+    footer: footerSave('保存して次へ') + `<div class="spacer"></div><button type="button" class="btn" id="cRet">返戻を記録する</button>`,
     mount: root => {
       const calc = () => {
         const v = toNum($('cK').value), gap = v - t, open = gap - off;
@@ -383,7 +386,7 @@ function openStepC(b, sm) {
         const v = toNum($('cK').value), msg = $('dMsg');
         if (!v) return msg.textContent = '国保連の確定額を入れてください。';
         $('dSave').disabled = true; msg.textContent = '保存しています…';
-        try { await replaceDocs(k30, [{base:b, kind:'K30', sm, pm:addM(sm,2), amount:v, memo:$('cMemo').value.trim()}], `${b} ${ym(sm)}提供分の払出し通知`); closeDrawer(); savedNext(`${b}の${mm(sm)}分の確定額を保存しました`); }
+        try { await replaceDocs(k30, [{base:b, kind:'K30', sm, pm:addM(sm,2), amount:v, memo:$('cMemo').value.trim()}], `${b} ${ym(sm)}提供分の払出し通知`); closeDrawer(); savedNextAuto(`${b}の${mm(sm)}分の確定額を保存しました`, 'C'); }
         catch (err) { $('dSave').disabled = false; msg.textContent = '保存できませんでした。もう一度お試しください。'; }
       });
     }
@@ -460,8 +463,10 @@ function renderHome() {
   const dlCls = isNow && left >= 0 ? (left === 0 ? 'today' : left <= 3 ? 'soon' : '') : '';
   $('main').innerHTML = `<div class="page">${guideBanner()}${nextCardHtml(w)}
     <section class="panel col" style="gap:14px">
-      <div class="monthbar"><button type="button" class="btn navbtn" data-wm="-1" aria-label="前の月">‹</button><h1>${ym(w)}の作業</h1><button type="button" class="btn navbtn" data-wm="1" aria-label="次の月">›</button>${w!==nowM?`<button type="button" class="btn ghost" data-wm="0">今月に戻る</button>`:''}<div class="spacer"></div></div>
-      <div class="deadline ${dlCls}"><span class="hint">国保連 請求の締切</span><span class="big">${dl0.getMonth()+1}月${dl0.getDate()}日（${WD[dl0.getDay()]}）</span>${isNow?(left>0?`<span>あと <b>${left}日</b></span>`:left===0?'<b>今日が締切です</b>':'<span class="hint">締切は過ぎました</span>'):''}<span class="hint">10日が土日祝のときは翌営業日</span></div>
+      <div class="monthbar"><span class="mb-ic">${ic('list',20)}</span><div class="col" style="gap:0"><span class="eyebrow">今月の4ステップ</span><h1>${ym(w)}の作業</h1></div>
+        <div class="mb-nav"><button type="button" class="btn navbtn" data-wm="-1" aria-label="前の月">‹</button>${w!==nowM?`<button type="button" class="btn small" data-wm="0">今月</button>`:''}<button type="button" class="btn navbtn" data-wm="1" aria-label="次の月">›</button></div>
+        <div class="spacer"></div>
+        <div class="deadline ${dlCls}">${ic('calendar',18)}<span class="hint">請求の締切</span><b class="big">${dl0.getMonth()+1}/${dl0.getDate()}（${WD[dl0.getDay()]}）</b>${isNow?(left>0?`<span class="pill wait">あと${left}日</span>`:left===0?'<span class="pill bad">今日まで</span>':'<span class="pill na">締切後</span>'):''}</div></div>
       <div class="timeline">${tl}</div>
     </section>
     <section class="steps">${stepHtml}</section>
@@ -563,12 +568,19 @@ function renderReport() {
       <div class="ptitle"><h2>報告文</h2><p class="hint">内容から自動で作ります。コメントを一言添えて、コピーしてChatworkなどに貼り付けてください。</p></div>
       <label class="f">今月のコメント（任意）<span class="sub">報告文の最後に入ります。保存すると他の人にも見えます</span><textarea id="cmt" rows="3" placeholder="例：6月分の返戻は9月の精算ですべて相殺されました。">${esc(close.comment||'')}</textarea></label>
       <textarea id="reportText" rows="16" readonly aria-label="報告文"></textarea>
-      <div class="row"><button type="button" class="btn primary" id="copyBtn">報告文をコピー</button><button type="button" class="btn" id="saveCmt">コメントを保存</button><button type="button" class="btn" id="markDone">${close.reportedAt ? '報告済みを取り消す' : '報告済みにする'}</button>${close.reportedAt?`<span class="hint">${new Date(close.reportedAt).toLocaleDateString('ja-JP')} に報告済み${close.reportedBy?`（${esc(close.reportedBy)}）`:''}</span>`:''}</div></section></div>`;
+      <div><button type="button" class="btn small ghost" id="saveCmt">${ic('save',14)}コメントを保存</button></div>
+      <ol class="actsteps" aria-label="報告の手順">
+        <li class="${close.reportedAt?'is-done':'is-cur'}"><span class="as-no">1</span><button type="button" class="btn ${close.reportedAt?'':'primary'}" id="copyBtn">${ic('copy',16)}報告文をコピー</button></li>
+        <li class="${close.reportedAt?'is-done':''}"><span class="as-no">2</span><span class="as-tx">${ic('chat',16)}Chatworkに貼り付けて送る</span></li>
+        <li class="${close.reportedAt?'is-done':''}"><span class="as-no">3</span><button type="button" class="btn ${close.reportedAt?'':''}" id="markDone">${close.reportedAt ? ic('repeat',16)+'報告済みを取り消す' : ic('check',16)+'報告済みにする'}</button></li>
+        ${close.reportedAt?`<li class="is-done as-note">${ic('check',16)}${new Date(close.reportedAt).toLocaleDateString('ja-JP')} に報告済み${close.reportedBy?`（${esc(close.reportedBy)}）`:''}</li>`:''}
+      </ol></section></div>`;
   renderTrend(list, pms, pm);
   const upd = () => { $('reportText').value = reportText(pm, st, open, $('cmt').value.trim(), kp, rg); }; upd();
   $('cmt').addEventListener('input', upd);
   $('pmSel').addEventListener('change', e => { S.repPm = e.target.value; renderReport(); });
-  $('copyBtn').addEventListener('click', async () => { const t = $('reportText'); try { await navigator.clipboard.writeText(t.value); toast('報告文をコピーしました'); } catch (e) { t.select(); toast('文章を選択しました。Ctrl+C でコピーしてください'); } });
+  const stepOn = () => { if (close.reportedAt) return; $('copyBtn').classList.remove('primary'); $('markDone').classList.add('primary'); const li = $('main').querySelectorAll('.actsteps li'); li[0].className = 'is-done'; li[1].className = 'is-done'; li[2].className = 'is-cur'; };
+  $('copyBtn').addEventListener('click', async () => { const t = $('reportText'); try { await navigator.clipboard.writeText(t.value); toast('コピーしました。Chatworkに貼り付けて送ってください'); } catch (e) { t.select(); toast('文章を選択しました。Ctrl+C でコピーしてください'); } stepOn(); });
   const saveClose = async patch => { await db.doc('closes/' + pm).set({...(S.closes[pm]||{}), ...patch}); };
   $('saveCmt').addEventListener('click', async () => { try { await saveClose({comment: $('cmt').value.trim()}); toast('コメントを保存しました'); } catch (e) { toast('保存できませんでした'); } });
   $('markDone').addEventListener('click', async () => { const done = !!close.reportedAt; try { await saveClose({comment: $('cmt').value.trim(), reportedAt: done ? null : new Date().toISOString(), reportedBy: done ? null : (S.me||'')}); logIt('報告', `${ym(pm)}の報告を${done?'取り消し':'報告済みに'}`); done ? toast('報告済みを取り消しました') : savedNext('報告済みにしました'); } catch (e) { toast('保存できませんでした'); } });
@@ -929,7 +941,8 @@ $('fileIn').addEventListener('change', async e => {
 function drawMenu() {
   const nOpen = BASES.flatMap(openItems).filter(o => o.state === 'open').length;
   const nRet = S.returns.filter(x => !['入金済','対象外'].includes(x.status) && x.plan && x.plan < nowM).length;
-  $('menu').innerHTML = MENU.map(([k,l,ic]) => `<button type="button" data-tab="${k}" ${S.tab===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg>${l}${k==='recon'&&nOpen?`<span class="badge">${nOpen}</span>`:k==='returns'&&nRet?`<span class="badge">${nRet}</span>`:''}</button>`).join('');
+  const btn = ([k,l,icn]) => `<button type="button" data-tab="${k}" ${S.tab===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icn}</svg>${l}${k==='recon'&&nOpen?`<span class="badge">${nOpen}</span>`:k==='returns'&&nRet?`<span class="badge">${nRet}</span>`:''}</button>`;
+  $('menu').innerHTML = MENU_GROUPS.map(([g, ks]) => `<div class="mgroup"><span class="mg-lbl">${g}</span>${ks.map(k => btn(MENU.find(m => m[0] === k))).join('')}</div>`).join('');
 }
 function drawMe() {
   const ms = S.settings.members || [];
@@ -939,6 +952,8 @@ function render() {
   drawMenu();
   if (!S.loaded && db) { $('main').innerHTML = '<div class="page"><div class="panel"><p class="hint">データを読み込んでいます…</p></div></div>'; return; }
   ({home:renderHome, report:renderReport, cash:renderCash, recon:renderRecon, returns:renderReturns, ledger:renderLedger, settings:renderSettings, learn:renderLearn})[S.tab]();
+  $('crumb').innerHTML = crumbHtml();
+  const fn = flowNavHtml(S.tab); if (fn) $('main').querySelector('.page')?.insertAdjacentHTML('beforeend', fn);
 }
 function setTab(t) { S.tab = t; try { localStorage.setItem('linoa-tab', t); } catch (e) {} render(); window.scrollTo({top:0}); }
 $('baseSeg').addEventListener('click', e => { const b = e.target.closest('[data-base]'); if (!b) return; S.base = b.dataset.base; document.querySelectorAll('[data-base]').forEach(x => x.setAttribute('aria-pressed', x === b)); render(); });

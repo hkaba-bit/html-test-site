@@ -367,3 +367,62 @@ h2 svg.i{color:var(--accent);vertical-align:-3px}
 .course .ribbon{position:absolute;top:-11px;right:14px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px}
 .c-foot .chip{white-space:nowrap}
 .course h3{word-break:keep-all;overflow-wrap:anywhere}
+
+/* ===== 階層：メニューのグループ ===== */
+nav.menu{gap:14px}
+.mgroup{display:flex;flex-direction:column;gap:2px}
+.mg-lbl{font-size:11px;font-weight:700;color:var(--faint);letter-spacing:.08em;padding:0 10px 4px}
+@media (max-width:900px){nav.menu{gap:2px}.mgroup{flex-direction:row;gap:2px}.mg-lbl{display:none}.mgroup+.mgroup{border-left:1px solid var(--line);padding-left:4px;margin-left:2px}}
+
+/* ===== 階層：パンくず ===== */
+.crumb{max-width:1180px;margin:0 auto 14px;display:flex;justify-content:space-between;align-items:center;gap:10px 16px;flex-wrap:wrap}
+.crumb-path{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted);min-width:0}
+.crumb-path svg{color:var(--faint)}
+.crumb-path b{color:var(--ink);font-size:14px}
+.crumb-home{display:inline-flex;align-items:center;gap:4px;border:0;background:transparent;font:inherit;color:var(--accent);font-weight:700;cursor:pointer;padding:2px 4px;border-radius:6px}
+.crumb-home:hover{background:var(--accent-soft)}
+.crumb-lead{padding-left:10px;margin-left:2px;border-left:1px solid var(--line)}
+.crumb-ctx{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+@media (max-width:620px){.crumb-lead,.crumb-grp,.crumb-grp+svg{display:none}}
+
+/* ===== 今月の作業：見出し行 ===== */
+.monthbar{gap:12px}
+.monthbar h1{font-size:22px}
+.mb-ic{width:42px;height:42px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;flex:none}
+.mb-nav{display:flex;gap:6px;align-items:center}
+.monthbar .spacer{flex:1}
+.deadline{padding:8px 14px;gap:8px;border-radius:999px}
+.deadline .big{font-size:17px}
+.deadline svg{color:var(--accent)}
+
+/* ===== 入力画面：拠点タブと3つの手順 ===== */
+.dflow{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.dtabs{display:flex;gap:6px;flex-wrap:wrap}
+.dtab{font:inherit;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+.dtab small{font-size:11px;font-weight:400;color:var(--warn)}
+.dtab.is-done{color:var(--ok)} .dtab.is-done svg{color:var(--ok)}
+.dtab.is-cur{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);cursor:default}
+.dtab.is-cur small,.dtab.is-cur svg{color:var(--accent-ink)}
+.dsteps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;counter-reset:ds}
+.dsteps li{counter-increment:ds;display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--muted);padding:8px 10px;background:var(--sunk);position:relative}
+.dsteps li:first-child{border-radius:10px 0 0 10px} .dsteps li:last-child{border-radius:0 10px 10px 0}
+.dsteps li+li{border-left:2px solid var(--surface)}
+.dsteps li::before{content:counter(ds);width:18px;height:18px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:11px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.dsteps li svg{color:var(--accent)}
+
+/* ===== 前後の画面への帯 ===== */
+.flownav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:6px;border-top:1px dashed var(--line);margin-top:6px}
+.flownav .btn{padding:10px 16px;text-align:left}
+.flownav small{font-size:11px;font-weight:400;opacity:.8}
+
+/* ===== 報告の3手順 ===== */
+.actsteps{list-style:none;margin:0;padding:12px;display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;background:var(--sunk);border-radius:12px}
+.actsteps li{display:flex;align-items:center;gap:8px}
+.actsteps li+li::before{content:'';width:22px;height:2px;background:var(--line);margin-right:2px}
+.as-no{width:24px;height:24px;border-radius:50%;background:var(--surface);border:2px solid var(--line);color:var(--muted);font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.actsteps li.is-cur .as-no{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.actsteps li.is-done .as-no{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.as-tx{display:inline-flex;gap:6px;align-items:center;font-size:13.5px;font-weight:700;color:var(--muted)}
+.as-note{color:var(--ok);font-size:13px;font-weight:700;gap:6px}
+.as-note::before{display:none!important}
+@media (max-width:620px){.nextcard h2{font-size:18px}.nc-ic{width:46px;height:46px}.actsteps li+li::before{display:none}}
