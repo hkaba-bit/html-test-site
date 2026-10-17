@@ -1,0 +1,277 @@
+@charset "UTF-8";
+/* エディトリアル改修：写真主役・明朝の大見出し・オフホワイト＋墨＋かべまとブルー1色 */
+:root{
+  --e-paper:#f6f4f0; --e-white:#ffffff; --e-ink:#1a1d21; --e-ink-2:#4a4f55; --e-ink-3:#7a7f85; --e-rule:#d8d4cd;
+  --e-blue:#2c628c; --e-navy:#16304a; --e-signal:#f2b705;
+  --e-serif:"Noto Serif JP","Yu Mincho","Hiragino Mincho ProN",serif;
+  --e-sans:"BIZ UDPGothic","Hiragino Sans","Noto Sans JP",sans-serif;
+  --e-latin:"Cormorant Garamond","Noto Serif JP",serif;
+  --e-wrap:1280px; --e-gut:clamp(20px, 5vw, 80px);
+  --e-sec:clamp(96px, 12vw, 200px);
+}
+.e-page{ background:var(--e-paper); color:var(--e-ink); font-family:var(--e-sans); }
+.e-page .wf-canvas,.wf-canvas.e-page{ max-width:none; margin:0; }
+
+/* ヘッダー：白・細い罫線 */
+.e-page .wf-header{ background:rgba(246,244,240,.94); backdrop-filter:blur(8px); border-bottom:1px solid var(--e-rule); }
+.e-page .wf-logo span{ font-family:var(--e-serif); font-weight:700; letter-spacing:.08em; }
+.e-page .wf-gnav a{ font-weight:500; font-size:14px; letter-spacing:.04em; }
+.e-page .wf-header .wf-btn{ border-radius:0; box-shadow:none !important; font-weight:600; }
+.e-page .wf-header .wf-btn.is-line{ display:none; }
+
+/* 装飾の整理 */
+.e-page .site-marquee,.e-page .site-swatch,.e-page .site-rail,.e-page .site-float,.e-page .site-say,.e-page .site-ghost{ display:none !important; }
+.e-page .wf-sechead .wf-en::before,.e-page .wf-sechead .wf-en::after{ content:none !important; display:none !important; }
+.e-page .wf-footer::after,.e-page .site-cta::before{ content:none !important; }
+.e-page .site-ico,.e-page .z-num__ic,.e-page .z-road__ic,.e-page .z-baton__ic{ display:none !important; }
+
+/* 共通部品 */
+.e-wrap{ max-width:var(--e-wrap); margin:0 auto; padding:0 var(--e-gut); box-sizing:border-box; }
+.e-sec{ padding:var(--e-sec) 0; }
+.e-kicker{ margin:0 0 20px; font:500 13px/1.4 var(--e-sans); letter-spacing:.12em; color:var(--e-ink-3); display:flex; align-items:center; gap:14px; }
+.e-kicker span{ font-family:var(--e-latin); font-size:15px; letter-spacing:.24em; color:var(--e-blue); font-weight:600; }
+.e-kicker::before{ content:""; width:40px; height:1px; background:var(--e-blue); }
+.e-h2{ margin:0 0 32px; font:600 clamp(32px, 4.4vw, 60px)/1.42 var(--e-serif); letter-spacing:.04em; color:var(--e-ink); font-feature-settings:"palt"; }
+.e-body{ margin:0 0 32px; max-width:34em; font-size:16px; line-height:2.05; letter-spacing:.04em; color:var(--e-ink-2); }
+.e-body--narrow{ max-width:40em; }
+.e-link{ display:inline-flex; align-items:center; gap:14px; padding:8px 0; border-bottom:1px solid currentColor; color:var(--e-ink); text-decoration:none; font-size:15px; font-weight:600; letter-spacing:.06em; }
+.e-link span{ transition:transform .3s; }
+.e-link:hover span{ transform:translateX(6px); }
+.e-btn{ display:inline-flex; align-items:center; justify-content:center; min-height:56px; padding:0 32px; font-weight:700; font-size:15px; letter-spacing:.06em; text-decoration:none; border:1px solid transparent; transition:background .2s, color .2s; }
+.e-btn--lg{ min-height:68px; padding:0 44px; font-size:16px; }
+.e-btn--signal{ background:var(--e-signal); color:var(--e-ink); }
+.e-btn--signal:hover{ background:#dba503; }
+.e-btn--line{ border-color:rgba(255,255,255,.8); color:#fff; }
+.e-btn--line:hover{ background:#fff; color:var(--e-ink); }
+.e-btn--white{ background:#fff; color:var(--e-navy); }
+.e-btn--white:hover{ background:var(--e-paper); }
+.e-btn:focus-visible,.e-link:focus-visible{ outline:2px solid var(--e-blue); outline-offset:4px; }
+figure{ margin:0; }
+.e-page img{ display:block; }
+
+/* KV：白黒の全幅写真＋左下に大きな明朝 */
+.e-kv{ position:relative; height:clamp(620px, calc(100svh - 72px), 980px); overflow:hidden; color:#fff; background:#111; }
+.e-kv__media{ position:absolute; inset:0; }
+.e-kv__media img{ width:100%; height:100%; object-fit:cover; object-position:30% 40%; transform:scale(1.04); animation:e-zoom 14s ease-out forwards; }
+.e-kv::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(10,18,28,.78) 0%, rgba(10,18,28,.35) 55%, rgba(10,18,28,.05) 100%), linear-gradient(0deg, rgba(10,18,28,.6) 0%, transparent 45%); }
+@keyframes e-zoom{ to{ transform:scale(1); } }
+.e-kv__inner{ position:absolute; left:var(--e-gut); right:var(--e-gut); bottom:clamp(96px, 14vh, 160px); z-index:1; max-width:var(--e-wrap); }
+.e-kv__eyebrow{ margin:0 0 28px; font-size:13px; letter-spacing:.14em; opacity:.85; }
+.e-kv__title{ margin:0 0 28px; font:600 clamp(44px, 7.4vw, 112px)/1.28 var(--e-serif); letter-spacing:.04em; font-feature-settings:"palt"; }
+.e-kv__title span{ display:block; animation:e-up 1.2s cubic-bezier(.2,.7,.2,1) both; }
+.e-kv__title span + span{ animation-delay:.18s; }
+@keyframes e-up{ from{ opacity:0; transform:translateY(24px); clip-path:inset(0 0 100% 0); } to{ opacity:1; transform:none; clip-path:inset(0 0 0 0); } }
+.e-kv__lead{ margin:0 0 36px; font-size:16px; line-height:2; letter-spacing:.06em; opacity:.92; }
+.e-kv__btns{ display:flex; gap:12px; flex-wrap:wrap; }
+.e-kv__news{ position:absolute; right:0; bottom:0; z-index:1; display:flex; align-items:center; gap:16px; padding:18px var(--e-gut) 18px 28px; background:var(--e-paper); color:var(--e-ink); text-decoration:none; font-size:13px; max-width:min(560px, 100%); box-sizing:border-box; }
+.e-kv__news span{ font-family:var(--e-latin); font-weight:700; letter-spacing:.2em; color:var(--e-blue); }
+
+/* MESSAGE：明朝の一文と、紺の面に重ねた縦長写真 */
+.e-msg__grid{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(40px, 8vw, 140px); align-items:center; }
+.e-msg__fig{ position:relative; padding:0 0 48px 48px; }
+.e-msg__block{ position:absolute; left:0; bottom:0; width:72%; height:78%; background:var(--e-blue); }
+.e-msg__fig img{ position:relative; width:100%; aspect-ratio:4/5; object-fit:cover; object-position:30% 50%; }
+.e-msg__fig figcaption{ position:relative; margin-top:14px; font-size:12px; color:#fff; letter-spacing:.06em; }
+
+/* STATEMENT：全幅の外壁写真（紺のデュオトーン）に大きな一文 */
+.e-statement{ position:relative; height:clamp(480px, 70vh, 760px); overflow:hidden; display:grid; place-items:center; text-align:center; color:#fff; }
+.e-statement img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.e-statement::after{ content:""; position:absolute; inset:0; background:rgba(16,34,52,.55); }
+.e-statement__in{ position:relative; z-index:1; padding:0 var(--e-gut); }
+.e-statement__en{ margin:0 0 24px; font:600 15px var(--e-latin); letter-spacing:.4em; opacity:.85; }
+.e-statement__t{ margin:0 0 28px; font:600 clamp(44px, 7vw, 104px)/1.3 var(--e-serif); letter-spacing:.08em; }
+.e-statement__s{ margin:0; font-size:15px; line-height:2.1; letter-spacing:.06em; opacity:.9; }
+
+/* WORK：左に縦長写真（追従）、右に番号付きの工程 */
+.e-split{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(40px, 7vw, 120px); align-items:start; }
+.e-split__fig img{ width:100%; aspect-ratio:4/5; object-fit:cover; object-position:40% 50%; }
+.e-sticky{ position:sticky; top:96px; }
+.e-steps{ list-style:none; margin:0 0 40px; padding:0; border-top:1px solid var(--e-rule); }
+.e-steps li{ display:grid; grid-template-columns:72px 1fr auto; gap:20px; align-items:baseline; padding:26px 0; border-bottom:1px solid var(--e-rule); }
+.e-steps__n{ font:500 34px/1 var(--e-latin); color:var(--e-ink-3); }
+.e-steps h3{ margin:0 0 6px; font:600 21px/1.5 var(--e-serif); letter-spacing:.04em; }
+.e-steps p{ margin:0; font-size:14px; line-height:1.9; color:var(--e-ink-2); }
+.e-steps em{ font-style:normal; font-size:12px; letter-spacing:.08em; color:var(--e-ink-3); white-space:nowrap; }
+.e-steps li.is-you .e-steps__n{ color:var(--e-blue); }
+.e-steps li.is-you em{ color:#fff; background:var(--e-blue); padding:4px 12px; }
+
+/* COVER：線画1色の分解図 */
+.e-cover-sec{ background:var(--e-white); }
+.e-cover-grid{ display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr); gap:clamp(40px, 6vw, 100px); align-items:center; }
+.e-cover{ width:100%; height:auto; }
+
+/* REAL：写真＋イメージと実際の対比（罫線の表） */
+.e-real__grid{ display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); gap:clamp(40px, 6vw, 100px); align-items:start; margin-bottom:40px; }
+.e-real__fig img{ width:100%; aspect-ratio:4/5; object-fit:cover; }
+.e-real__list{ margin:0; border-top:1px solid var(--e-ink); }
+.e-real__list > div{ display:grid; grid-template-columns:140px 1fr; padding:28px 0; border-bottom:1px solid var(--e-rule); column-gap:24px; row-gap:10px; }
+.e-real__list dt{ font-size:12px; letter-spacing:.1em; color:var(--e-ink-3); padding-top:6px; }
+.e-real__list dd{ margin:0; font:600 20px/1.7 var(--e-serif); }
+.e-real__list dd.is-img{ color:var(--e-ink-3); text-decoration:line-through; text-decoration-thickness:1px; font-weight:500; font-size:17px; }
+.e-real__list dt:nth-of-type(2){ color:var(--e-blue); font-weight:700; }
+
+/* NUMBERS：紺の全幅に大きな数字3つ */
+.e-nums{ background:var(--e-navy); color:#fff; padding:clamp(88px, 10vw, 160px) 0; }
+.e-nums .e-kicker{ color:rgba(255,255,255,.7); } .e-nums .e-kicker span{ color:#fff; } .e-nums .e-kicker::before{ background:#fff; }
+.e-nums__row{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); margin:24px 0 56px; border-top:1px solid rgba(255,255,255,.3); }
+.e-nums__row > div{ padding:40px 32px 8px 0; border-right:1px solid rgba(255,255,255,.2); }
+.e-nums__row > div + div{ padding-left:40px; }
+.e-nums__row > div:last-child{ border-right:0; }
+.e-nums__v{ margin:0 0 14px; display:flex; align-items:baseline; gap:8px; }
+.e-nums__v b{ font:500 clamp(64px, 8.6vw, 136px)/1 var(--e-latin); letter-spacing:.01em; }
+.e-nums__v span{ font:500 18px var(--e-serif); }
+.e-nums__l{ margin:0 0 6px; font:600 17px var(--e-serif); letter-spacing:.06em; }
+.e-nums__note{ margin:0; font-size:12px; color:rgba(255,255,255,.6); }
+.e-nums .e-link{ color:#fff; }
+
+/* PEOPLE：縦長写真を横にスクロール */
+.e-people__head{ display:grid; grid-template-columns:1fr auto; align-items:end; column-gap:24px; }
+.e-people__head .e-kicker{ grid-column:1 / -1; }
+.e-people__head .e-h2{ margin-bottom:0; }
+.e-people{ display:grid; grid-auto-flow:column; grid-auto-columns:clamp(260px, 28vw, 400px); gap:28px; overflow-x:auto; padding:48px var(--e-gut) 24px; scroll-snap-type:x mandatory; scrollbar-width:thin; }
+.e-person{ scroll-snap-align:start; color:var(--e-ink); text-decoration:none; }
+.e-person figure{ overflow:hidden; margin-bottom:18px; }
+.e-person img{ width:100%; aspect-ratio:3/4; object-fit:cover; transition:transform .8s cubic-bezier(.2,.7,.2,1), filter .6s; filter:grayscale(1); }
+.e-person:hover img,.e-person:focus-visible img{ transform:scale(1.04); }
+.e-person__no{ margin:0 0 10px; display:flex; gap:14px; align-items:baseline; font:600 15px var(--e-latin); letter-spacing:.16em; color:var(--e-blue); }
+.e-person__no span{ font:500 12px var(--e-sans); letter-spacing:.06em; color:var(--e-ink-3); }
+.e-person h3{ margin:0; font:600 19px/1.75 var(--e-serif); letter-spacing:.03em; }
+
+/* CAREER：罫線1本のタイムライン */
+.e-career{ background:var(--e-white); }
+.e-line{ list-style:none; margin:24px 0 28px; padding:0; display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); border-top:1px solid var(--e-ink); }
+.e-line li{ position:relative; padding:28px 16px 0 0; }
+.e-line li::before{ content:""; position:absolute; left:0; top:-6px; width:11px; height:11px; border-radius:50%; background:var(--e-paper); border:1px solid var(--e-ink); }
+.e-line li:last-child::before{ background:var(--e-blue); border-color:var(--e-blue); }
+.e-line span{ display:block; font:500 14px var(--e-latin); letter-spacing:.1em; color:var(--e-ink-3); margin-bottom:8px; }
+.e-line b{ font:600 clamp(17px, 1.6vw, 22px)/1.5 var(--e-serif); }
+.e-line__branch{ margin:0 0 40px; padding:18px 0; border-top:1px solid var(--e-rule); border-bottom:1px solid var(--e-rule); font-size:15px; color:var(--e-ink-2); }
+.e-line__branch span{ display:inline-block; margin-right:16px; color:var(--e-blue); font-weight:700; }
+
+/* COMPANIES：2社を大判写真で並べる */
+.e-comp__grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(24px, 4vw, 56px); margin-top:24px; }
+.e-co{ color:var(--e-ink); text-decoration:none; }
+.e-co figure{ overflow:hidden; margin-bottom:22px; }
+.e-co img{ width:100%; aspect-ratio:3/2; object-fit:cover; transition:transform .8s cubic-bezier(.2,.7,.2,1); }
+.e-co:hover img{ transform:scale(1.04); }
+.e-co__area{ margin:0 0 8px; font:600 14px var(--e-latin); letter-spacing:.24em; color:var(--e-blue); }
+.e-co h3{ margin:0 0 8px; font:600 clamp(22px, 2.2vw, 30px)/1.4 var(--e-serif); }
+.e-co p:last-child{ margin:0; font-size:14px; color:var(--e-ink-2); }
+
+/* INDEX：明朝の大きなテキストリンク */
+.e-index{ padding-top:0; }
+.e-index__list{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; column-gap:56px; border-top:1px solid var(--e-ink); }
+.e-index__list a{ display:grid; grid-template-columns:56px 1fr auto; align-items:center; padding:28px 0; border-bottom:1px solid var(--e-rule); color:var(--e-ink); text-decoration:none; }
+.e-index__list span{ font:500 16px var(--e-latin); color:var(--e-ink-3); letter-spacing:.1em; }
+.e-index__list b{ font:600 clamp(18px, 1.8vw, 24px) var(--e-serif); }
+.e-index__list i{ font-style:normal; transition:transform .3s; }
+.e-index__list a:hover i{ transform:translateX(6px); }
+.e-index__list a:hover b{ color:var(--e-blue); }
+
+/* LINE（TOP） */
+.e-line-sec{ background:var(--e-white); }
+
+/* CTA：紺ベタ1面＋大きな明朝 */
+.e-cta{ background:var(--e-navy); color:#fff; padding:clamp(104px, 12vw, 200px) 0; text-align:left; }
+.e-cta__en{ margin:0 0 20px; font:600 15px var(--e-latin); letter-spacing:.4em; color:rgba(255,255,255,.7); }
+.e-cta__t{ margin:0 0 28px; font:600 clamp(36px, 5.4vw, 80px)/1.35 var(--e-serif); letter-spacing:.04em; }
+.e-cta__s{ margin:0 0 48px; max-width:40em; font-size:16px; line-height:2; color:rgba(255,255,255,.85); }
+.e-cta__btns{ display:flex; gap:16px; flex-wrap:wrap; margin-bottom:32px; }
+.e-cta__sub{ margin:0; font-size:13px; color:rgba(255,255,255,.7); }
+.e-cta__sub a{ color:#fff; }
+
+/* フッター：墨 */
+.e-page .wf-footer{ background:var(--e-ink); }
+
+/* 下層：同じ文法を適用 */
+.e-page:not(.e-top) .wf-pagehead{ background:var(--e-navy) !important; background-image:none !important; box-shadow:none !important; padding:clamp(80px, 10vw, 140px) 0 clamp(56px, 7vw, 96px); }
+.e-page:not(.e-top) .wf-pagehead::after{ content:none !important; }
+.e-page:not(.e-top) .wf-pagehead .wf-h1{ font:600 clamp(34px, 5vw, 68px)/1.35 var(--e-serif); letter-spacing:.04em; }
+.e-page:not(.e-top) .wf-pagehead .wf-en{ font-family:var(--e-latin); letter-spacing:.3em; }
+.e-page .wf-inner{ max-width:var(--e-wrap); padding-inline:var(--e-gut); }
+.e-page:not(.e-top) .wf-sec{ padding-block:clamp(72px, 9vw, 140px); background-image:none !important; box-shadow:none !important; }
+.e-page:not(.e-top) .wf-sec--fill{ background:var(--e-white); }
+.e-page:not(.e-top) .wf-h2,.e-page:not(.e-top) .wf-sechead .wf-h2{ font:600 clamp(26px, 3.2vw, 44px)/1.45 var(--e-serif) !important; letter-spacing:.04em; border-left:0 !important; padding-left:0 !important; }
+.e-page:not(.e-top) .wf-sechead .wf-en{ font:600 14px var(--e-latin) !important; letter-spacing:.24em; color:var(--e-blue) !important; display:block !important; margin-bottom:12px; }
+.e-page:not(.e-top) .wf-h3{ font-family:var(--e-serif); }
+.e-page:not(.e-top) .wf-p,.e-page:not(.e-top) .site-body p{ font-size:15.5px; line-height:2; }
+.e-page:not(.e-top) .wf-card{ border-radius:0; box-shadow:none !important; border:0; background:transparent; }
+.e-page:not(.e-top) .wf-card .wf-card__body{ padding-left:0; padding-right:0; }
+.e-page:not(.e-top) .wf-btn{ border-radius:0; box-shadow:none !important; }
+.e-page:not(.e-top) .site-truth{ background:var(--e-navy) !important; }
+.e-page:not(.e-top) .site-flow{ background:var(--e-navy) !important; background-image:none !important; }
+.e-page:not(.e-top) .wf-faq details,.e-page:not(.e-top) .wf-step,.e-page:not(.e-top) .z-num,.e-page:not(.e-top) .site-wall .wf-stat,.e-page:not(.e-top) .z-req > div{ box-shadow:none !important; border-radius:0; }
+.e-page:not(.e-top) .site-wall .wf-stat:nth-child(4n+1){ background:var(--e-navy) !important; background-image:none !important; }
+.e-page:not(.e-top) .wf-stat__num{ font-family:var(--e-latin) !important; font-weight:500 !important; }
+.e-page .site-ivhero__body{ background-image:none !important; }
+.e-page .site-ivhero__title i{ background:none; color:#fff; padding:0; }
+.e-page .site-ivhero__title{ font-family:var(--e-serif); font-weight:600; }
+.e-page .site-ivhero__no{ background:none; clip-path:none; padding:0; color:#fff; font-family:var(--e-latin); }
+.e-page .site-tile b,.e-page .site-cta .wf-en{ clip-path:none; }
+.e-page .z-baton__face,.e-page .z-orgface{ display:none !important; }
+.e-page .z-baton li{ padding-top:32px; }
+.e-page .wf-table th{ background:var(--e-paper) !important; color:var(--e-ink) !important; border-color:var(--e-rule) !important; font-weight:700; }
+.e-page .wf-table td{ border-color:var(--e-rule) !important; background:#fff; }
+.e-page .site-band{ background:none !important; color:inherit !important; padding:0; }
+
+/* SP */
+@container (max-width:900px){
+  .e-msg__grid,.e-split,.e-cover-grid,.e-real__grid,.e-comp__grid{ grid-template-columns:1fr; }
+  .e-sticky{ position:static; }
+  .e-split__fig img,.e-real__fig img{ aspect-ratio:4/3; }
+  .e-line{ grid-template-columns:repeat(3, minmax(0,1fr)); row-gap:28px; }
+  .e-index__list{ grid-template-columns:1fr; }
+}
+@container (max-width:600px){
+  .e-kv{ height:calc(100svh - 64px); min-height:600px; }
+  .e-kv__inner{ bottom:120px; }
+  .e-kv__title{ font-size:clamp(36px, 10.4vw, 46px); }
+  .e-kv__lead{ font-size:14px; }
+  .e-kv__btns{ display:grid; grid-template-columns:1fr 1fr; }
+  .e-kv__btns .e-btn{ padding:0 10px; font-size:14px; }
+  .e-kv__news{ left:0; right:0; max-width:none; padding:14px 16px; font-size:12px; }
+  .e-h2{ font-size:clamp(28px, 8vw, 34px); }
+  .e-body{ font-size:15px; }
+  .e-msg__fig{ padding:0 0 28px 28px; }
+  .e-steps li{ grid-template-columns:44px 1fr; }
+  .e-steps em{ grid-column:2; justify-self:start; }
+  .e-steps__n{ font-size:26px; }
+  .e-real__list > div{ grid-template-columns:1fr; }
+  .e-real__list dd{ font-size:17px; }
+  .e-nums__row{ grid-template-columns:1fr; }
+  .e-nums__row > div{ border-right:0; border-bottom:1px solid rgba(255,255,255,.2); padding:28px 0 20px !important; }
+  .e-nums__v b{ font-size:64px; }
+  .e-people__head{ grid-template-columns:1fr; row-gap:16px; }
+  .e-people{ grid-auto-columns:76%; gap:16px; }
+  .e-line{ grid-template-columns:1fr 1fr; }
+  .e-cta__btns{ display:grid; }
+  .e-cta__btns .e-btn{ padding:0 16px; }
+}
+@media (prefers-reduced-motion: reduce){ .e-kv__media img,.e-kv__title span{ animation:none !important; transform:none; } }
+/* 調整 */
+.e-nums__v{ white-space:nowrap; }
+.e-nums__v b{ font-size:clamp(56px, 7.2vw, 112px); }
+.e-nums__v i{ font:500 22px var(--e-serif); font-style:normal; margin-right:4px; }
+.e-nums__v span{ white-space:nowrap; }
+.e-people{ padding-left:max(var(--e-gut), calc((100cqw - var(--e-wrap)) / 2 + var(--e-gut))); padding-right:var(--e-gut); }
+.e-cover-grid{ grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); }
+.e-line-sec .wf-sechead .wf-en{ font:600 14px var(--e-latin) !important; letter-spacing:.24em; color:var(--e-blue) !important; display:block !important; margin-bottom:12px; }
+.e-line-sec .wf-h2{ font:600 clamp(26px, 3.2vw, 40px)/1.5 var(--e-serif) !important; }
+.e-line-sec .site-line__phone{ border-radius:24px; }
+.e-line-sec .site-line__btn{ border-radius:0; }
+@container (max-width:600px){ .e-nums__v b{ font-size:60px; } }
+.e-people{ scroll-padding-inline:max(var(--e-gut), calc((100cqw - var(--e-wrap)) / 2 + var(--e-gut))); }
+.e-nums__v b{ font-size:clamp(52px, 6.4vw, 100px); }
+.e-nums__v span{ font-size:16px; }
+.e-page .site-ivhero{ background:var(--e-navy) !important; }
+.e-page .site-ivhero__name b{ font-family:var(--e-serif); font-weight:600; }
+.e-page .site-ivhero::before,.e-page .site-ivhero::after{ content:none !important; }
+.e-page .site-quote{ background:none !important; color:var(--e-ink) !important; box-shadow:none !important; border-left:2px solid var(--e-blue) !important; padding:8px 0 8px 32px !important; font:600 clamp(22px, 2.4vw, 32px)/1.7 var(--e-serif) !important; }
+.e-page .site-quote::before{ content:none !important; }
+.e-page .z-donuts svg{ background:#fff; }
+@container (max-width:900px){ .e-cover-grid{ grid-template-columns:1fr; } }
+@container (max-width:600px){
+  .e-line{ grid-template-columns:1fr; border-top:0; border-left:1px solid var(--e-ink); margin-left:6px; row-gap:0; }
+  .e-line li{ padding:0 0 22px 22px; }
+  .e-line li::before{ left:-6px; top:4px; }
+}

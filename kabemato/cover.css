@@ -1,0 +1,18 @@
+@charset "UTF-8";
+/* 開幕演出：今ある壁 → サイディングを下から重ねて張る → 張り終えるとコピーが現れる（初回訪問のみ・約1.6秒） */
+.site-kv__cover{ display:none; }
+.kv-intro .site-kv__cover{ position:absolute; left:0; top:0; bottom:0; width:44%; z-index:0; display:grid; grid-template-rows:repeat(10, 1fr); overflow:hidden; pointer-events:none; animation:cover-off .3s ease 1.5s forwards; }
+.site-kv__old{ position:absolute; inset:0; background:#8f8a82 url(img/wall-3.jpg) center/cover; filter:grayscale(1) sepia(.35) contrast(.9) brightness(.8); animation:old-off 0s linear 1.25s forwards; }
+.site-kv__cover i{ position:relative; z-index:1; background:var(--k-blue); background-image:linear-gradient(rgba(255,255,255,.08), rgba(0,0,0,.12)); box-shadow:inset 0 -2px 0 rgba(0,0,0,.22); transform:scaleX(0); transform-origin:left; animation:plank .34s cubic-bezier(.2,.7,.2,1) forwards; animation-delay:calc(.25s + (9 - var(--i)) * 90ms); }
+.site-kv__cover span{ position:absolute; left:50%; top:50%; z-index:2; transform:translate(-50%,-50%); white-space:nowrap; padding:10px 18px; background:#fff; color:var(--k-blue); font-family:var(--k-display); font-weight:900; font-size:clamp(16px, 1.6vw, 22px); letter-spacing:.08em; opacity:0; animation:cap 1.2s ease .15s forwards; }
+@keyframes plank{ to{ transform:scaleX(1); } }
+@keyframes old-off{ to{ opacity:0; } }
+@keyframes cover-off{ to{ opacity:0; visibility:hidden; } }
+@keyframes cap{ 0%{ opacity:0; } 15%{ opacity:1; } 75%{ opacity:1; } 100%{ opacity:0; } }
+.kv-intro .site-kv__copy{ animation:kv-in .8s ease-out 1.45s both !important; }
+.kv-intro .site-kv::after,.kv-intro.site-kv::after{ animation:kv-in .8s ease-out 1.45s both; }
+.kv-intro .site-kv__facts{ animation:kv-in .6s ease-out 1.6s both; }
+.kv-done .site-kv__cover{ display:none !important; }
+@container (max-width:900px){ .kv-intro .site-kv__cover{ width:auto; right:0; top:42%; } }
+@container (max-width:600px){ .kv-intro .site-kv__cover{ top:38%; } }
+@media (prefers-reduced-motion: reduce){ .site-kv__cover{ display:none !important; } }

@@ -1,0 +1,22 @@
+@charset "UTF-8";
+/* KVの簡素化：左＝ブルーの外壁面にコピー、右＝写真1枚。
+   写真枠を写真と同じ比率（7:5）にして、人物が切れないようにする。ズーム演出は外す */
+.site-kv{ height:max(520px, 40cqw); min-height:0; }
+.site-kv__media{ left:44%; display:block; overflow:hidden; }
+.site-kv__tile{ display:none !important; animation:none !important; transform:none !important; }
+.site-kv__tile--a{ display:block !important; position:absolute; inset:0; }
+.kv-intro .site-kv__tile--a{ animation:kv-lay .7s cubic-bezier(.2,.7,.2,1) both !important; }
+.site-kv__tile--a img{ object-position:30% 40%; filter:none; }
+.site-kv::after,.site-kv__vert,.site-kv__scroll,.site-kv__facts,.site-kv__wall{ display:none !important; }
+.site-kv__copy{ bottom:auto; top:50%; margin-top:-180px; gap:20px; }
+.site-kv__lead{ font-size:16px; }
+.site-rail{ display:none !important; }
+@container (max-width:900px){
+  .site-kv{ height:auto; display:grid; }
+  .site-kv__media{ position:relative; left:0; height:auto; aspect-ratio:7/5; }
+  .site-kv__copy{ position:relative; top:auto; left:auto; right:auto; width:auto; margin:0; padding:32px 32px 44px; }
+  .kv-intro .site-kv__cover{ top:71.43cqw !important; bottom:0; }
+}
+@container (max-width:600px){
+  .site-kv__copy{ padding:24px 16px 32px; }
+}

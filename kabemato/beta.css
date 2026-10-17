@@ -1,0 +1,146 @@
+@charset "UTF-8";
+/* ベタ塗りレイヤー。競合（オープンハウス／村本建設／三井住友海上あいおい／レントハウス／インサイト／日清食品）の
+   「色面の使い方」を、かべまとのメインカラー（#2c628c）と2社のエリア色で翻案 */
+:root{ --k-blue:#2c628c; --k-blue-d:#204765; --k-blue-dd:#17344b; }
+
+/* A. KV：左半分ベタ＋右に写真（オープンハウス型）。見出しは白い帯に乗せる（インサイト型） */
+.site-kv{ background:var(--k-blue); }
+.site-kv__shade{ display:none; }
+.site-kv__media{ left:44%; grid-template-columns:1.25fr 1fr; grid-template-rows:1fr 1fr 1fr; }
+.site-kv__tile--a{ grid-row:1 / 4; }
+.site-kv__tile--e{ display:none; }
+.site-kv__copy{ left:max(40px, 4.4vw); right:auto; width:calc(44% - max(40px, 4.4vw) - 24px); max-width:none; bottom:170px; }
+.site-kv__title{ font-size:clamp(34px, 3.9vw, 60px); line-height:1.5; }
+.site-kv__title span{ display:block; width:max-content; }
+.site-kv__title span > i{ font-style:normal; background:#fff; color:var(--k-blue); padding:.02em .22em; box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+.site-kv__title span + span{ padding-left:0; margin-top:.18em; }
+.site-kv__lead{ color:#fff; }
+.site-kv__eyebrow{ color:#fff; }
+.site-kv__btn--ghost{ border-color:#fff; }
+.site-kv__vert{ color:rgba(255,255,255,.85); text-shadow:0 0 12px rgba(0,0,0,.4); }
+.site-kv__facts{ background:var(--k-blue-dd); border-top:0; }
+.site-kv::after{ content:"KABEMATO"; position:absolute; left:-.04em; top:28px; z-index:-1; font-family:var(--k-latin); font-weight:800; font-size:clamp(80px, 11vw, 170px); line-height:1; color:transparent; -webkit-text-stroke:1px rgba(255,255,255,.18); pointer-events:none; white-space:nowrap; }
+@container (max-width:900px){
+  .site-kv__media{ left:0; bottom:auto; height:42%; grid-template-columns:1.3fr 1fr 1fr; grid-template-rows:1fr; }
+  .site-kv__tile--a{ grid-row:auto; }
+  .site-kv__copy{ left:32px; right:32px; width:auto; bottom:120px; }
+  .site-kv::after{ top:auto; bottom:44%; font-size:14vw; }
+}
+@container (max-width:600px){
+  .site-kv__media{ height:38%; grid-template-columns:1.4fr 1fr; grid-template-rows:1fr 1fr; }
+  .site-kv__tile--a{ grid-row:1 / 3; }
+  .site-kv__tile--d{ display:none; }
+  .site-kv__copy{ left:16px; right:16px; bottom:128px; gap:14px; }
+  .site-kv__title{ font-size:clamp(28px, 8.4vw, 34px); }
+  .site-kv__lead{ font-size:14px; }
+  .site-kv__btns{ grid-template-columns:1fr 1fr; }
+  .site-kv__btn{ padding:0 8px; font-size:14px; }
+  .site-kv::after{ display:none; }
+}
+
+/* B. 右端の縦型CTAレール（オープンハウス型）。PCのみ */
+.site-rail{ position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:840; display:grid; }
+.site-rail a{ writing-mode:vertical-rl; display:flex; align-items:center; justify-content:center; gap:10px; width:56px; padding:22px 0; font-weight:700; font-size:14px; letter-spacing:.12em; text-decoration:none; }
+.site-rail a small{ font-family:var(--k-latin); font-size:10px; letter-spacing:.2em; }
+.site-rail a:first-child{ background:var(--k-signal); color:var(--wf-ink); }
+.site-rail a:first-child:hover{ background:var(--k-signal-hover); }
+.site-rail a:last-child{ background:var(--k-blue); color:#fff; }
+.site-rail a:last-child:hover{ background:var(--k-blue-d); }
+.site-rail a:focus-visible{ outline:3px solid var(--wf-ink); outline-offset:-3px; }
+.site-float{ display:none !important; }
+@container (max-width:600px){ .site-rail{ display:none; } }
+
+/* C. INDEX：色ベタのタイル（村本建設型）。ラベルは白帯 */
+.site-tiles{ display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:0; }
+.site-tile{ --c:var(--k-blue); position:relative; grid-column:span 2; min-height:220px; padding:22px 24px 20px; display:grid; align-content:space-between; gap:12px; background:var(--c); color:#fff; text-decoration:none; overflow:hidden; isolation:isolate; }
+.site-tile--w3{ grid-column:span 3; min-height:260px; }
+.site-tile img{ position:absolute; top:0; right:0; width:58%; height:100%; object-fit:cover; max-width:none; z-index:-2; transition:transform .5s var(--lay-ease, ease); }
+.site-tile::before{ content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg, var(--c) 42%, color-mix(in srgb, var(--c) 55%, transparent) 62%, transparent 100%); }
+.site-tile b{ font-family:var(--k-latin); font-size:40px; line-height:1; font-weight:800; }
+.site-tile small{ display:block; font-size:13px; margin-bottom:6px; }
+.site-tile strong{ display:block; font-family:var(--k-display); font-size:clamp(20px, 2vw, 28px); line-height:1.6; }
+.site-tile strong em{ font-style:normal; background:#fff; color:var(--c); padding:.04em .3em; box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+.site-tile i{ font-style:normal; font-family:var(--k-latin); font-size:11px; font-weight:600; letter-spacing:.2em; }
+.site-tile i::after{ content:" ●"; font-size:8px; }
+.site-tile:hover img,.site-tile:focus-visible img{ transform:scale(1.05); }
+.site-tile:focus-visible{ outline:3px solid var(--k-signal); outline-offset:-3px; }
+.site-tile--slate{ --c:var(--k-slate); } .site-tile--west{ --c:var(--k-west); } .site-tile--east{ --c:var(--k-east); }
+.site-tile--deep{ --c:var(--k-blue-d); } .site-tile--slate2{ --c:var(--k-slate-2); }
+@container (max-width:900px){ .site-tiles{ grid-template-columns:repeat(2, minmax(0,1fr)); } .site-tile,.site-tile--w3{ grid-column:span 1; min-height:200px; } .site-tile:first-child{ grid-column:span 2; } }
+@container (max-width:600px){ .site-tile{ padding:16px; min-height:176px; } .site-tile b{ font-size:30px; } .site-tile strong{ font-size:17px; } .site-tile img{ width:70%; } }
+
+/* D. 選考・スケジュール：全面ベタ＋白カード＋矢印バー＋縦書きの大見出し（オープンハウス型） */
+.site-flow{ position:relative; overflow:hidden; background:var(--k-blue) !important; color:#fff; box-shadow:none; }
+.site-flow > .wf-inner{ position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:48px; align-items:start; }
+.site-flow .wf-sechead{ grid-column:2; grid-row:1; writing-mode:vertical-rl; background:none; padding:0; margin:0; }
+.site-flow .wf-sechead .wf-en{ font-size:12px; color:rgba(255,255,255,.7); margin:0 0 0 12px; }
+.site-flow .wf-sechead .wf-en::before{ content:none; }
+.site-flow .wf-h2{ color:#fff; font-size:clamp(32px, 3.4vw, 48px); font-weight:900; letter-spacing:.12em; line-height:1.3; }
+.site-flow .wf-steps{ grid-column:1; grid-row:1; gap:6px; }
+.site-flow .wf-step{ background:#fff; color:var(--wf-ink); padding:0 0 20px; border-radius:2px; box-shadow:0 var(--lap, 4px) 0 var(--k-blue-dd); }
+.site-flow .wf-step::before{ content:"STEP." counter(step, decimal-leading-zero); display:block; margin:0 0 16px; padding:8px 26px 8px 16px; background:var(--wf-ink); color:#fff; font-size:12px; font-weight:700; letter-spacing:.12em; clip-path:polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%); }
+.site-flow .wf-step:last-child::before{ background:var(--k-blue-d); }
+.site-flow .wf-step .wf-h4,.site-flow .wf-step .wf-p{ padding:0 16px; }
+.site-flow .wf-step .wf-h4{ color:var(--k-blue); font-size:15px; }
+.site-flow .site-flow__btns{ grid-column:1; display:flex; gap:12px; flex-wrap:wrap; }
+.site-flow::before{ content:"FLOW"; position:absolute; left:-.04em; bottom:-.2em; font-family:var(--k-latin); font-weight:800; font-size:clamp(120px, 20vw, 300px); line-height:1; color:transparent; -webkit-text-stroke:1px rgba(255,255,255,.14); pointer-events:none; }
+.site-flow .wf-btn.is-light{ background:transparent; border-color:#fff; color:#fff; }
+@container (max-width:900px){
+  .site-flow > .wf-inner{ grid-template-columns:1fr; gap:24px; }
+  .site-flow .wf-sechead{ grid-column:1; writing-mode:horizontal-tb; }
+  .site-flow .wf-sechead .wf-en{ margin:0 0 8px; }
+  .site-flow .wf-steps{ grid-row:2; }
+}
+
+/* E. 社員カード：キャッチを会社色のベタ帯で（レントハウス型） */
+.site-band{ background:var(--k-blue); color:#fff; padding:.08em .35em; line-height:1.95; box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+[data-tags~="smiletime"] .site-band{ background:var(--k-west); }
+[data-tags~="graise"] .site-band{ background:var(--k-east); }
+
+/* F. 締めのCTA：ベタ2分割の巨大ボタン（三井住友海上あいおい型） */
+.site-cta{ background:var(--k-blue) !important; }
+.site-cta .wf-lead{ color:#fff; } .site-cta .wf-en,.site-cta .wf-cap{ color:rgba(255,255,255,.8); }
+.site-bigcta{ display:grid; grid-template-columns:1fr 1fr; }
+.site-bigcta a{ position:relative; display:grid; gap:6px; align-content:center; min-height:200px; padding:32px max(32px, 5vw); text-decoration:none; transition:background .2s; }
+.site-bigcta small{ font-family:var(--k-latin); font-size:clamp(34px, 4.6vw, 64px); font-weight:800; line-height:1; letter-spacing:.02em; }
+.site-bigcta b{ font-size:16px; }
+.site-bigcta span{ position:absolute; right:max(32px, 4vw); top:50%; transform:translateY(-50%); width:56px; height:56px; border-radius:50%; display:grid; place-items:center; font-size:22px; transition:transform .2s; }
+.site-bigcta a:hover span{ transform:translate(6px, -50%); }
+.site-bigcta__a{ background:var(--k-signal); color:var(--wf-ink); } .site-bigcta__a:hover{ background:var(--k-signal-hover); } .site-bigcta__a span{ background:var(--wf-ink); color:var(--k-signal); }
+.site-bigcta__b{ background:#1f2124; color:#fff; } .site-bigcta__b:hover{ background:var(--k-slate); } .site-bigcta__b span{ background:#fff; color:#1f2124; }
+.site-bigcta a:focus-visible{ outline:3px solid var(--k-blue); outline-offset:-6px; }
+@container (max-width:600px){ .site-bigcta{ grid-template-columns:1fr; } .site-bigcta a{ min-height:128px; padding:24px 16px; } .site-bigcta span{ right:16px; width:44px; height:44px; } }
+
+/* G. 下層ページの見出し：ベタ＋背景の巨大アウトライン英字 */
+.wf-pagehead{ background:var(--k-blue); }
+.wf-pagehead .wf-en,.wf-pagehead .wf-cap{ color:rgba(255,255,255,.82); }
+.site-ghost{ position:absolute; right:-.04em; bottom:-.22em; font-family:var(--k-latin); font-weight:800; font-size:clamp(80px, 13vw, 200px); line-height:1; color:transparent; -webkit-text-stroke:1px rgba(255,255,255,.2); pointer-events:none; white-space:nowrap; }
+
+/* H. 既存パーツの差し色をかべまとブルーへ */
+.wf-sec .site-wall .wf-stat:nth-child(4n+1){ background:var(--k-blue); box-shadow:0 var(--lap, 4px) 0 var(--k-blue-dd); }
+.wf-sec .site-wall .wf-stat:nth-child(4n+1) .site-stat__note{ color:rgba(255,255,255,.8); }
+.site-overlap{ background:var(--k-blue); box-shadow:0 var(--lap, 4px) 0 var(--k-blue-dd); }
+.site-overlap small{ color:#fff; }
+.wf-step[data-step][aria-current="true"]{ background:var(--k-blue); box-shadow:0 var(--lap, 4px) 0 var(--k-blue-dd); }
+.site-years .wf-timeline > li:nth-child(4){ background:var(--k-blue); }
+.site-stairs div:nth-child(4){ background:var(--k-blue); }
+
+/* 調整 */
+.site-kv__vert{ display:none; }
+.site-kv::after{ width:44%; overflow:hidden; }
+.wf-pagehead::after{ background:linear-gradient(var(--k-blue-d),var(--k-blue-d)) 0 0/100% 52px no-repeat, linear-gradient(var(--k-blue-dd),var(--k-blue-dd)) 48px 58px/100% 52px no-repeat, linear-gradient(#3a76a3,#3a76a3) 96px 116px/100% 52px no-repeat; }
+.site-flow .wf-sechead .wf-en::after{ display:none; }
+.site-flow .wf-step{ min-height:180px; }
+.site-bigcta span{ right:max(32px, 4vw); }
+.site-bigcta__b{ padding-right:120px !important; }
+.site-bigcta__b span{ right:96px; }
+.site-cta .wf-h2{ font-size:clamp(26px, 2.8vw, 40px); }
+@container (max-width:600px){ .site-bigcta__b{ padding-right:16px !important; } .site-bigcta__b span{ right:16px; } }
+.site-flow > .wf-inner{ grid-template-rows:auto 1fr; row-gap:32px; }
+.site-flow .wf-sechead{ grid-row:1 / span 2; }
+.site-flow .site-flow__btns{ grid-row:2; align-self:start; }
+@container (max-width:900px){ .site-flow .wf-sechead{ grid-row:auto; } .site-flow .wf-steps{ grid-row:auto; } .site-flow .site-flow__btns{ grid-row:auto; } .site-flow > .wf-inner{ grid-template-rows:none; } }
+@container (max-width:600px){
+  .site-flow .wf-step{ min-height:0; }
+  .site-kv__copy{ top:calc(38% + 20px); bottom:auto; }
+}

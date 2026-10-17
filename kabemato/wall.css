@@ -1,0 +1,54 @@
+@charset "UTF-8";
+/* 「らしさ」レイヤー：ベタ面を“かべまとの外壁”として描く
+   ・面＝外壁材：横張りサイディング／グランブリック調（レンガ）／スマイルストーン調（石張り）／角波（縦リブ）の目地
+   ・面の上端＝カバー工法の層（既存の壁→下地→断熱材→サイディング）を細い帯で重ねる
+   ・ラベル＝家の形（切妻）のバッジ、外壁の色見本タグ */
+:root{
+  --wall-lap:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='96'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='white' stop-opacity='.08'/%3E%3Cstop offset='1' stop-color='black' stop-opacity='.12'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='640' height='48' fill='url(%23g)'/%3E%3Crect y='48' width='640' height='48' fill='url(%23g)'/%3E%3Crect y='46' width='640' height='2' fill='black' fill-opacity='.22'/%3E%3Crect y='94' width='640' height='2' fill='black' fill-opacity='.22'/%3E%3Crect x='0' width='2' height='46' fill='black' fill-opacity='.16'/%3E%3Crect x='320' y='48' width='2' height='46' fill='black' fill-opacity='.16'/%3E%3C/svg%3E");
+  --wall-brick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='64'%3E%3Crect width='80' height='32' fill='white' fill-opacity='.04'/%3E%3Crect x='80' width='80' height='32' fill='black' fill-opacity='.06'/%3E%3Crect x='0' y='32' width='40' height='32' fill='black' fill-opacity='.04'/%3E%3Crect x='40' y='32' width='80' height='32' fill='white' fill-opacity='.05'/%3E%3Crect x='120' y='32' width='40' height='32' fill='black' fill-opacity='.04'/%3E%3Cg fill='black' fill-opacity='.24'%3E%3Crect y='30' width='160' height='2'/%3E%3Crect y='62' width='160' height='2'/%3E%3Crect x='78' width='2' height='32'/%3E%3Crect x='158' width='2' height='32'/%3E%3Crect x='38' y='32' width='2' height='32'/%3E%3Crect x='118' y='32' width='2' height='32'/%3E%3C/g%3E%3C/svg%3E");
+  --wall-stone:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='108'%3E%3Cg fill='white' fill-opacity='.05'%3E%3Crect x='70' width='80' height='36'/%3E%3Crect x='0' y='36' width='40' height='36'/%3E%3Crect x='110' y='36' width='70' height='36'/%3E%3Crect x='20' y='72' width='75' height='36'/%3E%3Crect x='160' y='72' width='55' height='36'/%3E%3C/g%3E%3Cg fill='black' fill-opacity='.06'%3E%3Crect x='150' width='50' height='36'/%3E%3Crect x='40' y='36' width='70' height='36'/%3E%3Crect x='95' y='72' width='65' height='36'/%3E%3C/g%3E%3Cg fill='black' fill-opacity='.24'%3E%3Crect y='34' width='240' height='2'/%3E%3Crect y='70' width='240' height='2'/%3E%3Crect y='106' width='240' height='2'/%3E%3Crect x='68' width='2' height='34'/%3E%3Crect x='148' width='2' height='34'/%3E%3Crect x='198' width='2' height='34'/%3E%3Crect x='38' y='36' width='2' height='34'/%3E%3Crect x='108' y='36' width='2' height='34'/%3E%3Crect x='178' y='36' width='2' height='34'/%3E%3Crect x='18' y='72' width='2' height='34'/%3E%3Crect x='93' y='72' width='2' height='34'/%3E%3Crect x='158' y='72' width='2' height='34'/%3E%3Crect x='213' y='72' width='2' height='34'/%3E%3C/g%3E%3C/svg%3E");
+  --wall-rib:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='8'%3E%3Crect width='12' height='8' fill='white' fill-opacity='.07'/%3E%3Crect x='12' width='2' height='8' fill='black' fill-opacity='.2'/%3E%3Crect x='30' width='1' height='8' fill='black' fill-opacity='.1'/%3E%3C/svg%3E");
+  --layers-edge:inset 0 4px 0 #8a8f96, inset 0 8px 0 #b8946a, inset 0 12px 0 #e9dcc0;
+}
+
+/* 面＝外壁材 */
+.site-kv,.site-cta,.wf-pagehead,.site-ivhero__body{ background-image:var(--wall-lap); background-size:640px 96px; }
+.site-flow{ background-image:var(--wall-brick) !important; background-size:160px 64px !important; }
+.site-truth{ background-image:var(--wall-stone) !important; background-size:240px 108px !important; }
+.wf-sec .site-wall .wf-stat:nth-child(4n+1),.site-gate,.site-tree__root{ background-image:var(--wall-rib); }
+.site-tile:nth-child(3n+1){ background-image:var(--wall-lap); } .site-tile:nth-child(3n+2){ background-image:var(--wall-brick); } .site-tile:nth-child(3n){ background-image:var(--wall-stone); }
+.site-marquee{ background-image:var(--wall-lap); background-size:320px 48px; }
+.site-bigcta__b{ background-image:var(--wall-stone); }
+
+/* 面の上端＝カバー工法の層 */
+.site-cta,.site-flow,.site-truth,.wf-pagehead,.site-ivhero{ box-shadow:var(--layers-edge) !important; }
+.site-kv__facts{ box-shadow:var(--layers-edge); padding-top:32px; }
+
+/* 家の形のバッジ（切妻） */
+.site-house{ display:inline-grid; place-items:center; padding:14px 14px 6px; min-width:64px; clip-path:polygon(50% 0, 100% 34%, 100% 100%, 0 100%, 0 34%); background:#fff; color:var(--k-blue); font-family:var(--k-latin); font-weight:800; letter-spacing:.14em; font-size:12px; line-height:1.2; }
+.site-cta .wf-en{ display:inline-grid; place-items:center; padding:20px 18px 8px; clip-path:polygon(50% 0, 100% 34%, 100% 100%, 0 100%, 0 34%); background:#fff; color:var(--k-blue) !important; font-weight:800; }
+.site-flow .wf-sechead .wf-en{ display:inline-grid; place-items:center; padding:12px 6px 16px 10px; clip-path:polygon(0 0, 66% 0, 100% 50%, 66% 100%, 0 100%); background:#fff; color:var(--k-blue) !important; margin:0 0 0 12px; font-weight:800; }
+.site-tile b{ display:inline-grid; place-items:center; width:64px; height:60px; padding-top:14px; box-sizing:border-box; clip-path:polygon(50% 0, 100% 36%, 100% 100%, 0 100%, 0 36%); background:#fff; color:var(--c); font-size:24px; }
+.site-ivhero__no{ justify-self:start; display:inline-grid; place-items:center; padding:18px 18px 8px; clip-path:polygon(50% 0, 100% 34%, 100% 100%, 0 100%, 0 34%); background:#fff; color:var(--c); }
+@container (max-width:900px){ .site-flow .wf-sechead .wf-en{ clip-path:polygon(50% 0, 100% 34%, 100% 100%, 0 100%, 0 34%); padding:16px 14px 6px; margin:0 0 10px; } }
+@container (max-width:600px){ .site-tile b{ width:52px; height:48px; font-size:20px; padding-top:10px; } }
+
+/* 外壁の色見本タグ */
+.site-swatch{ position:absolute; right:max(16px, 3vw); bottom:20px; z-index:2; display:grid; grid-template-columns:28px auto; column-gap:10px; align-items:center; padding:8px 12px 8px 8px; background:#fff; color:var(--wf-ink); border-radius:2px; box-shadow:0 4px 0 rgba(0,0,0,.18); pointer-events:none; }
+.site-swatch i{ grid-row:1 / 3; width:28px; height:28px; border-radius:2px; background:var(--sw, var(--k-blue)); background-image:var(--swp, var(--wall-lap)); background-size:auto; }
+.site-swatch b{ font-family:var(--k-latin); font-size:10px; letter-spacing:.16em; line-height:1.3; }
+.site-swatch small{ font-size:10px; color:var(--wf-ink-3); line-height:1.3; }
+.site-swatch::before{ content:""; position:absolute; left:50%; top:-6px; width:8px; height:8px; margin-left:-4px; border-radius:50%; background:#fff; box-shadow:inset 0 0 0 2px #c9ced3; }
+.site-truth,.site-flow,.site-cta,.wf-pagehead{ position:relative; }
+.site-cta .site-swatch{ bottom:24px; }
+@container (max-width:600px){ .site-swatch{ display:none; } }
+
+/* KV：壁をまとう、のひと言 */
+.site-kv__wall{ margin:0; font-size:13px; letter-spacing:.2em; color:rgba(255,255,255,.88); display:flex; align-items:center; gap:10px; }
+.site-kv__wall::before{ content:""; width:28px; height:20px; background:var(--k-blue-d); background-image:var(--wall-lap); background-size:64px 10px; box-shadow:inset 0 0 0 1px rgba(255,255,255,.5); }
+@container (max-width:900px){ .site-kv__wall{ display:none; } }
+
+.site-swatch--lap i{ --swp:var(--wall-lap); background-size:140px 21px; }
+.site-swatch--brick i{ --swp:var(--wall-brick); background-size:40px 16px; }
+.site-swatch--stone i{ --swp:var(--wall-stone); background-size:62px 28px; }
+.site-cta{ background-image:var(--wall-lap) !important; background-size:640px 96px !important; }

@@ -1,0 +1,23 @@
+@charset "UTF-8";
+/* イラスト作り込み版 */
+.z-house--ill{ background:#fff; padding:8px; }
+.z-house--ill img{ display:block; width:100%; height:auto; }
+.z-about{ grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); }
+.z-layers{ grid-template-columns:150px 1fr; }
+.z-layers__fig{ position:relative; margin:0; background:#fff; border-radius:2px; padding:4px; }
+.z-layers__fig img{ display:block; width:100%; height:auto; }
+.z-layers__fig span{ position:absolute; display:grid; place-items:center; width:20px; height:20px; margin:-10px 0 0 -10px; border-radius:50%; background:var(--k-signal); color:var(--wf-ink); border:2px solid var(--wf-ink); font:800 11px/1 var(--k-latin); }
+.z-gap__img,.z-gap__real{ grid-template-columns:200px 1fr; padding:14px 18px; }
+.z-gap__pic{ width:200px; height:auto; border-radius:2px; background:#fff; }
+.z-gap__img .z-gap__pic{ opacity:.9; }
+.z-baton__face{ width:96px; height:96px; border-radius:50%; border:3px solid var(--wf-ink); background:#e6eef4; }
+.z-baton li.is-you .z-baton__face{ border-color:var(--k-signal); box-shadow:0 0 0 3px var(--wf-ink); }
+.site-org .z-orgface{ width:72px; height:72px; border-radius:50%; border:2px solid var(--wf-ink); display:block; margin:0 auto 6px; background:#e6eef4; }
+.site-say{ align-items:center; }
+.site-say__chara{ width:84px; height:auto; flex:none; }
+.site-say p{ margin:0; }
+@container (max-width:800px){ .z-gap__img,.z-gap__real{ grid-template-columns:130px 1fr; } .z-gap__pic{ width:130px; } }
+@container (max-width:900px){ .z-baton__face{ width:64px; height:64px; } .z-about{ grid-template-columns:1fr; } }
+@container (max-width:600px){ .site-say__chara{ width:64px; } .z-layers{ grid-template-columns:110px 1fr; } }
+.z-baton__ic{ display:none !important; } .z-baton__face{ margin-bottom:6px; }
+@container (max-width:600px){ .z-layers__fig span{ display:none; } }
