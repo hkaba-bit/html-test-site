@@ -62,11 +62,12 @@ header{display:flex;align-items:center;gap:12px;padding-block:18px 14px}
 /* bottom nav */
 nav.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);
   padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
-.tablist{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);height:var(--nav-h)}
+.tablist{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);height:var(--nav-h)}
 .tab{border:0;background:transparent;color:var(--muted);display:grid;justify-items:center;align-content:center;gap:2px;font-size:11px;font-weight:700;cursor:pointer;position:relative}
 .tab svg{width:24px;height:24px}
 .tab[aria-selected="true"]{color:var(--accent)}
 .tab[aria-selected="true"]::before{content:"";position:absolute;top:0;left:30%;right:30%;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
+.tab{font-size:10.5px;letter-spacing:-.02em}
 .tab .badge{position:absolute;top:6px;left:calc(50% + 8px);font-size:10px;min-width:18px;height:18px;line-height:18px;text-align:center;background:var(--warm);color:var(--surface);border-radius:99px;padding:0 5px;font-variant-numeric:tabular-nums}
 
 /* floating action */
@@ -434,6 +435,59 @@ body.lock{overflow:hidden}
 .acc.rules-acc .body{padding:0 14px 14px}
 .chips.wrap{flex-wrap:wrap}
 
+.facts{margin:0;display:grid;gap:6px}
+.facts div{display:grid;grid-template-columns:86px 1fr;gap:8px;font-size:13px;background:var(--bg);border-radius:10px;padding:8px 10px}
+.facts dt{display:flex;align-items:center;gap:5px;color:var(--muted);font-weight:700}
+.facts dt svg{width:14px;height:14px}
+.facts dd{margin:0}
+.tipchip{display:inline-flex;align-items:center;gap:4px;font-size:12px;background:var(--accent-soft);color:var(--accent);border-radius:99px;padding:3px 10px;font-weight:700}
+.tipchip svg{width:12px;height:12px}
+.hosp-mini{display:grid;gap:6px}
+.hosp-mini>div{display:grid;gap:1px;background:var(--bg);border-radius:10px;padding:8px 12px;font-size:13px}
+.hosp-mini span{color:var(--muted);font-size:12px}
+.hosp-mini .tel{display:flex;align-items:center;gap:8px;color:var(--ink);font-variant-numeric:tabular-nums;font-weight:700}
+.srcs{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px}
+.srcs a{display:inline-flex;align-items:center;gap:4px}
+.srcs svg{width:12px;height:12px}
+/* guide */
+.g-sec{display:grid;gap:10px}
+.g-sec>h3{display:flex;align-items:center;gap:8px}
+.g-sec>h3 i{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent)}
+.g-sec>h3 i svg{width:16px;height:16px}
+.callcard{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
+.callcard .k{font-family:var(--f-display);font-weight:700;font-size:19px;text-align:center;color:var(--bad)}
+.callcard b{font-size:14px}
+.callcard span{display:block;font-size:12px;color:var(--muted)}
+.gcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:10px}
+.gtable{width:100%;border-collapse:collapse;font-size:13px}
+.gtable th,.gtable td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.gtable th{font-size:11px;color:var(--muted);font-weight:700}
+.gtable tr:last-child td{border-bottom:0}
+.gtable td.n{white-space:nowrap;font-weight:700}
+.chk{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14px}
+.chk li{display:flex;gap:8px;align-items:flex-start}
+.chk li::before{content:"✓";color:var(--ok);font-weight:700}
+.chk2{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:14px}
+.hosp{display:grid;gap:8px}
+.hosp>div{display:grid;grid-template-columns:1fr auto;gap:2px 10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.hosp b{font-size:14px}
+.hosp .ty{font-size:11px;font-weight:700;color:var(--accent)}
+.hosp .ad{font-size:12px;color:var(--muted);grid-column:1/-1}
+.hosp .km{font-family:var(--f-display);font-weight:700;font-size:15px;text-align:right;align-self:start;font-variant-numeric:tabular-nums}
+.hosp .htel{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-weight:700;font-variant-numeric:tabular-nums}
+.evt{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line)}
+.evt:last-child{border-bottom:0}
+.evt b{font-size:14px}
+.evt .d{font-size:12px;color:var(--muted);grid-column:2}
+.evt .nt{font-size:12px;grid-column:2}
+.wx{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:6px}
+.wx span{background:var(--bg);border-radius:10px;padding:8px 10px;font-size:11px;color:var(--muted);display:grid}
+.wx b{font-family:var(--f-display);font-size:16px;color:var(--ink);font-variant-numeric:tabular-nums}
+.flight{display:grid;gap:6px}
+.flight .res{display:flex;gap:10px;align-items:center;border-radius:12px;padding:10px 12px;font-size:13px}
+.flight .res.ok{background:var(--ok-soft)} .flight .res.warn{background:var(--warn-soft)}
+.flight .res b{font-size:15px}
+
 /* chat */
 .chat{display:grid;gap:10px}
 .msg{max-width:88%;padding:10px 14px;border-radius:18px;font-size:14px;white-space:pre-wrap;word-break:break-word}
@@ -461,6 +515,11 @@ footer{margin-top:28px;font-size:12px;color:var(--muted);border-top:1px solid va
   <symbol id="i-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
   <symbol id="i-fit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
   <symbol id="i-heart" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.5s-8-4.7-8-10.6A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 8 2.6c0 5.9-8 10.6-8 10.6z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3l7.5 3v5.5c0 4.5-3.2 8.2-7.5 9.5-4.3-1.3-7.5-5-7.5-9.5V6z"/><path d="M12 9v6M9 12h6"/></symbol>
+  <symbol id="i-plane" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M10.5 13.5L3 11l1.5-1.5 7 1 4-4.5c1-1 2.5-1.5 3.5-.5s.5 2.5-.5 3.5l-4.5 4 1 7L13.5 21 11 13.5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
+  <symbol id="i-umbrella" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 18 0z"/><path d="M12 12v7a2 2 0 0 1-4 0"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="7" width="16" height="13" rx="2.5"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/></symbol>
   <symbol id="i-car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="16.5" r="1.8"/><circle cx="16" cy="16.5" r="1.8"/></symbol>
   <symbol id="i-train" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="14" rx="3"/><path d="M6 11h12M9 21l1.5-4M15 21l-1.5-4"/></symbol>
   <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></symbol>
@@ -574,11 +633,13 @@ footer{margin-top:28px;font-size:12px;color:var(--muted);border-top:1px solid va
       <div class="actions" id="routeLinks"></div>
       <div id="planBox" style="display:grid;gap:14px"></div>
     </div>
-    <div class="sos">
-      <b>もしものときに</b>
-      <span>お腹の強い張りや痛み、出血、破水かもと感じたら、まず受診中の産院へ電話を。救急は119、迷ったら救急安心センター #7119（実施していない地域もあります）。</span>
-      <span class="muted xs">母子手帳・健康保険証・診察券はいつも持ち歩きましょう。旅行先で受診できる病院は出発前に確認しておくと安心です。</span>
-    </div>
+    <button type="button" class="callcard" data-gotab="guide" style="text-align:left;cursor:pointer;font:inherit;color:inherit"><span class="k">SOS</span><span><b>もしものときの連絡先・近くの病院</b><span>#7119・周産期センター・持ち物は「安心ガイド」に</span></span><span aria-hidden="true">›</span></button>
+  </section>
+
+  <!-- guide -->
+  <section class="panel" id="p-guide" role="tabpanel" aria-labelledby="tab-guide" hidden>
+    <div class="sec-head"><div><h2>安心ガイド</h2><p>もしもの連絡先、近くの病院、飛行機・天気・移動の情報をまとめました。</p></div></div>
+    <div id="guideBox" style="display:grid;gap:22px"></div>
   </section>
 
   <!-- 4 chat -->
@@ -603,6 +664,7 @@ footer{margin-top:28px;font-size:12px;color:var(--muted);border-top:1px solid va
     <button class="tab" role="tab" id="tab-profile" aria-controls="p-profile" data-tab="profile"><svg><use href="#i-user"/></svg>条件</button>
     <button class="tab" role="tab" id="tab-spots" aria-controls="p-spots" data-tab="spots"><svg><use href="#i-pin"/></svg>行きたい場所<span class="badge" id="selCount" hidden></span></button>
     <button class="tab" role="tab" id="tab-plan" aria-controls="p-plan" data-tab="plan"><svg><use href="#i-route"/></svg>日程と地図</button>
+    <button class="tab" role="tab" id="tab-guide" aria-controls="p-guide" data-tab="guide"><svg><use href="#i-shield"/></svg>安心ガイド</button>
     <button class="tab" role="tab" id="tab-chat" aria-controls="p-chat" data-tab="chat"><svg><use href="#i-chat"/></svg>相談</button>
   </div>
 </nav>
@@ -638,80 +700,360 @@ const gmSearch = q => 'https://www.google.com/maps/search/?api=1&query=' + encod
 const gSearch = q => 'https://www.google.com/search?q=' + encodeURIComponent(q);
 const isUrl = s => /^https?:\/\/[^\s]+\.[^\s]+/i.test(String(s || '').trim());
 
-/* ================= example data ================= */
-function ex(o){ return Object.assign({id:uid(), custom:false, sel:false, url:null}, o); }
+/* ================= example data（2026/10 調査を反映。位置は目安） ================= */
+function ex(o){ return Object.assign({id:uid(), custom:false, sel:false, url:null, hours:'', price:'', parking:'', sources:[], tips:[], medical:{minutes:null, note:''}, reviews:{good:[], concern:[], source:'ai'}, alternative:null}, o); }
+const L = (level, note) => ({level, note});
+const RV = (good, concern) => ({good, concern, source:'research'});
 const EXAMPLE_SPOTS = [
-  ex({photoKey:'churaumi', name:'沖縄美ら海水族館', category:'sightseeing', area:'本部町', lat:26.6943, lng:127.878, summary:'大水槽の前で座って過ごせる、雨の日にも強い定番。', verdict:'ok', sel:true,
-    walk:{level:2, note:'館内は広いがスロープ・エレベーターあり。入口に近い駐車場を選ぶと歩く距離が減ります。'}, toilet:{level:1, note:'館内に複数あり。'},
-    medical:{minutes:30, note:'名護市内の総合病院まで（目安・要確認）。'}, food:{level:1, note:'館内カフェあり。加熱メニューを選べば安心。'},
-    reviews:{good:['大水槽の前にベンチがありゆっくり見られる','屋内なので天気に左右されにくい'], concern:['連休や夏休みは館内が混み合う','駐車場から入口まで少し歩く'], source:'ai'}, alternative:null}),
-  ex({photoKey:'kouri', name:'古宇利大橋', category:'sightseeing', area:'今帰仁村', lat:26.6935, lng:128.0165, summary:'車窓からエメラルドの海を眺められる、歩かない絶景。', verdict:'ok', sel:true,
-    walk:{level:1, note:'ほぼ車内で楽しめます。降りるなら展望駐車場から近い場所で。'}, toilet:{level:2, note:'島内の駐車場・売店を利用。渡る前に済ませると安心。'},
-    medical:{minutes:40, note:'名護市内まで（目安・要確認）。'}, food:{level:2, note:'海鮮丼の店が多め。加熱メニューの店を選びましょう。'},
-    reviews:{good:['車で走るだけで景色が楽しめる','晴れた日の海の色がきれい'], concern:['週末は島内の駐車場が混む','日陰が少なく日差しが強い'], source:'ai'}, alternative:null}),
-  ex({photoKey:'sefa', name:'斎場御嶽', category:'sightseeing', area:'南城市', lat:26.1727, lng:127.8275, summary:'沖縄の聖地。森の中の石畳の道を歩いて巡ります。', verdict:'avoid',
-    walk:{level:3, note:'石畳の坂道や段差が続き、雨のあとは滑りやすい。'}, toilet:{level:2, note:'チケット売り場周辺のみ。'},
-    medical:{minutes:25, note:'那覇・南風原方面まで（目安・要確認）。'}, food:{level:1, note:'飲食なし。'},
-    reviews:{good:['神聖な雰囲気で印象に残る'], concern:['足元が悪く歩きやすい靴が必須','坂道が多くて疲れたという声'], source:'ai'},
-    alternative:{name:'ニライカナイ橋', reason:'車から降りずに南部の海を一望できます。景色が目的なら負担がぐっと少なめです。'}}),
-  ex({photoKey:'soba', name:'本部そば街道の食堂', category:'gourmet', area:'本部町', lat:26.6545, lng:127.8985, summary:'あたたかい沖縄そばで、やさしい味のお昼に。', verdict:'caution',
-    walk:{level:1, note:'店の前に駐車できる店が多い。'}, toilet:{level:2, note:'店内に1つの店が多め。'},
-    medical:{minutes:30, note:'名護市内まで（目安）。'}, food:{level:1, note:'加熱料理中心で安心。'},
-    reviews:{good:['だしがやさしく食べやすい'], concern:['人気店は昼どきに行列','席がカウンター中心の店もある'], source:'ai'}, alternative:null}),
-  ex({name:'海の見えるカフェ（恩納村）', category:'gourmet', area:'恩納村', lat:26.4795, lng:127.8335, summary:'ソファ席で海を眺めながら、ハーブティーでひと休み。', verdict:'ok', sel:true,
-    walk:{level:1, note:'駐車場から近い店を選べば平坦。'}, toilet:{level:1, note:'店内にあり。'},
-    medical:{minutes:35, note:'うるま市・名護市方面まで（目安・要確認）。'}, food:{level:1, note:'ノンカフェインのドリンクがある店を選べます。'},
-    reviews:{good:['夕日の時間が特にきれい','ゆったりした席で長居しやすい'], concern:['夕方は満席になりやすい'], source:'ai'}, alternative:null}),
-  ex({name:'やちむんの里', category:'relax', area:'読谷村', lat:26.4045, lng:127.7445, summary:'工房めぐりと、座ってできる絵付け体験。', verdict:'caution', sel:true,
-    walk:{level:2, note:'里の中は未舗装の坂道あり。2〜3軒に絞りましょう。'}, toilet:{level:2, note:'共同駐車場付近にあり。'},
-    medical:{minutes:30, note:'中部の総合病院まで（目安・要確認）。'}, food:{level:1, note:'飲食は近くのカフェで。'},
-    reviews:{good:['器選びが楽しい','のどかな雰囲気'], concern:['道が舗装されていない場所がある','雨の日はぬかるみやすい'], source:'ai'}, alternative:null}),
-  ex({name:'ホテルのマタニティマッサージ', category:'relax', area:'恩納村', lat:26.4705, lng:127.8255, summary:'妊娠中に対応したトリートメントで、むくみや腰をいたわる時間に。', verdict:'ok', sel:true,
-    walk:{level:1, note:'館内で完結。'}, toilet:{level:1, note:'スパ内にあり。'},
-    medical:{minutes:35, note:'うるま市・名護市方面まで（目安）。'}, food:{level:1, note:'施術前後の飲み物はノンカフェインを。'},
-    reviews:{good:['横向きの姿勢で受けられて楽だった'], concern:['対応できる週数が決まっている場合がある（要予約確認）'], source:'ai'}, alternative:null}),
-  ex({name:'恩納村のリゾートホテル（連泊）', category:'hotel', area:'恩納村', lat:26.4705, lng:127.8255, summary:'4泊同じ宿にして、荷造りと移動の負担を減らす作戦。', verdict:'ok', sel:true,
-    walk:{level:1, note:'客室から車寄せまでが近い宿を選ぶと楽。'}, toilet:{level:1, note:'客室内。'},
-    medical:{minutes:35, note:'中部・北部の病院まで（目安・要確認）。'}, food:{level:1, note:'朝食は生ものを避け、温かい料理を中心に。'},
-    reviews:{good:['部屋から海が見えて部屋時間が楽しい'], concern:['広い館内は移動に時間がかかることも'], source:'ai'}, alternative:null}),
+  /* ---------- 観光・絶景 ---------- */
+  ex({photoKey:'churaumi', name:'沖縄美ら海水族館', category:'sightseeing', area:'本部町', lat:26.6943, lng:127.878, verdict:'ok', sel:true,
+    summary:'大水槽「黒潮の海」の前で座って鑑賞できる。雨の日でも安心の定番。',
+    hours:'8:30〜18:30（入館17:30まで）', price:'大人2,180円', parking:'海洋博公園の無料駐車場（P7が水族館に最寄り）',
+    url:'https://churaumi.okinawa/',
+    walk:L(1, '館内はエレベーター・エスカレーターあり。車いすの貸出はP7駐車場の案内所で。'),
+    toilet:L(1, '授乳室2か所（3F入口・2Fシアター前）と多目的トイレあり。'),
+    food:L(1, '館内カフェ「オーシャンブルー」は大水槽横。加熱メニューを選べば安心。'),
+    reviews:RV(['大水槽の前で座ってゆっくり見られる','屋内なので天気に左右されない'], ['12〜16時は混雑しやすい（開館直後か16時以降が狙い目）']),
+    tips:['開館直後に入る','P7駐車場を使う'],
+    sources:['https://churaumi.okinawa/guide/hour/','https://oki-churaumi.jp/guide/info/','https://barrier-free.net/archives/barrierfree/barrierfree-64193/']}),
+  ex({photoKey:'kouri', name:'古宇利大橋', category:'sightseeing', area:'今帰仁村', lat:26.6935, lng:128.0165, verdict:'ok', sel:true,
+    summary:'全長約2kmの橋を車で渡るだけでエメラルドの海を一望。歩かない絶景。',
+    hours:'通行自由', price:'無料', parking:'橋のたもと・島内の駐車場（有料の所あり・要確認）',
+    walk:L(1, 'ほぼ車内で楽しめる。降りるなら展望駐車場から近い場所だけに。'),
+    toilet:L(2, '島内の売店・駐車場のトイレ。渡る前に道の駅許田で済ませると安心。'),
+    food:L(2, '島内は海鮮丼の店が多め。加熱メニューの店を選ぶ。'),
+    reviews:RV(['車で走るだけで景色が楽しめる','晴れた日の海の色がとてもきれい'], ['週末は島内の駐車場が混む','日陰が少ない']),
+    tips:['助手席から撮影','トイレは手前の道の駅で']}),
+  ex({name:'美らヤシパークオキナワ 東南植物楽園（南国イルミネーション）', category:'sightseeing', area:'沖縄市', lat:26.3727, lng:127.8158, verdict:'caution', sel:false,
+    summary:'旅行中に確実に見られる季節イベント。約1万8千坪の夜の植物園がライトアップ。',
+    hours:'イルミネーション期間（2026/10/23〜2027/5/23）17:00〜22:00（入場21:30まで）', price:'夜の部 大人2,500円', parking:'無料駐車場あり（沖縄北ICからすぐ）',
+    url:'https://www.southeast-botanical.jp/illumination/',
+    walk:L(2, '屋外の園内を歩く。全部回らず、入口付近のエリアに絞ると安心。'),
+    toilet:L(2, '園内に数か所（場所は要確認）。'),
+    food:L(2, '園内の軽食は屋台形式。温かい飲み物を選ぶ。'),
+    reviews:RV(['国内のイルミネーション賞の受賞歴あり','写真映えする'], ['夜は冷えるので羽織りが必要','帰りが遅くなる']),
+    tips:['体調に余裕のある日だけ','20時台に切り上げる'], sources:['https://www.southeast-botanical.jp/illumination/']}),
+  ex({name:'道の駅許田（やんばる物産センター）', category:'sightseeing', area:'名護市', lat:26.556, lng:127.976, verdict:'ok', sel:true,
+    summary:'北部へ向かう途中の休憩とおみやげ選びが一度にできる。授乳室・多目的トイレあり。',
+    hours:'8:30〜19:00（無休）。1階トイレは24時間', price:'無料', parking:'無料272台（障がい者用6台）',
+    url:'https://www.okinawastory.jp/spot/1019',
+    walk:L(1, '駐車場から建物まですぐ。'), toilet:L(1, '多目的トイレあり。道路情報ターミナル2階に冷房付きの授乳室・休憩スペース。'),
+    food:L(2, 'サーターアンダギーなど揚げ物が中心。温かいものを。'),
+    reviews:RV(['休憩にちょうどいい','おみやげが揃う'], ['昼どきは混雑する']),
+    tips:['北部へ行く日の往復で寄る','北部病院まで車で約10分'], sources:['https://kids.rurubu.jp/article/108331/','https://www.okinawastory.jp/spot/1019']}),
+  ex({name:'ニライカナイ橋（車窓）', category:'sightseeing', area:'南城市', lat:26.158, lng:127.805, verdict:'ok', sel:false,
+    summary:'高台から海へ下るカーブの橋。車から降りずに南部の海を一望できる。',
+    hours:'通行自由', price:'無料', parking:'橋の上は停車不可。上部の展望所あり（要確認）',
+    walk:L(1, '車窓で楽しむ。'), toilet:L(2, '近くの南城市地域物産館で。'), food:L(1, '飲食なし。'),
+    reviews:RV(['ドライブだけで絶景'], ['橋の上では停車できない']), tips:['斎場御嶽の代わりに']}),
+  ex({name:'知念岬公園', category:'sightseeing', area:'南城市', lat:26.169, lng:127.83, verdict:'caution', sel:false,
+    summary:'斎場御嶽と同じ駐車場から行ける海の見える岬。久高島を望む。',
+    hours:'散策自由', price:'無料', parking:'南城市地域物産館の駐車場',
+    walk:L(2, '岬の先端までは緩い下り坂（帰りは上り）。手前のベンチで眺めるのがおすすめ。'),
+    toilet:L(1, '南城市地域物産館のトイレ。'), food:L(1, '物産館に軽食。'),
+    reviews:RV(['開放感のある景色'], ['坂の上り下りがある']), sources:['https://okinawa-nanjo.jp/sefa/access/']}),
+  ex({name:'万座毛', category:'sightseeing', area:'恩納村', lat:26.505, lng:127.85, verdict:'caution', sel:false,
+    summary:'象の鼻の形の断崖で有名な景勝地。恩納村の宿から近い。',
+    hours:'8:00〜19:00（季節で変動・要確認）', price:'入域料100円（要確認）', parking:'有料駐車場あり（要確認）',
+    walk:L(2, '施設から遊歩道を一周すると約20分。平坦だが日陰が少ない。'), toilet:L(1, '万座毛周辺活性化施設内（要確認）。'), food:L(2, '施設内の売店。'),
+    reviews:RV(['夕日がきれい'], ['風が強い日がある','日陰が少ない']), tips:['夕方の涼しい時間に']}),
+  ex({name:'備瀬のフクギ並木（水牛車）', category:'sightseeing', area:'本部町', lat:26.705, lng:127.88, verdict:'caution', sel:false,
+    summary:'美ら海水族館の近く。フクギの木陰の道を水牛車でゆっくり巡れる。',
+    hours:'水牛車は事業者により異なる（要確認）', price:'要確認', parking:'周辺の有料駐車場',
+    walk:L(2, '並木道は木陰で平坦だが砂地。歩くなら短い区間だけに。'), toilet:L(2, '集落内は少ない。'), food:L(2, '集落内のカフェ。'),
+    reviews:RV(['木陰が涼しい'], ['水牛車は揺れがある（乗車は体調次第）']), tips:['乗車可否は事業者に確認']}),
+  ex({name:'美浜アメリカンビレッジ', category:'sightseeing', area:'北谷町', lat:26.316, lng:127.757, verdict:'ok', sel:false,
+    summary:'海沿いの商業エリア。カフェ・買い物・夕日を平坦な道でまとめて楽しめる。',
+    hours:'店舗により異なる', price:'無料', parking:'無料の大型駐車場あり',
+    walk:L(1, '平坦。ただし広いので目的の店に近い駐車場を選ぶ。'), toilet:L(1, '商業施設内に多数。'), food:L(1, '選択肢が多く、加熱メニューも選びやすい。'),
+    reviews:RV(['夕日の時間がきれい','雨でも屋内に逃げられる'], ['週末の夜は混む']), tips:['美浜イルミネーションは11/14〜（要確認）']}),
+  ex({name:'瀬長島ウミカジテラス', category:'sightseeing', area:'豊見城市', lat:26.176, lng:127.642, verdict:'caution', sel:false,
+    summary:'那覇空港から車で約15分。最終日の時間調整に向く海辺の白い商業施設。',
+    hours:'10:00〜21:00（店舗により異なる）', price:'無料', parking:'無料駐車場あり（混雑時は満車）',
+    walk:L(2, '斜面に沿ったテラス状で階段・坂が多い。下段の店に絞る。'), toilet:L(1, '施設内にあり。'), food:L(1, 'パンケーキ・スープなど加熱メニュー多め。'),
+    reviews:RV(['飛行機と海が見える','空港に近い'], ['階段が多い','駐車場が混む'])}),
+  /* 妊婦には負担が大きい */
+  ex({photoKey:'sefa', name:'斎場御嶽', category:'sightseeing', area:'南城市', lat:26.1727, lng:127.8275, verdict:'avoid', sel:false,
+    summary:'琉球王国最高の聖地。森の中の石畳を歩いて巡る。',
+    hours:'9:00〜18:00（季節で変動）', price:'大人300円', parking:'南城市地域物産館',
+    url:'https://sefa.okinawa/map/',
+    walk:L(3, '券売所から入口まで約500m・徒歩7〜10分、さらに三庫理まで10〜15分。坂・凸凹道・滑りやすい石畳。所要50〜60分。'),
+    toilet:L(2, '券売所（南城市地域物産館）周辺のみ。場内にはなし。'), food:L(1, '飲食なし。'),
+    reviews:RV(['神聖な雰囲気で印象に残る'], ['足元が悪く歩きやすい靴が必須','坂道が多く疲れたという声']),
+    alternative:{name:'ニライカナイ橋（車窓）・知念岬公園', reason:'同じ南城市で、車から降りずに、または駐車場のすぐ近くで海を一望できます。公式も「体力に不安がある方は窓口に相談を」と案内しています。'},
+    sources:['https://sefa.okinawa/map/','https://www.kankou-nanjo.okinawa/bunka/200/']}),
+  ex({name:'首里城公園', category:'sightseeing', area:'那覇市', lat:26.217, lng:127.7195, verdict:'avoid', sel:false,
+    summary:'旅行期間中は正殿が公開前（一般公開は11/23正午から）。坂と石段が多い。',
+    hours:'要確認', price:'大人400円（11/23入場分から1,000円に改定）', parking:'首里杜館の有料駐車場',
+    url:'https://shurijocastle.okinawa/news/9269/',
+    walk:L(3, '城郭へは坂と石段が続く。正殿内部は公開後も30分ごとの日時指定予約制。'), toilet:L(1, '首里杜館などにあり。'), food:L(1, '周辺の飲食店。'),
+    reviews:RV(['歴史を感じられる'], ['坂と階段がきつい','公開直前で混雑・制限の可能性']),
+    alternative:{name:'産後の再訪がおすすめ', reason:'旅行中は正殿を見られず、坂の負担も大きいため。那覇では屋内の体験（首里琉染・やちむん道場）が代わりになります。'},
+    sources:['https://shurijocastle.okinawa/news/9269/','https://www.okinawastory.jp/news/tourism/4705']}),
+  ex({name:'青の洞窟シュノーケル（真栄田岬）', category:'sightseeing', area:'恩納村', lat:26.445, lng:127.774, verdict:'avoid', sel:false,
+    summary:'人気のマリンアクティビティ。妊婦は参加不可とする事業者が多い。',
+    walk:L(3, '岬から海へ長い階段と岩場。海に入る。'), toilet:L(2, '岬の管理施設。'), food:L(1, '—'),
+    reviews:RV(['海の青さが格別'], ['階段の上り下りがきつい','妊娠中は参加できない']),
+    alternative:{name:'沖縄美ら海水族館・ホテルのビーチ', reason:'海の生き物や青い海は、座って・歩かずに楽しめる方法を選びましょう。'}}),
+  ex({name:'大石林山', category:'sightseeing', area:'国頭村', lat:26.861, lng:128.258, verdict:'avoid', sel:false,
+    summary:'本島最北端の奇岩の山。岩場の遊歩道が中心で、病院から遠い。',
+    walk:L(3, '岩場や階段の多い遊歩道。'), toilet:L(2, '入口の施設のみ。'), food:L(2, '入口の売店。'),
+    reviews:RV(['迫力のある景色'], ['足場が悪い','最寄りの周産期センターまで遠い']),
+    alternative:{name:'古宇利大橋（車窓）', reason:'北部の絶景は、車から楽しめて病院にも近いルートを。'}}),
+  ex({name:'離島への高速船（伊江島・座間味など）', category:'sightseeing', area:'本部港・泊港', lat:26.656, lng:127.879, verdict:'avoid', sel:false,
+    summary:'揺れや衝撃があり、島では産科の救急体制が限られる。',
+    walk:L(2, '乗り降りで足場が不安定。'), toilet:L(2, '船内のトイレは揺れる。'), food:L(1, '—'),
+    reviews:RV(['離島の海がきれい'], ['揺れで酔いやすい','島の医療体制が限られる']),
+    alternative:{name:'瀬底島・古宇利島へ車で', reason:'橋でつながった島なら、揺れもなく病院にもすぐ戻れます。'}}),
+
+  /* ---------- グルメ・カフェ ---------- */
+  ex({photoKey:'soba', name:'きしもと食堂 八重岳店', category:'gourmet', area:'本部町', lat:26.639, lng:127.914, verdict:'ok', sel:true,
+    summary:'創業100年超の本部そばの名店。本店より駐車場が広く待ち時間が比較的短い。',
+    hours:'11:00〜17:00、定休日なし（臨時休業あり）', price:'沖縄そば 約800円〜（要確認）', parking:'25台',
+    walk:L(1, '駐車場からすぐ。'), toilet:L(2, '店内にあり。'), food:L(1, '加熱料理。生ものなし。'),
+    reviews:RV(['かつおだしがやさしい','本店より入りやすい'], ['昼どきは行列']),
+    sources:['https://rurubu.jp/andmore/spot/80043169','https://suba.okinawa/subaya/kishimoto-yaedake']}),
+  ex({name:'きしもと食堂 本店', category:'gourmet', area:'本部町', lat:26.6563, lng:127.8817, verdict:'caution', sel:false,
+    summary:'渡久地の老舗。歴史ある建物の雰囲気も楽しめる。',
+    hours:'11:00〜17:00（売り切れ次第終了）、水曜定休', price:'要確認', parking:'近くに3か所（11〜12台）',
+    walk:L(1, '駐車場は近いが、行列の間は立ちっぱなし。'), toilet:L(2, '店内にあり（要確認）。'), food:L(1, '加熱料理。'),
+    reviews:RV(['昔ながらの味'], ['行列ができやすい','席が少ない']), tips:['開店直後に'], sources:['https://rurubu.jp/andmore/spot/80043168']}),
+  ex({name:'山原そば', category:'gourmet', area:'本部町伊豆味', lat:26.641, lng:127.951, verdict:'ok', sel:false,
+    summary:'ソーキがほろほろの人気店。肉がなくなり次第終了。',
+    hours:'11:00〜15:00、月・火曜定休', price:'要確認', parking:'15〜20台',
+    walk:L(1, '駐車場からすぐ。'), toilet:L(2, '店内にあり（要確認）。'), food:L(1, '加熱料理。'),
+    reviews:RV(['ソーキがやわらかい'], ['早めに売り切れることがある']), sources:['https://suba.okinawa/subaya/yanbaru']}),
+  ex({name:'新垣ぜんざい屋', category:'gourmet', area:'本部町', lat:26.656, lng:127.883, verdict:'ok', sel:false,
+    summary:'じっくり煮た金時豆にふわふわの氷。沖縄の「ぜんざい」はかき氷。',
+    hours:'12:00〜18:00、月曜定休（祝日は翌日）', price:'1杯 数百円（要確認）', parking:'きしもと食堂と共用5〜6台',
+    walk:L(1, '駐車場からすぐ。'), toilet:L(2, '要確認。'), food:L(1, '加熱した豆と氷。冷たいので食べ過ぎに注意。'),
+    reviews:RV(['素朴でやさしい甘さ'], ['席数が少ない']), sources:['https://www.okinawatraveler.net/shop/898']}),
+  ex({name:'ピザ喫茶 花人逢', category:'gourmet', area:'本部町', lat:26.676, lng:127.903, verdict:'caution', sel:false,
+    summary:'高台の古民家から海と伊江島を見下ろす人気カフェ。焼きたてピザ。',
+    hours:'11:30〜19:00、火・水曜定休、現金のみ', price:'ピザ（中）約2,000円〜（要確認）', parking:'あり',
+    walk:L(2, '細い坂道を車で上った先。駐車場から店までは近い。'), toilet:L(2, '店内にあり。'), food:L(1, '焼きたてのピザ（加熱）。'),
+    reviews:RV(['景色が抜群','縁側でのんびりできる'], ['坂道の運転に注意','混雑時は待つ']), sources:['https://kajinhou.com/kajinhou.html']}),
+  ex({name:'Cafe ichara', category:'gourmet', area:'本部町伊豆味', lat:26.637, lng:127.942, verdict:'ok', sel:false,
+    summary:'森の中のガラス張りカフェ。木々を眺めて静かに過ごせる。',
+    hours:'11:30〜16:00、火・水曜定休', price:'要確認', parking:'8〜10台',
+    walk:L(1, '林の中の道を通るが駐車場から近い。'), toilet:L(2, '店内にあり。'), food:L(1, 'ピザなど加熱料理。'),
+    reviews:RV(['森の景色に癒やされる'], ['席数が少なく待つことも']), sources:['https://rurubu.jp/andmore/spot/80043180']}),
+  ex({name:'やちむん喫茶シーサー園', category:'gourmet', area:'本部町伊豆味', lat:26.645, lng:127.933, verdict:'caution', sel:false,
+    summary:'屋根にたくさんのシーサーが並ぶ古民家カフェ。',
+    hours:'11:00〜17:00、月・火曜と第3または第4日曜定休', price:'要確認', parking:'約17〜20台',
+    walk:L(2, '2階の席は階段（要確認）。1階の席を。'), toilet:L(2, '要確認。'), food:L(2, 'メニューは要確認。'),
+    reviews:RV(['風情のある建物'], ['2階は階段']), sources:['https://www.okinawastory.jp/feature/traditionalcrafts/cafe']}),
+  ex({name:'キングタコス 金武本店', category:'gourmet', area:'金武町', lat:26.456, lng:127.926, verdict:'ok', sel:false,
+    summary:'タコライス発祥の店。恩納村から高速で北部へ行く途中に。',
+    hours:'10:30〜21:00（要確認）、定休日なし', price:'タコライス 約700円〜（要確認）', parking:'近くの無料公共駐車場',
+    walk:L(1, '駐車場から近い。'), toilet:L(2, '要確認。'), food:L(2, 'ひき肉は加熱済み。生野菜が気になる場合は少なめに。辛いソースに注意。'),
+    reviews:RV(['ボリューム満点'], ['量が多い','店内が狭い']), tips:['テイクアウトしてホテルで'], sources:['https://www.visitkintown.jp/spot/kingtacos-honten']}),
+  ex({name:'宗像堂', category:'gourmet', area:'宜野湾市', lat:26.269, lng:127.742, verdict:'ok', sel:false,
+    summary:'石窯で焼く天然酵母パンの名店。ホテルの朝ごはん用に。',
+    hours:'10:00〜17:00（定休日は公式Instagramで確認）', price:'要確認', parking:'約6台',
+    walk:L(1, '駐車場からすぐ。'), toilet:L(2, '要確認。'), food:L(1, '加熱済みのパン。'),
+    reviews:RV(['どのパンもおいしい'], ['駐車場が少ない']), sources:['https://www.tabirai.net/sightseeing/column/0004761.aspx']}),
+  ex({name:'ジャッキーステーキハウス', category:'gourmet', area:'那覇市', lat:26.212, lng:127.673, verdict:'ok', sel:false,
+    summary:'1953年創業の老舗ステーキ店。最終日の那覇で。',
+    hours:'11:00〜22:00受付、水曜定休（要確認）', price:'要確認', parking:'専用10〜13台＋契約駐車場',
+    walk:L(1, '駐車場から近い。'), toilet:L(1, '店内にあり。'), food:L(1, '焼き加減はウェルダンで注文する。'),
+    reviews:RV(['昔ながらの味と雰囲気'], ['混雑して待つ']), tips:['ウェルダンで注文'], sources:['https://rurubu.jp/andmore/spot/80042587']}),
+  ex({name:'浜辺の茶屋', category:'gourmet', area:'南城市', lat:26.143, lng:127.772, verdict:'ok', sel:false,
+    summary:'窓の外がすぐ海。ハーブティーがある、南部で人気の海カフェ。',
+    hours:'平日8:00〜18:00、土日祝8:00〜19:00（要確認）', price:'要確認', parking:'あり',
+    walk:L(1, '駐車場から近い。'), toilet:L(2, '要確認。'), food:L(1, 'ハーブティーあり。ノンカフェインを選びやすい。'),
+    reviews:RV(['目の前が海','時間を忘れて過ごせる'], ['満潮・干潮で景色が変わる','窓際の席は混む']), sources:['https://rurubu.jp/andmore/spot/80043048']}),
+  ex({name:'カフェ土花土花', category:'gourmet', area:'恩納村', lat:26.47, lng:127.82, verdict:'ok', sel:false,
+    summary:'恩納村のホテル併設カフェ。有機のコーヒー・紅茶。',
+    hours:'8:00〜18:00、日曜定休', price:'要確認', parking:'要確認',
+    walk:L(1, '要確認。'), toilet:L(1, 'ホテル併設。'), food:L(2, 'ノンカフェインの有無は入店時に確認。'),
+    reviews:RV(['ゆったりした雰囲気'], ['住所・駐車場は要確認']), sources:['https://dokadoka.jp/cafe/']}),
+  ex({name:'ホテルのラウンジ・ルームサービス', category:'gourmet', area:'恩納村', lat:26.504, lng:127.854, verdict:'ok', sel:true,
+    summary:'ノンカフェインの飲み物を頼みやすく、移動ゼロで海を眺められるいちばん確実な選択肢。',
+    walk:L(1, '館内で完結。'), toilet:L(1, '館内。'), food:L(1, 'ルイボスティーやデカフェの有無を事前に確認・リクエストしやすい。'),
+    reviews:RV(['疲れた日に助かる'], ['料金は高め']), tips:['チェックイン時にノンカフェインを確認']}),
+
+  /* ---------- 癒やし・体験 ---------- */
+  ex({name:'うるもスパ（ANAインターコンチネンタル万座）', category:'relax', area:'恩納村', lat:26.504, lng:127.854, verdict:'ok', sel:true,
+    summary:'妊娠中の方向けのボディ・フェイシャルトリートメント。ペアルームあり。',
+    hours:'要確認', price:'要確認', parking:'ホテル内',
+    url:'https://www.anaintercontinental-manza.jp/spa-wellness/urumo-spa/',
+    walk:L(1, 'ホテル館内。'), toilet:L(1, 'スパ内。'), food:L(1, '施術前後の飲み物はノンカフェインを。'),
+    reviews:RV(['夫婦一緒に受けられる'], ['対象の週数・条件は予約時に確認']), tips:['予約時に週数と体調を伝える','主治医の了承を']}),
+  ex({name:'スパ はなり（ハイアット リージェンシー 瀬良垣）', category:'relax', area:'恩納村', lat:26.513, lng:127.878, verdict:'ok', sel:false,
+    summary:'妊娠16週以降の健康な方向けマタニティトリートメント（90分以内を推奨）。',
+    hours:'要確認', price:'75分23,000円〜（2022年時点・現在は要確認）', parking:'ホテル内',
+    walk:L(1, 'ホテル館内。'), toilet:L(1, 'スパ内。'), food:L(1, '—'),
+    reviews:RV(['横向きの姿勢で楽だった'], ['料金は高め']), sources:['https://prtimes.jp/main/html/rd/p/000000073.000034203.html']}),
+  ex({name:'ハレクラニ沖縄 スパ（MOTHER-TO-BE）', category:'relax', area:'恩納村', lat:26.524, lng:127.894, verdict:'ok', sel:false,
+    summary:'60・90分のボディ、120分のボディ＋フェイシャル。横向きの姿勢で施術（妊娠16週以降）。',
+    walk:L(1, 'ホテル館内。'), toilet:L(1, 'スパ内。'), food:L(1, '—'),
+    reviews:RV(['上質な空間'], ['料金は高め','条件は要確認']), sources:['https://siqew2023.jp/halekulani-okinawa-pregnant-travel/']}),
+  ex({name:'THE HIRAMATSU 宜野座 スパ', category:'relax', area:'宜野座村', lat:26.49, lng:127.98, verdict:'ok', sel:false,
+    summary:'マタニティコースあり（妊娠20週以降・主治医の同意が必要）。',
+    url:'https://www.hiramatsuhotels.com/ginoza/spa/',
+    walk:L(1, 'ホテル館内。'), toilet:L(1, 'スパ内。'), food:L(1, '—'),
+    reviews:RV(['静かで落ち着く'], ['主治医の同意書が必要']), tips:['同意の確認を事前に']}),
+  ex({name:'陶眞窯（やちむん絵付け）', category:'relax', area:'読谷村', lat:26.4, lng:127.74, verdict:'ok', sel:true,
+    summary:'座ってできる点打ちの絵付け（約50分）。作品は約2か月後に郵送。',
+    hours:'要予約', price:'2名以上で1人5,000円', parking:'あり（要確認）',
+    url:'https://tousingama.com/tougeitaiken/',
+    walk:L(1, '座ってできる。'), toilet:L(2, '要確認。'), food:L(1, '—'),
+    reviews:RV(['ふたりの記念の器になる'], ['完成品は後日郵送']), tips:['予約制','出産後に届く器が記念に']}),
+  ex({photoKey:null, name:'琉球村（シーサー色付け）', category:'relax', area:'恩納村', lat:26.422, lng:127.768, verdict:'ok', sel:true,
+    summary:'50分・2,200円で当日持ち帰り可。恩納村の宿から近い。',
+    hours:'要確認', price:'2,200円', parking:'あり',
+    url:'https://www.ryukyumura.co.jp/facilities/memorysisa/',
+    walk:L(2, '体験は座ってできる。村内の散策は短めに。'), toilet:L(1, '施設内。'), food:L(2, '村内の食堂。'),
+    reviews:RV(['当日持ち帰れる'], ['村内は広い'])}),
+  ex({name:'琉球ガラス村（ジェルグラス体験）', category:'relax', area:'糸満市', lat:26.088, lng:127.695, verdict:'ok', sel:false,
+    summary:'吹きガラスは炉の前に立つので、座ってできるジェルグラス（3,300円〜）がおすすめ。',
+    hours:'9:30〜17:30、無休', price:'ジェルグラス3,300円〜', parking:'無料駐車場あり',
+    url:'https://www.ryukyu-glass.co.jp/workshop',
+    walk:L(1, '座ってできる。'), toilet:L(1, '施設内。'), food:L(1, '—'),
+    reviews:RV(['雨の日でも楽しめる'], ['吹きガラスは暑い']), tips:['吹きガラスは避ける']}),
+  ex({name:'首里琉染（紅型・サンゴ染め）', category:'relax', area:'那覇市', lat:26.2185, lng:127.723, verdict:'ok', sel:false,
+    summary:'約50分・大人3,850円。1日3回、各回4席の予約制。',
+    price:'3,850円', url:'https://www.shuri-ryusen.com/course/sango.html',
+    walk:L(1, '座ってできる。'), toilet:L(1, '施設内。'), food:L(1, '—'),
+    reviews:RV(['世界にひとつの作品'], ['席が少ないので予約必須'])}),
+  ex({name:'育陶園 やちむん道場', category:'relax', area:'那覇市壺屋', lat:26.213, lng:127.693, verdict:'ok', sel:false,
+    summary:'壺屋やちむん通りで絵付け体験（4,400円〜・送料別）。',
+    price:'4,400円〜', url:'https://www.ikutouen.com/yachimun-dojo/',
+    walk:L(2, '体験は座って。やちむん通りは石畳。'), toilet:L(2, '要確認。'), food:L(1, '—'),
+    reviews:RV(['那覇で手軽に'], ['周辺は石畳'])}),
+  ex({name:'沖縄出張撮影とっくー（マタニティフォト）', category:'relax', area:'本島全域', lat:null, lng:null, verdict:'ok', sel:false,
+    summary:'マタニティフォト40分16,000円・80枚以上。体調への配慮の評価が高い。',
+    price:'16,000円（40分）', url:'https://okinawa-familyphoto.com/',
+    walk:L(1, '撮影場所は相談可。平らな砂浜を選ぶ。'), toilet:L(2, '撮影場所による。'), food:L(1, '—'),
+    reviews:RV(['ふたりの記念に'], ['日差しの強い時間は避ける']), tips:['夕方の30〜40分で']}),
+  ex({name:'琉球幻想写真（マタニティフォト）', category:'relax', area:'本島全域', lat:null, lng:null, verdict:'ok', sel:false,
+    summary:'18,000円〜。雨天は無料で延期、全データ納品。瀬底・アラハ・残波など。',
+    price:'18,000円〜', url:'https://www.okinawaphoto.com/maternityphoto.html',
+    walk:L(1, '撮影場所は相談可。'), toilet:L(2, '撮影場所による。'), food:L(1, '—'),
+    reviews:RV(['雨でも延期できて安心'], ['撮影場所までの移動を考慮'])}),
+
+  /* ---------- ホテル・宿 ---------- */
+  ex({name:'ANAインターコンチネンタル万座ビーチリゾート（連泊）', category:'hotel', area:'恩納村', lat:26.504, lng:127.854, verdict:'ok', sel:true,
+    summary:'万座毛の対岸。マタニティメニューのある「うるもスパ」、抱き枕の貸出（宿泊者の声）。',
+    price:'21,376円〜（時期により変動）', parking:'あり', url:'https://www.anaintercontinental-manza.jp/',
+    walk:L(1, '車寄せからロビーが近い。'), toilet:L(1, '客室内。'), food:L(1, '館内レストランが複数。'),
+    reviews:RV(['館内で過ごせる','海が目の前'], ['館内が広い']), tips:['抱き枕を事前にリクエスト'], sources:['https://yukicoyuki.com/hotel-ana-maternity/']}),
+  ex({name:'ハレクラニ沖縄', category:'hotel', area:'恩納村', lat:26.524, lng:127.894, verdict:'ok', sel:false,
+    summary:'全室バスタブ付き、マタニティスパ（16週以降）、インルームダイニング。',
+    parking:'あり', walk:L(1, '館内は広め。'), toilet:L(1, '客室内。'), food:L(1, '客室で食事ができる。'),
+    reviews:RV(['上質で静か'], ['料金は高め']), sources:['https://inunohi.com/recommended/trip/okinawa/']}),
+  ex({name:'沖縄かりゆしビーチリゾート・オーシャンスパ', category:'hotel', area:'恩納村', lat:26.533, lng:127.907, verdict:'ok', sel:false,
+    summary:'マタニティサービス（抱き枕・マタニティ水着）を公式に案内。大浴場あり。',
+    url:'https://kariyushi-oceanspa.jp/service/maternity/',
+    walk:L(1, '要確認。'), toilet:L(1, '客室内。'), food:L(1, '館内レストラン。'),
+    reviews:RV(['マタニティ向けの貸出が明記'], ['大浴場は長湯に注意'])}),
+  ex({name:'ハイアット リージェンシー 瀬良垣アイランド 沖縄', category:'hotel', area:'恩納村', lat:26.513, lng:127.878, verdict:'ok', sel:false,
+    summary:'マタニティトリートメント（16週以降）のあるスパ。',
+    walk:L(2, '島と本館が橋でつながり館内が広い。'), toilet:L(1, '客室内。'), food:L(1, '館内レストラン。'),
+    reviews:RV(['景色がきれい'], ['館内の移動距離'])}),
+  ex({name:'星のや沖縄', category:'hotel', area:'読谷村', lat:26.404, lng:127.718, verdict:'ok', sel:false,
+    summary:'全室バスタブ付き、客室で食事ができる。那覇空港から約40分と近い。',
+    walk:L(1, '要確認。'), toilet:L(1, '客室内。'), food:L(1, '客室で食事。'),
+    reviews:RV(['プライベート感'], ['料金は高め'])}),
+  ex({name:'オリオンホテル モトブ リゾート＆スパ', category:'hotel', area:'本部町', lat:26.695, lng:127.88, verdict:'ok', sel:false,
+    summary:'美ら海水族館まで徒歩7分。天然温泉の大浴場。北部を中心に回るなら。',
+    price:'33,660円〜（時期により変動）', walk:L(1, '要確認。'), toilet:L(1, '客室内。'), food:L(1, 'ビュッフェ（加熱料理を中心に）。'),
+    reviews:RV(['水族館に近い'], ['空港から約100分'])}),
+  ex({name:'ザ・ブセナテラス', category:'hotel', area:'名護市', lat:26.54, lng:127.969, verdict:'ok', sel:false,
+    summary:'全室バスタブ付き。北部病院にも比較的近い。',
+    price:'41,140円〜（時期により変動）', walk:L(1, '要確認。'), toilet:L(1, '客室内。'), food:L(1, '館内レストラン。'),
+    reviews:RV(['落ち着いた大人のリゾート'], ['料金は高め'])}),
+  ex({name:'琉球温泉 瀬長島ホテル', category:'hotel', area:'豊見城市', lat:26.177, lng:127.643, verdict:'ok', sel:false,
+    summary:'空港から約15分。最終日の前泊に向く。天然温泉、露天風呂付き客室あり。',
+    walk:L(1, '要確認。'), toilet:L(1, '客室内。'), food:L(1, '館内レストラン。'),
+    reviews:RV(['空港に近く帰りが楽'], ['温泉は長湯に注意'])}),
 ];
+
+/* 周産期医療（位置は目安） */
+const HOSPITALS = [
+  {name:'沖縄県立北部病院', area:'名護市', type:'地域周産期母子医療センター', addr:'名護市大中2-12-3', tel:'0980-52-2719', lat:26.595, lng:127.985, note:'北部の中核病院。許田ICから車で約10分。'},
+  {name:'沖縄県立中部病院', area:'うるま市', type:'総合周産期母子医療センター', addr:'うるま市字宮里281', tel:'098-973-4111', lat:26.363, lng:127.854, note:'24時間の母体・新生児搬送の受け入れ体制。'},
+  {name:'沖縄県立南部医療センター・こども医療センター', area:'南風原町', type:'総合周産期母子医療センター', addr:'島尻郡南風原町字新川118-1', tel:'098-888-0123', lat:26.202, lng:127.729, note:'24時間の母体・新生児搬送の受け入れ体制。'},
+  {name:'那覇市立病院', area:'那覇市', type:'地域周産期母子医療センター', addr:'那覇市古島2-31-1', tel:'098-884-5111', lat:26.231, lng:127.699, note:''},
+  {name:'琉球大学病院', area:'宜野湾市', type:'地域周産期母子医療センター', addr:'宜野湾市字喜友名1076', tel:'098-894-1301', lat:26.285, lng:127.748, note:'2025年1月に西原町から移転。'},
+  {name:'中部徳洲会病院', area:'北中城村', type:'産婦人科', addr:'中頭郡北中城村字比嘉801', tel:'098-932-1110', lat:26.301, lng:127.79, note:''},
+  {name:'ハートライフ病院', area:'中城村', type:'産婦人科', addr:'中頭郡中城村字伊集208', tel:'098-895-3255', lat:26.267, lng:127.782, note:''},
+  {name:'中頭病院', area:'沖縄市', type:'産婦人科', addr:'沖縄市登川610', tel:'098-939-1300', lat:26.361, lng:127.813, note:''},
+];
+const GUIDE = {
+  calls:[
+    {k:'119', t:'救急車', d:'出血・破水・規則的なお腹の張り・強い痛みは迷わず', tel:'119'},
+    {k:'#7119', t:'おきなわ#7119（救急相談）', d:'24時間365日・無料。受診すべきか迷ったとき', tel:'#7119', alt:'098-866-7119'},
+    {k:'#8000', t:'小児救急電話相談', d:'平日19時〜翌8時、土日祝は24時間', tel:'#8000', alt:'098-888-5230'},
+  ],
+  bring:['母子健康手帳（予定日と健診記録）','健康保険証またはマイナ保険証','かかりつけ産院の連絡先・診察券','お薬手帳'],
+  airlines:[
+    {n:'JAL', rule:'予定日を含め28日以内は診断書（7日以内に発行）', doc:28, note:'予約時に予定日を伝えると優先搭乗などの手配がスムーズ', url:'https://www.jal.co.jp/jp/ja/dom/support/smilesupport/mama.html'},
+    {n:'ANA', rule:'予定日を含め15〜28日以内は診断書、14日以内は医師の同伴', doc:28, note:'28日以内の方は出発30分前までに搭乗手続き', url:'https://www.ana.co.jp/ja/jp/guide/reservation/support/domestic/maternity/'},
+    {n:'スカイマーク', rule:'予定日を含め8〜28日以内は診断書と同意書', doc:28, note:'妊娠中は優先搭乗の対象', url:'https://www.skymark.co.jp/ja/support/assist.html'},
+    {n:'Peach', rule:'予定日を含め28日以内は書類の提出など', doc:28, note:'優先搭乗あり。非常口座席は不可', url:'https://cs.flypeach.com/hc/ja/articles/4690988844830'},
+    {n:'ジェットスター', rule:'国内線は妊娠36週以降に診断書を携帯', wk:36, note:'優先搭乗は自動では対象外', url:'https://www.jetstar.com/jp/ja/help/articles/pregnancy-and-air-travel'},
+  ],
+  climate:{src:'気象庁 那覇 平年値（1991〜2020年）', rows:[['平均気温','22.5℃'],['最高／最低','25.0℃／20.4℃'],['降水量','119.1mm'],['日照時間','121.7時間'],['湿度','69％']],
+    wear:['日中は半袖でOK','朝晩・冷房・北風用に薄手の羽織り','帽子と日焼け止め','滑りにくいフラットシューズ（ビーチサンダルは避ける）','11月は曇りや雨の日も多い。雨の日プランを用意']},
+  drive:[['那覇空港 → 恩納村（ANA万座）','約80分（高速利用で約50分の案内も）'],['那覇空港 → ハレクラニ沖縄・ブセナテラス','約75分'],['那覇空港 → 星のや沖縄（読谷）','約40分'],['那覇空港 → オリオン モトブ','約100分'],['那覇空港 → 斎場御嶽（南城）','約50分'],['許田IC → 北部病院','約10分']],
+  belt:['腰ベルトは大きくなったお腹を避け、腰骨のできるだけ低い位置で','肩ベルトは肩から胸の間を通し、お腹を避けて体の側面へ','運転は夫が担当し、妊婦は助手席か後部座席に','60〜90分ごとに休憩。水分をとり足首を回してエコノミークラス症候群を予防'],
+  events:[
+    {t:'沖縄南国イルミネーション2026-2027', d:'2026/10/23〜2027/5/23・17:00〜22:00', s:'ok', note:'旅行中に見られる（東南植物楽園・沖縄市）', url:'https://www.southeast-botanical.jp/illumination/'},
+    {t:'美浜イルミネーション（北谷町）', d:'2026/11/14〜（二次情報）', s:'warn', note:'公式発表で要確認'},
+    {t:'首里城正殿 一般公開', d:'2026/11/23（月・祝）12:00〜', s:'bad', note:'旅行の後。完成式の11/22前後は混雑・入場制限に注意', url:'https://shurijocastle.okinawa/news/9269/'},
+    {t:'首里城の入場料改定', d:'11/23入場分から大人400円→1,000円', s:'warn', note:'旅行期間中は400円'},
+  ],
+  notes:['南城市「カフェくるくま」は2025年10月31日に閉店しています。','沖縄の個人店で「ノンカフェインあり」を公式に確認できた店は少数です。入店時に確認するか、ホテルのラウンジ・ルームサービスを使うのが確実です。'],
+};
+
 const P = (time, kind, title, detail, durationMin, extra = {}) => Object.assign({time, kind, title, detail, durationMin, driveMin:null, place:'', lat:null, lng:null}, extra);
+const HOTEL = {place:'ANAインターコンチネンタル万座ビーチリゾート', lat:26.504, lng:127.854};
 const EXAMPLE_PLAN = {days:[
   {day:1, title:'空港からホテルへ、まず休む日', area:'那覇→恩納村', memo:'初日は観光を入れず、移動の疲れを取ることを優先。', items:[
-    P('13:00','move','那覇空港に到着・レンタカー受け取り','営業所へは送迎バス。時間にゆとりを。',45,{place:'那覇空港', lat:26.2061, lng:127.6469}),
-    P('14:00','move','恩納村のホテルへ','沖縄自動車道で約50分。伊芸SAでトイレ休憩。',60,{driveMin:50}),
-    P('15:30','rest','チェックイン・お昼寝','足を少し高くして横になると楽なことも。',120,{place:'恩納村のリゾートホテル', lat:26.4705, lng:127.8255}),
-    P('18:30','meal','ホテルで夕食','館内レストランなら移動なし。',90)]},
-  {day:2, title:'美ら海水族館でゆっくり', area:'本部町', memo:'水族館は開館直後が比較的ゆったり。', items:[
-    P('09:00','move','本部町へ','許田IC経由で約55分。道の駅許田で休憩。',70,{driveMin:55}),
-    P('10:15','main','沖縄美ら海水族館','大水槽の前のベンチで座って鑑賞。',120,{place:'沖縄美ら海水族館', lat:26.6943, lng:127.878}),
-    P('12:30','meal','本部そば街道で沖縄そば','行列の店は避け、待たずに入れる店へ。',60,{place:'本部そば街道', lat:26.6545, lng:127.8985}),
-    P('14:00','move','ホテルへ戻る','約55分。',60,{driveMin:55}),
-    P('15:00','rest','ホテルでお昼寝','夕方までのんびり。',120,{place:'恩納村のリゾートホテル', lat:26.4705, lng:127.8255})]},
-  {day:3, title:'やちむんと、いたわる時間', area:'読谷村・恩納村', memo:'工房めぐりは2〜3軒に絞りましょう。', items:[
+    P('13:00','move','那覇空港に到着・レンタカー受け取り','営業所へは送迎バス。妊婦は先に座って待てる場所を確保。',45,{place:'那覇空港', lat:26.2061, lng:127.6469}),
+    P('14:00','move','恩納村のホテルへ','沖縄自動車道で約50〜80分。伊芸SAか中城PAでトイレ休憩。',70,{driveMin:60}),
+    P('15:30','rest','チェックイン・お昼寝','抱き枕とノンカフェインの飲み物をリクエスト。',120,HOTEL),
+    P('18:30','meal','ホテルで夕食','館内レストランなら移動なし。加熱料理を中心に。',90,HOTEL)]},
+  {day:2, title:'美ら海水族館と古宇利大橋', area:'本部町・今帰仁村', memo:'北部の日。困ったときの最寄りは北部病院（許田ICから約10分）。', items:[
+    P('08:00','move','本部町へ','許田IC経由で約55分。道の駅許田で休憩。',70,{driveMin:55}),
+    P('09:15','main','沖縄美ら海水族館','開館直後に入り、大水槽の前のベンチで座って鑑賞。P7駐車場が最寄り。',120,{place:'沖縄美ら海水族館', lat:26.6943, lng:127.878}),
+    P('11:30','meal','きしもと食堂 八重岳店で沖縄そば','駐車場25台。本店より待ち時間が短め。',60,{place:'きしもと食堂 八重岳店', lat:26.639, lng:127.914}),
+    P('13:00','main','古宇利大橋を車窓から','降りずに絶景を。渡る前にトイレを。',45,{driveMin:25, place:'古宇利大橋', lat:26.6935, lng:128.0165}),
+    P('14:15','move','道の駅許田で休憩してホテルへ','授乳室・多目的トイレあり。ホテルまで約30分。',75,{driveMin:50, place:'道の駅許田', lat:26.556, lng:127.976}),
+    P('15:30','rest','ホテルでお昼寝','夕方までのんびり。',120,HOTEL)]},
+  {day:3, title:'スパと海カフェ、記念の写真', area:'恩納村', memo:'移動ほぼなし。いちばんのんびりする日。', items:[
+    P('10:00','main','うるもスパでマタニティトリートメント','予約時に週数と体調を伝え、90分以内のコースを。',90,{place:'うるもスパ（ANAインターコンチネンタル万座）', lat:26.504, lng:127.854}),
+    P('12:00','meal','ホテルでランチ','',60,HOTEL),
+    P('13:30','rest','部屋でお昼寝','',120,HOTEL),
+    P('16:00','cafe','ラウンジで海を眺めてひと休み','ノンカフェインの飲み物を。',60,HOTEL),
+    P('17:00','main','ビーチでマタニティフォト（40分）','平らな砂浜で、涼しい夕方に短時間で。',40,{place:'万座ビーチ', lat:26.505, lng:127.856})]},
+  {day:4, title:'やちむん絵付けと、夜は光の植物園', area:'読谷村・恩納村・沖縄市', memo:'イルミネーションは体調に余裕がある場合だけ。20時台に切り上げる。', items:[
     P('10:00','move','読谷村へ','約30分。',30,{driveMin:30}),
-    P('10:30','main','やちむんの里で絵付け体験','座ってできる体験。器は配送にすると荷物が増えません。',90,{place:'やちむんの里', lat:26.4045, lng:127.7445}),
-    P('12:30','meal','読谷でランチ','ソファ席のあるお店へ。',60,{place:'読谷村 カフェ', lat:26.396, lng:127.7355}),
-    P('14:00','rest','ホテルで休憩','お昼寝タイム。',90,{place:'恩納村のリゾートホテル', lat:26.4705, lng:127.8255}),
-    P('16:00','main','マタニティマッサージ','施術前に週数と体調を伝えましょう。',60)]},
-  {day:4, title:'古宇利大橋と海カフェ', area:'今帰仁村・恩納村', memo:'橋を渡る前にトイレを済ませておくと安心。', items:[
-    P('10:00','move','古宇利島へ','約60分。途中の道の駅で休憩。',70,{driveMin:60}),
-    P('11:15','main','古宇利大橋ドライブ','車窓から海を楽しみ、展望駐車場で写真を。',60,{place:'古宇利大橋', lat:26.6935, lng:128.0165}),
-    P('12:30','meal','古宇利島でランチ','海鮮丼ではなく、加熱メニューのお店へ。',60,{place:'古宇利島', lat:26.704, lng:128.022}),
-    P('14:00','move','恩納村へ戻る','約60分。',60,{driveMin:60}),
-    P('15:00','cafe','海の見えるカフェ','ソファ席でハーブティー。夕日まで過ごしても。',90,{place:'恩納村 海の見えるカフェ', lat:26.4795, lng:127.8335})]},
-  {day:5, title:'早めに空港へ', area:'恩納村→那覇', memo:'帰りは時間に余裕を持って。', items:[
-    P('10:00','hotel','チェックアウト','',30,{place:'恩納村のリゾートホテル', lat:26.4705, lng:127.8255}),
+    P('10:30','main','陶眞窯でやちむん絵付け','座ってできる約50分。器は約2か月後に届きます。',60,{place:'陶眞窯', lat:26.4, lng:127.74}),
+    P('12:00','meal','読谷でランチ','ソファ席のあるお店へ。',60,{place:'読谷村 カフェ', lat:26.396, lng:127.736}),
+    P('13:30','rest','ホテルで休憩','夜に備えてしっかり休む。琉球村のシーサー色付けを足すのも◎（50分）。',180,HOTEL),
+    P('18:30','main','東南植物楽園 南国イルミネーション','入口付近のエリアに絞って。羽織りを忘れずに。',90,{driveMin:35, place:'東南植物楽園', lat:26.3727, lng:127.8158})]},
+  {day:5, title:'ゆっくり空港へ', area:'恩納村→那覇', memo:'帰りは時間に余裕を持って。', items:[
+    P('10:00','hotel','チェックアウト','',30,HOTEL),
     P('10:30','move','那覇方面へ','約60分。途中でトイレ休憩。',70,{driveMin:60}),
-    P('12:00','meal','那覇でランチ・おみやげ','空港内で買えるものは空港で。',90,{place:'国際通り', lat:26.215, lng:127.6875}),
-    P('14:00','rest','空港で早めにひと休み','搭乗前にゆっくり座れる場所を確保。',60,{place:'那覇空港', lat:26.2061, lng:127.6469})]}],
-  tips:['飛行機は通路側の席にするとトイレに立ちやすくなります。','運転は1時間ごとの休憩を目安に。シートが調整しやすい車種が楽です。','日差しが強いので帽子と水分補給を忘れずに。']};
+    P('12:00','meal','那覇でランチ（ジャッキーステーキハウス）','焼き加減はウェルダンで。',60,{place:'ジャッキーステーキハウス', lat:26.212, lng:127.673}),
+    P('13:30','rest','空港で早めにひと休み','搭乗前にゆっくり座れる場所を確保。',60,{place:'那覇空港', lat:26.2061, lng:127.6469})]}],
+  tips:['飛行機は通路側・前方の席を。非常口座席は選べません。','旅行中は予定日の28日前より早いので、主要5社とも診断書は不要です。母子手帳と保険証は必ず携帯。','11月は曇りや雨も多め。雨の日は「安心ガイド」の屋内プランへ切り替えを。','首里城正殿の一般公開は11/23からで旅行には間に合いません。']};
+
 const EXAMPLE_PROFILE = {dest:'沖縄本島', nights:4, start:'2026-11-12', transport:'レンタカー', conds:['疲れやすい','生もの不可'], concern:'', wishes:['海や絶景を見たい','ホテルでのんびり'], wish:''};
 const EMPTY_PROFILE = {dest:'', nights:2, start:'', transport:'レンタカー', conds:[], concern:'', wishes:[], wish:''};
 
 /* ================= state ================= */
-function freshExample(){ return {profile:{...EXAMPLE_PROFILE}, spots:JSON.parse(JSON.stringify(EXAMPLE_SPOTS)), plan:JSON.parse(JSON.stringify(EXAMPLE_PLAN)), chat:[], example:{profile:true, spots:true, plan:true}, tab:'profile'}; }
+function freshExample(){ return {dataVer:5, profile:{...EXAMPLE_PROFILE}, spots:JSON.parse(JSON.stringify(EXAMPLE_SPOTS)), plan:JSON.parse(JSON.stringify(EXAMPLE_PLAN)), chat:[], example:{profile:true, spots:true, plan:true}, tab:'profile'}; }
+const DATA_VER = 5;
 let state = load() || freshExample();
+if ((state.dataVer || 0) < DATA_VER){
+  if (state.example && state.example.spots) state.spots = JSON.parse(JSON.stringify(EXAMPLE_SPOTS));
+  if (state.example && state.example.plan) state.plan = JSON.parse(JSON.stringify(EXAMPLE_PLAN));
+  state.dataVer = DATA_VER;
+}
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
 function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY) || 'null'); return s && s.profile && Array.isArray(s.spots) ? s : null; }catch(e){ return null; } }
 let ui = {filter:'all', view:'list', open:new Set(), day:'all'};
@@ -1113,6 +1455,20 @@ $('btnReset').onclick = () => {
 };
 
 /* ================= spots ================= */
+function kmBetween(a, b){ const R = 6371, r = x => x * Math.PI / 180, dLa = r(b.lat - a.lat), dLo = r(b.lng - a.lng);
+  const h = Math.sin(dLa / 2) ** 2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(dLo / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(h)); }
+const isOkinawa = () => /沖縄/.test(state.profile.dest || '');
+function nearestHospitals(p, n = 2){
+  if (!p || p.lat == null || !isOkinawa()) return [];
+  const main = HOSPITALS.filter(h => /周産期/.test(h.type));
+  return main.map(h => ({...h, km:kmBetween(p, h)})).sort((a, b) => a.km - b.km).slice(0, n);
+}
+function medInfo(s){
+  if (s.medical && s.medical.minutes !== null && s.medical.minutes !== undefined) { const l = medLevel(s.medical.minutes); return {label:`${s.medical.minutes}分`, cls:l[1], lvl:l, text:`車で約${s.medical.minutes}分。` + shortNote(s.medical.note)}; }
+  const h = nearestHospitals(s, 1)[0];
+  if (h){ const km = Math.round(h.km), cls = km <= 12 ? 'ok' : km <= 25 ? 'warn' : 'bad'; return {label:`約${km}km`, cls, lvl:[{ok:'近い', warn:'やや遠い', bad:'遠い'}[cls], cls], text:`最寄りの周産期センターは${h.name}（直線で約${km}km）。車の所要時間は要確認。`, h}; }
+  return {label:'要確認', cls:'na', lvl:['要確認','na'], text:(s.medical && s.medical.note) || '最寄りの産婦人科は出発前に確認を。'};
+}
 function medLevel(min){ return min === null ? ['要確認','na'] : min <= 20 ? ['安心','ok'] : min <= 40 ? ['注意','warn'] : ['遠め','bad']; }
 const shortNote = n => String(n || '').replace(/^(車で)?約?\d+分[。、]?/, '');
 function photoOf(s){ return s ? (s.photoKey && PHOTOS[s.photoKey]) || s.photo || null : null; }
@@ -1125,8 +1481,8 @@ const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentCo
 const HEART_O = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 20.5s-8-4.7-8-10.6A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 8 2.6c0 5.9-8 10.6-8 10.6z"/></svg>';
 const CAT_COLOR = c => `var(--c-${c})`;
 function meters(s){
-  const med = medLevel(s.medical.minutes);
-  return [['歩行', LV[s.walk.level]], ['トイレ', LV[s.toilet.level]], ['病院', s.medical.minutes !== null ? [`${s.medical.minutes}分`, med[1]] : med], ['食事', LV[s.food.level]]];
+  const m = medInfo(s);
+  return [['歩行', LV[s.walk.level]], ['トイレ', LV[s.toilet.level]], ['病院', [m.label, m.cls]], ['食事', LV[s.food.level]]];
 }
 function thumbHTML(s){
   const ph = photoOf(s);
@@ -1146,24 +1502,31 @@ function spotCard(s){
   </article>`;
 }
 function sheetHTML(s){
-  const v = VERD[s.verdict], med = medLevel(s.medical.minutes), rv = s.reviews || {good:[], concern:[]}, q = `${s.name} ${s.area}`;
+  const v = VERD[s.verdict], mi = medInfo(s), med = mi.lvl, rv = s.reviews || {good:[], concern:[]}, q = `${s.name} ${s.area}`;
   return `
     ${coverHTML(s, `<div class="ov"><span class="cat-chip">${icon(s.category)}${esc(CATS[s.category])}</span><span class="pill ${v[1]}">${v[0]}</span></div>`)}
     <div style="display:grid;gap:4px"><h2 id="sheetTitle">${esc(s.name)}</h2><span class="small muted">${esc(s.area)}${s.custom ? '・追加した場所' : ''}</span>${s.summary ? `<p>${esc(s.summary)}</p>` : ''}</div>
     ${s.alternative ? `<div class="alt"><span><b>代わりにこちらはいかが？</b>「${esc(s.alternative.name)}」 ${esc(s.alternative.reason)}</span><div><button type="button" class="btn sm ai-btn" data-alt="${s.id}">代わりの場所をチェック</button></div></div>` : ''}
+    ${(s.hours || s.price || s.parking || (s.tips && s.tips.length)) ? `<div class="blk"><h4>基本情報</h4><dl class="facts">
+      ${s.hours ? `<div><dt>${icon('clock')}営業</dt><dd>${esc(s.hours)}</dd></div>` : ''}
+      ${s.price ? `<div><dt>${icon('cal')}料金</dt><dd>${esc(s.price)}</dd></div>` : ''}
+      ${s.parking ? `<div><dt>${icon('car')}駐車場</dt><dd>${esc(s.parking)}</dd></div>` : ''}
+    </dl>${s.tips && s.tips.length ? `<div class="chips">${s.tips.map(x => `<span class="tipchip">${icon('flag')}${esc(x)}</span>`).join('')}</div>` : ''}</div>` : ''}
     <div class="blk"><h4>マタニティ評価</h4><div class="evals">
       ${[['🚶','歩行・体力', LV[s.walk.level], s.walk.note], ['🚻','トイレの安心度', LV[s.toilet.level], s.toilet.note],
-         ['🏥','周辺医療アクセス', med, (s.medical.minutes !== null ? `車で約${s.medical.minutes}分。` : '') + shortNote(s.medical.note)], ['🍽️','食事の配慮', LV[s.food.level], s.food.note]]
+         ['🏥','周辺医療アクセス', med, mi.text], ['🍽️','食事の配慮', LV[s.food.level], s.food.note]]
         .map(([ic, k, l, n]) => `<div class="ev"><span class="k">${ic} ${k}</span><span class="pill ${l[1]}">${l[0]}</span><span class="v">${esc(n || '—')}</span></div>`).join('')}
     </div></div>
     <div class="blk">
-      <h4>口コミの傾向 <span class="src">${rv.source === 'pasted' ? `貼り付けた口コミ${rv.count ? `約${rv.count}件` : ''}から` : state.example.spots && !s.custom ? '例' : 'AIがまとめた傾向'}</span></h4>
+      <h4>口コミの傾向 <span class="src">${rv.source === 'pasted' ? `貼り付けた口コミ${rv.count ? `約${rv.count}件` : ''}から` : rv.source === 'research' ? '調査で集めた傾向（要約）' : 'AIがまとめた傾向'}</span></h4>
       ${(rv.good.length || rv.concern.length) ? `<div class="rv">${rv.good.length ? `<div><b class="xs" style="color:var(--ok)">よかった点</b><ul>${rv.good.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>` : ''}${rv.concern.length ? `<div><b class="xs" style="color:var(--warn)">気になる点</b><ul>${rv.concern.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>` : ''}</div>` : '<p class="small muted">口コミの傾向はまだありません。</p>'}
       <div class="links">
         <a class="btn ghost sm" href="${gmSearch(q)}" target="_blank" rel="noopener">${icon('ext')}Googleマップの口コミ</a>
         ${s.url ? `<a class="btn ghost sm" href="${esc(s.url)}" target="_blank" rel="noopener">${icon('ext')}公式サイト</a>` : `<a class="btn ghost sm" href="${gSearch(q + ' 公式サイト')}" target="_blank" rel="noopener">${icon('ext')}公式サイトを探す</a>`}
       </div>
     </div>
+    ${nearestHospitals(s, 2).length ? `<div class="blk"><h4>近くの周産期センター <span class="src">直線距離・位置は目安</span></h4><div class="hosp-mini">${nearestHospitals(s, 2).map(h => `<div><b>${esc(h.name)}</b><span>${esc(h.type)}・約${Math.round(h.km)}km</span><span class="tel">${esc(h.tel)}<button type="button" class="btn text" data-copy="${esc(h.tel)}">コピー</button></span></div>`).join('')}</div></div>` : ''}
+    ${s.sources && s.sources.length ? `<div class="blk"><h4>出典</h4><div class="srcs">${s.sources.map((u, i) => `<a href="${esc(u)}" target="_blank" rel="noopener">${icon('ext')}${esc(new URL(u).hostname.replace(/^www\./, ''))}</a>`).join('')}</div></div>` : ''}
     <details class="acc"><summary><span class="ic">${icon('chat')}</span><span class="tx"><b>口コミを貼り付けて見直す</b><span>読んだ口コミから評価をAIが更新</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
       <div class="body"><label for="rv-${s.id}" class="sr">${esc(s.name)}の口コミ</label>
         <textarea id="rv-${s.id}" placeholder="Googleマップなどの口コミをそのまま貼り付け（複数件OK）"></textarea>
@@ -1203,7 +1566,7 @@ let toastT = null;
 function toast(msg){ const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 1800); }
 function togglePick(id){
   const s = state.spots.find(x => x.id === id); if (!s) return;
-  s.sel = !s.sel; save(); renderSpots(); if (sheetId === id) renderSheet();
+  s.sel = !s.sel; save(); renderSpots(); if (sheetId === id) renderSheet(); if (state.tab === 'guide') renderGuide();
   toast(s.sel ? `「${clip(s.name, 14)}」を行きたいに追加しました` : `「${clip(s.name, 14)}」を外しました`);
 }
 let spotMap = null;
@@ -1244,6 +1607,8 @@ function renderSpots(){
 function scrollToCard(id){ requestAnimationFrame(() => { const el = document.querySelector(`.row-card[data-open="${id}"]`); el && el.scrollIntoView({block:'center', behavior:'smooth'}); }); }
 $('filters').onclick = e => { const b = e.target.closest('[data-f]'); if (b){ ui.filter = b.dataset.f; renderSpots(); } };
 document.querySelector('[aria-label="表示"]').onclick = e => { const b = e.target.closest('[data-view]'); if (b){ ui.view = b.dataset.view; renderSpots(); } };
+async function copyText(v){ try { await navigator.clipboard.writeText(v); toast(`${v} をコピーしました`); } catch(e){ toast(v); } }
+document.addEventListener('click', e => { const c = e.target.closest('[data-copy]'); if (c){ e.preventDefault(); e.stopPropagation(); copyText(c.dataset.copy); } }, true);
 function spotAction(e){
   const t = e.target.closest('[data-pick],[data-del],[data-alt],[data-goto],[data-rv],[data-more],[data-onmap],[data-f2],[data-open]'); if (!t) return;
   if (t.closest('a,label,input,textarea,summary') && !t.dataset.open) return;
@@ -1480,6 +1845,52 @@ $('btnCopy').onclick = async () => {
   catch(e){ st.className = 'status'; st.innerHTML = '<textarea readonly style="width:100%;min-height:160px"></textarea>'; const ta = st.querySelector('textarea'); ta.value = txt; ta.select(); }
 };
 
+/* ================= guide ================= */
+const RAIN = ['沖縄美ら海水族館','琉球ガラス村','首里琉染','育陶園','陶眞窯','琉球村','うるもスパ','スパ はなり','美浜アメリカンビレッジ','ホテルのラウンジ'];
+function baseOf(){
+  const h = state.spots.find(s => s.sel && s.category === 'hotel' && s.lat != null);
+  return h ? {name:h.name, lat:h.lat, lng:h.lng} : null;
+}
+function flightInfo(){
+  const tw = tripWeeks(); if (!tw) return null;
+  const due = toDate(DUE), ret = tw.end;
+  const daysIncl = Math.round((due - ret) / dayMs) + 1;
+  return {daysIncl, retW:tw.to.w, retLabel:md(ret)};
+}
+function renderGuide(){
+  const ok = isOkinawa(), base = baseOf(), fi = flightInfo();
+  const sec = (ic, title, body) => `<section class="g-sec"><h3><i>${icon(ic)}</i>${title}</h3>${body}</section>`;
+  const checks = state.guideChecks || {};
+  let h = '';
+  h += sec('shield', 'もしものとき', GUIDE.calls.map(c => `<div class="callcard"><span class="k">${esc(c.k)}</span><span><b>${esc(c.t)}</b><span>${esc(c.d)}${c.alt ? `（つながらない電話は ${esc(c.alt)}）` : ''}</span></span><button type="button" class="btn soft sm" data-copy="${esc(c.alt || c.tel)}">コピー</button></div>`).join('')
+    + `<p class="xs muted">お腹の強い張り・出血・破水かもと感じたら、まず受診中の産院へ電話を。電話番号はタップでコピーできます。</p>`);
+  h += sec('bag', 'いつも持ち歩くもの', `<div class="gcard"><ul class="chk2">${GUIDE.bring.map((b, i) => `<li style="display:block"><label style="display:flex;gap:10px;align-items:center;cursor:pointer"><input type="checkbox" data-gchk="${i}" ${checks[i] ? 'checked' : ''} style="width:20px;height:20px;accent-color:var(--accent)">${esc(b)}</label></li>`).join('')}</ul></div>`);
+  if (ok){
+    const ref = base || {name:'那覇空港', lat:26.2061, lng:127.6469};
+    const list = HOSPITALS.map(x => ({...x, km:kmBetween(ref, x)})).sort((a, b) => a.km - b.km);
+    h += sec('pin', '近くの病院', `<p class="xs muted">「${esc(ref.name)}」から近い順（${base ? '行きたいに入れた宿' : '宿を選ぶと宿から'}）</p><div class="hosp">${list.map(x => `<div><span><span class="ty">${esc(x.type)}</span><br><b>${esc(x.name)}</b></span><span class="km">約${Math.round(x.km)}km</span><span class="ad">${esc(x.addr)}${x.note ? '・' + esc(x.note) : ''}</span><span class="htel">${esc(x.tel)}<button type="button" class="btn text" data-copy="${esc(x.tel)}">コピー</button><a class="btn text" href="${gmSearch(x.name)}" target="_blank" rel="noopener">地図</a></span></div>`).join('')}</div>
+      <p class="xs muted">距離は直線の目安です。総合周産期センターは原則、紹介か救急搬送で受診します。夜間の受け入れ方法は出発前に各病院へご確認ください。</p>`);
+  }
+  h += sec('plane', '飛行機の妊婦ルール', `<div class="flight">${fi ? `<div class="res ${fi.daysIncl > 28 && fi.retW < 36 ? 'ok' : 'warn'}"><span style="font-size:22px">${fi.daysIncl > 28 && fi.retW < 36 ? '✓' : '!'}</span><span>帰りの便（${fi.retLabel}）は予定日を含め<b>${fi.daysIncl}日前</b>・妊娠${fi.retW}週。${fi.daysIncl > 28 && fi.retW < 36 ? '主要5社とも診断書は不要です。' : '診断書などが必要な航空会社があります。下の表を確認してください。'}</span></div>` : '<p class="small muted">出発日を入れると、診断書が必要かどうかを自動で判定します。</p>'}
+    <div class="gcard" style="padding:6px 12px;overflow-x:auto"><table class="gtable"><thead><tr><th>航空会社</th><th>診断書などが必要な時期</th>${fi ? '<th>今回</th>' : ''}</tr></thead><tbody>${GUIDE.airlines.map(a => { const need = fi ? (a.doc ? fi.daysIncl <= a.doc : fi.retW >= a.wk) : null; return `<tr><td class="n"><a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.n)}</a></td><td>${esc(a.rule)}<br><span class="xs muted">${esc(a.note)}</span></td>${fi ? `<td><span class="pill ${need ? 'warn' : 'ok'}">${need ? '必要' : '不要'}</span></td>` : ''}</tr>`; }).join('')}</tbody></table></div>
+    <p class="xs muted">座席は通路側・前方がおすすめ。非常口座席は妊娠中は選べません。2026年10月時点の各社公式情報より。</p></div>`);
+  if (ok){
+    h += sec('sun', '11月の天気と服装', `<div class="gcard"><div class="wx">${GUIDE.climate.rows.map(([k, v]) => `<span>${k}<b>${v}</b></span>`).join('')}</div><ul class="chk">${GUIDE.climate.wear.map(w => `<li>${esc(w)}</li>`).join('')}</ul><span class="xs muted">${GUIDE.climate.src}</span></div>`);
+    h += sec('car', '車での移動', `<div class="gcard" style="padding:6px 12px"><table class="gtable"><tbody>${GUIDE.drive.map(([a, b]) => `<tr><td style="width:58%">${esc(a)}</td><td style="font-weight:700">${esc(b)}</td></tr>`).join('')}</tbody></table></div>
+      <div class="gcard"><b class="small">妊娠中のシートベルトと休憩</b><ul class="chk">${GUIDE.belt.map(w => `<li>${esc(w)}</li>`).join('')}</ul><span class="xs muted">神奈川県警察「妊娠中の女性へのシートベルト着用の推奨について」より</span></div>`);
+    h += sec('cal', '旅行中のイベント・注意', `<div class="gcard" style="padding:4px 16px">${GUIDE.events.map(e => `<div class="evt"><span class="pill ${e.s}">${{ok:'見られる', warn:'要確認', bad:'期間外'}[e.s]}</span><b>${e.url ? `<a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.t)}</a>` : esc(e.t)}</b><span class="d">${esc(e.d)}</span><span class="nt">${esc(e.note)}</span></div>`).join('')}</div>`);
+    const rain = state.spots.filter(s => RAIN.some(n => s.name.includes(n)));
+    if (rain.length) h += sec('umbrella', '雨の日・疲れた日の屋内プラン', `<div class="rowlist">${rain.map(spotCard).join('')}</div>`);
+    h += sec('flag', 'そのほかのメモ', `<div class="gcard"><ul class="chk">${GUIDE.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>`);
+  } else {
+    h += `<p class="small muted">行き先が沖縄本島のときは、周産期センター・天気・移動時間・イベントの情報も表示されます。ほかの地域の病院は出発前に確認してください。</p>`;
+  }
+  $('guideBox').innerHTML = h;
+}
+$('guideBox').addEventListener('change', e => { const c = e.target.closest('[data-gchk]'); if (!c) return; state.guideChecks = state.guideChecks || {}; state.guideChecks[c.dataset.gchk] = c.checked; save(); });
+$('guideBox').addEventListener('click', spotAction);
+document.addEventListener('click', e => { const g = e.target.closest('[data-gotab]'); if (g) setTab(g.dataset.gotab); });
+
 /* ================= chat ================= */
 const QUICK = ['持ち物リストを作って', '雨の日の代わりのプランは？', '移動中にお腹が張ったら？', '飛行機で気をつけることは？', 'マタニティフォトのおすすめ場所は？'];
 $('quickQs').innerHTML = QUICK.map((q, i) => `<button type="button" class="filter ai-btn" id="q-${i}">${q}</button>`).join('');
@@ -1508,7 +1919,8 @@ $('f-chat').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaK
 function setTab(t){
   state.tab = t; save();
   document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
-  ['profile','spots','plan','chat'].forEach(k => $('p-' + k).hidden = k !== t);
+  ['profile','spots','plan','guide','chat'].forEach(k => $('p-' + k).hidden = k !== t);
+  if (t === 'guide') renderGuide();
   $('composer').hidden = t !== 'chat';
   if (t === 'plan') renderPlan();
   if (t === 'spots') renderSpots();
