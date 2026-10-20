@@ -1,0 +1,60 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><title>説明会・インターンシップのお申し込み｜スマイルタイム × Graise HOME 合同新卒採用</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lp.css"><style>
+.fm{ padding:24px 28px 32px; } .steps{ display:flex; gap:8px; list-style:none; margin:0 0 20px; padding:0; } .steps li{ flex:1; text-align:center; font:700 13px var(--goth); padding:8px; background:var(--gray); color:var(--ink3); border-radius:3px; } .steps li.on{ background:var(--blue); color:#fff; }
+.fr{ margin-bottom:18px; } .fr label{ display:block; font:700 14px var(--goth); margin-bottom:6px; } .fr label em{ font-style:normal; font-size:11px; background:#c0392b; color:#fff; padding:2px 6px; margin-left:8px; border-radius:2px; }
+.fr input:not([type=checkbox]):not([type=file]),.fr select,.fr textarea{ width:100%; font:16px var(--goth); padding:12px 14px; border:1px solid #b9c3cc; border-radius:4px; background:#fff; }
+.fr input:focus,.fr select:focus,.fr textarea:focus{ outline:2px solid var(--blue); outline-offset:1px; }
+.fr2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; } .to{ margin:8px 0 0; font:700 14px var(--goth); color:var(--blue); background:var(--pale); padding:10px 14px; border-radius:4px; }
+.agree label{ font-weight:500; display:flex; gap:8px; align-items:center; } .err{ color:#c0392b; font-weight:700; font-size:14px; min-height:1em; }
+.src{ font-size:12.5px; background:#fff8dc; color:#6b5300; padding:10px 14px; border-radius:4px; margin-bottom:18px; }
+.src b{ font-family:monospace; }
+@media (max-width:760px){ .fr2{ grid-template-columns:1fr; gap:0; } .fm{ padding:16px; } }
+</style></head><body>
+<p class="demo-note">提案用デモです。写真・数値・日程は公開情報や例による仮置きで、内容はご支給の情報で差し替えます。</p>
+<header class="hd"><div class="hd__in"><a href="index.html" class="hd__logo">スマイルタイム × Graise HOME<small>新卒採用</small></a>
+<nav class="hd__nav" aria-label="ページ内"><a href="index.html#kodawari">こだわり</a><a href="index.html#people">働く人</a><a href="index.html#work">仕事</a><a href="index.html#product">商材</a><a href="index.html#company">2社紹介</a><a href="index.html#event">説明会・インターン</a><a href="index.html#recruit">募集要項</a><a href="index.html#faq">FAQ</a></nav>
+<a href="entry.html" class="btn btn--signal">説明会・インターンに申し込む</a></div></header>
+<main class="sec sec--gray" style="padding-top:56px"><div class="wrap" style="max-width:860px">
+<p class="lab"><b>ENTRY</b>お申し込み</p><h1 class="h2">説明会・インターンシップの<br>お申し込み</h1>
+<p class="lead">希望する勤務エリアを選ぶと、お申し込み先の会社が決まります。どちらの会社か決めていなくても大丈夫です。</p>
+<div class="tabs" role="tablist"><button role="tab" aria-selected="true" aria-controls="f-new" id="fb-new">新卒（説明会・インターン）</button><button role="tab" aria-selected="false" aria-controls="f-mid" id="fb-mid">中途採用の応募</button></div>
+<div class="panel fm" id="f-new" role="tabpanel">
+<ol class="steps"><li class="on">1 入力</li><li>2 確認</li><li>3 完了</li></ol>
+<form id="form-new" novalidate>
+<div class="fr"><label>参加するイベント<em>必須</em></label><select name="ev" required><option value="">選択してください</option>
+<option value="1123">11/23（月・祝）オープンカンパニー（オンライン）</option><option value="1205">12/05（土）1day 仕事体験（名古屋）</option><option value="1212">12/12（土）1day 仕事体験（横浜）</option><option value="1219">12/19（土）オープンカンパニー（名古屋）</option></select></div>
+<div class="fr"><label>希望する勤務エリア<em>必須</em></label><select name="area" required><option value="">選択してください</option>
+<option value="st">中部（愛知・静岡）</option><option value="st">関西（大阪）</option><option value="st">中国・九州（広島・福岡）</option><option value="gr">関東（神奈川・埼玉・千葉・茨城）</option><option value="gr">甲信越（新潟）</option><option value="un">まだ決めていない</option></select>
+<p class="to" id="to-new" aria-live="polite">お申し込み先：エリアを選ぶと表示されます</p></div>
+<div class="fr2"><div class="fr"><label>氏名<em>必須</em></label><input name="name" required autocomplete="name"></div><div class="fr"><label>フリガナ<em>必須</em></label><input name="kana" required></div></div>
+<div class="fr"><label>学校名・学部・学科<em>必須</em></label><input name="school" required></div>
+<div class="fr2"><div class="fr"><label>卒業予定年月<em>必須</em></label><select name="grad" required><option value="">選択してください</option><option>2028年3月</option><option>2028年9月</option><option>2029年3月</option><option>その他</option></select></div><div class="fr"><label>電話番号<em>必須</em></label><input name="tel" type="tel" required autocomplete="tel"></div></div>
+<div class="fr"><label>メールアドレス<em>必須</em></label><input name="mail" type="email" required autocomplete="email"></div>
+<div class="fr"><label>質問・ご要望（任意）</label><textarea name="note" rows="3"></textarea></div>
+<div class="src" id="src-new"></div>
+<div class="fr agree"><label><input type="checkbox" name="agree" required> 個人情報の取り扱いに同意する</label><p class="note">ご入力の情報は、株式会社住居時間（スマイルタイム）と株式会社Graise HOMEが共同で利用します。（共同利用の範囲・目的・管理責任者は確認のうえ掲載します）</p></div>
+<p class="err" id="err-new" role="alert"></p>
+<div class="cta-row"><button class="btn btn--signal" type="submit">入力内容を確認する →</button></div>
+</form></div>
+<div class="panel fm" id="f-mid" role="tabpanel" hidden>
+<form id="form-mid" novalidate>
+<div class="fr"><label>応募する職種<em>必須</em></label><select name="job" required><option value="">選択してください</option><option>リフォームアドバイザー（未経験歓迎）</option><option>その他の職種（ご相談）</option></select></div>
+<div class="fr"><label>希望する勤務エリア<em>必須</em></label><select name="area" required><option value="">選択してください</option><option value="st">中部・関西・中国・九州</option><option value="gr">関東・甲信越</option></select><p class="to" id="to-mid" aria-live="polite">応募先：エリアを選ぶと表示されます</p></div>
+<div class="fr2"><div class="fr"><label>氏名<em>必須</em></label><input name="name" required></div><div class="fr"><label>電話番号<em>必須</em></label><input name="tel" type="tel" required></div></div>
+<div class="fr"><label>メールアドレス<em>必須</em></label><input name="mail" type="email" required></div>
+<div class="fr"><label>職務経歴書（任意）</label><input type="file" name="cv"></div>
+<div class="fr agree"><label><input type="checkbox" name="agree" required> 個人情報の取り扱いに同意する</label></div>
+<p class="err" id="err-mid" role="alert"></p>
+<div class="cta-row"><button class="btn btn--blue" type="submit">入力内容を確認する →</button></div>
+</form></div>
+<div class="panel fm" id="done" hidden><h2 class="h2" style="margin-top:20px">お申し込みを受け付けました（デモ）</h2><p class="lead" id="done-msg"></p><a class="btn btn--blue" href="index.html">ページに戻る</a></div>
+</div></main><footer class="ft"><div class="wrap"><div class="ft__grid">
+<div><h4>スマイルタイム × Graise HOME 合同新卒採用</h4><p>こだわりのちからで、住まいに笑顔を。</p><div class="ft__logos"><img src="img/logo-smiletime.svg" alt="スマイルタイム"><img src="img/logo-graise.svg" alt="Graise HOME"></div></div>
+<div><h4>このページ</h4><a href="index.html#kodawari">私たちのこだわり</a><a href="index.html#people">働く人</a><a href="index.html#work">リフォームアドバイザーの仕事</a><a href="index.html#company">2社紹介</a><a href="index.html#recruit">募集要項</a><a href="index.html#faq">よくある質問</a></div>
+<div><h4>関連リンク</h4><a href="https://kabemato.jp/" target="_blank" rel="noopener">かべまと（アルミサイディング）↗</a><a href="https://www.smiletime.co.jp/" target="_blank" rel="noopener">スマイルタイム 公式サイト ↗</a><a href="https://www.graise-home.co.jp/" target="_blank" rel="noopener">Graise HOME 公式サイト ↗</a><a href="entry.html#mid">中途採用の応募</a></div>
+</div><div class="ft__copy"><span>個人情報の取り扱い（2社共同利用）｜サイトのご利用について</span><span>© スマイルタイム × Graise HOME（デモ）</span></div></div></footer>
+
+<script src="lp.js"></script></body></html>
